@@ -13,39 +13,49 @@ namespace WebShop.Api.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            //modelBuilder.Entity<User>(user =>
-            //{
-            //    user
-            //        .HasMany(u => u.Orders)
-            //        .WithOne(o => o.User)
-            //        .HasForeignKey(o => o.UserId);
-            //});
-            //modelBuilder.Entity<Product>(product =>
-            //{
-            //    product.HasOne(p => p.Category)
-            //    .WithMany().HasForeignKey(p => p.CategoryId);
+            modelBuilder.Entity<User>(customer =>
+            {
+                customer
+                    .HasMany(c => c.Orders)
+                    .WithOne(o => o.User)
+                    .HasForeignKey(o => o.UserId);
+                customer
+                    .HasMany(c => c.Reviews)
+                    .WithOne(r => r.User)                              
+                    .HasForeignKey(r => r.UserId);
+            });
 
-            //});
-            //modelBuilder.Entity<Cart>(cart =>
-            //{
-            //    cart.HasOne(c => c.User).WithOne();
+            modelBuilder.Entity<Product>(product =>
+            {
+                product.HasOne(p => p.Category).WithMany().HasForeignKey(p => p.CategoryId);
+                product
+                    .HasMany(p => p.Reviews)
+                    .WithOne(r => r.Product)
+                    .HasForeignKey(r => r.ProductId);
+            });
 
-            //});
-            //modelBuilder.Entity<CartItem>(cartItem =>
-            //{
-            //    cartItem
-            //    .HasOne(ci => ci.Cart)
-            //    .WithMany(ca => ca.CartItem)
-            //    .HasForeignKey(ca => ca.CartId);
-            //});
-            //modelBuilder.Entity<OrderItem>(orderItem =>
-            //{
-            //    orderItem
-            //        .HasOne(oi => oi.Order)
-            //        .WithMany(o => o.OrderItems)
-            //        .HasForeignKey(oi => oi.OrderId);
-            //    orderItem.HasOne(oi => oi.Product).WithMany().HasForeignKey(oi => oi.ProductId);
-            //});
+            modelBuilder.Entity<Cart>(cart =>
+            {
+                cart.HasOne(c => c.User).WithOne();
+            });
+
+            modelBuilder.Entity<CartItem>(cartItem =>
+            {
+                cartItem
+                    .HasOne(ci => ci.Cart)
+                    .WithMany(ca => ca.CartItems)
+                    .HasForeignKey(ci => ci.CartId);
+                cartItem.HasOne(ci => ci.Product).WithMany().HasForeignKey(ci => ci.ProductId);
+            });
+
+            modelBuilder.Entity<OrderItem>(orderItem =>
+            {
+                orderItem
+                    .HasOne(oi => oi.Order)
+                    .WithMany(o => o.OrderItems)
+                    .HasForeignKey(oi => oi.OrderId);
+                orderItem.HasOne(oi => oi.Product).WithMany().HasForeignKey(oi => oi.ProductId);
+            });
 
             //Products
             //Beauty Category
@@ -306,7 +316,6 @@ namespace WebShop.Api.Data
                 Email = "Bob@Mail.com",
                 Phonenumber = "070-1231212",
                 Role = 1
-
             });
             modelBuilder.Entity<User>().HasData(new User
             {
@@ -319,7 +328,6 @@ namespace WebShop.Api.Data
                 Email = "Sarah@Mail.com",
                 Phonenumber = "070-3213232",
                 Role = 1
-
             });
 
             //Create Shopping Cart for Users
@@ -357,7 +365,7 @@ namespace WebShop.Api.Data
                 Id = 4,
                 Name = "Shoes"
             });
-        }
+                                   }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<Order> Orders { get; set; }
@@ -365,6 +373,7 @@ namespace WebShop.Api.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductCategory> ProductCategories { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Review> Reviews { get; set; }
 
     }
 }

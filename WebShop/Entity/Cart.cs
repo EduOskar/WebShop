@@ -10,9 +10,8 @@ namespace WebShop.Api.Entity
         public int Id { get; set; }
         
         public int? UserId { get; set; }
-        public User? User { get; set; }
+        public virtual User? User { get; set; }
 
-
-        public ICollection<CartItem> CartItem { get; set;} = new List<CartItem>();
+        public ICollection<CartItem> CartItems { get; set;} = new List<CartItem>();
     }
 }

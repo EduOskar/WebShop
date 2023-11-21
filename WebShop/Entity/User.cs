@@ -16,9 +16,7 @@ namespace WebShop.Api.Entity
         public string Email { get; set; } = string.Empty;
         public string Phonenumber { get; set; } = string.Empty;
         public int Role { get; set; }
-
-        public int OrderId { get; set; }
-        public ICollection<Order> Orders { get; set; } = new List<Order>();
-        //public ICollection<Review> Revíews { get; set; } = new List<Review>(); //Add in future
+        public ICollection<Order>? Orders { get; set; }
+        public ICollection<Review>? Reviews { get; set; }
     }
 }

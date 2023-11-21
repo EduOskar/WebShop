@@ -4,10 +4,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.8.34309.116
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebShop.Api", "WebShop\WebShop.Api.csproj", "{4BC0BA8B-5244-4FBA-9A87-446F59727A2E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CAC01A66-F5DE-483F-A205-FE7EA6D5167A} = {CAC01A66-F5DE-483F-A205-FE7EA6D5167A}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebShop.Models", "Models\WebShop.Models.csproj", "{CAC01A66-F5DE-483F-A205-FE7EA6D5167A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebShop.Web", "WebShop.Web\WebShop.Web.csproj", "{7A6910A7-5BD7-46B1-B92A-5AD070FE5D07}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebShop.Web", "WebShop.Web\WebShop.Web.csproj", "{7A6910A7-5BD7-46B1-B92A-5AD070FE5D07}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

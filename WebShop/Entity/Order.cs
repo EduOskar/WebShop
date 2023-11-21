@@ -14,7 +14,8 @@ namespace WebShop.Api.Entity
 
         //ForeignKey for Customer
         public int UserId { get; set; }
-        public User? User { get; set; }
+        public virtual User? User { get; set; }
+
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     }
 }
