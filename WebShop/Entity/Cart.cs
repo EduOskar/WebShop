@@ -1,17 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace WebShop.Api.Entity
-{
-    public class Cart
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-        
-        public int? UserId { get; set; }
-        public virtual User? User { get; set; }
+namespace WebShop.Api.Entity;
 
-        public ICollection<CartItem> CartItems { get; set;} = new List<CartItem>();
-    }
+public class Cart
+{
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
+    
+    public int UserId { get; set; }
+    public virtual User? User { get; set; }
+
+    public ICollection<CartItem>? CartItems { get; set; } = default!;
 }

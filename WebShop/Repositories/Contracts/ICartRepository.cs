@@ -1,6 +1,14 @@
-﻿namespace WebShop.Api.Repositories.Contracts
+﻿using WebShop.Api.Entity;
+
+namespace WebShop.Api.Repositories.Contracts;
+
+public interface ICartRepository
 {
-    public interface ICartRepository
-    {
-    }
+    Task<ICollection<Cart>> GetCarts();
+    Task<Cart> GetCart(int cartId);
+    Task<bool> CartExist(int cartId);
+    Task<bool> CreateCart(Cart cart);
+    Task<bool> UpdateCart(Cart cart);
+    Task<bool> DeleteCart(Cart cart);
+    Task<bool> Save();
 }

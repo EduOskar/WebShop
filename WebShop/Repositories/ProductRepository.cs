@@ -3,76 +3,75 @@ using WebShop.Api.Data;
 using WebShop.Api.Entity;
 using WebShop.Api.Repositories.Contracts;
 
-namespace WebShop.Api.Repositories
+namespace WebShop.Api.Repositories;
+
+public class ProductRepository : IProductRepository
 {
-    public class ProductRepository : IProductRepository
+    private readonly ApplicationDbContext _dbContext;
+
+    public ProductRepository(ApplicationDbContext dbContext)
     {
-        private readonly ApplicationDbContext _dbContext;
+        _dbContext = dbContext;
+    }
 
-        public ProductRepository(ApplicationDbContext dbContext)
+    public async Task<bool> CreateProduct(Product product)
+    {
+        await _dbContext.AddAsync(product);
+
+        return await Save();
+    }
+
+    public async Task<bool> DeleteProduct(Product product)
+    {
+        _dbContext.Remove(product);
+
+        return await Save();
+    }
+
+    public async Task<Product> GetProduct(int productId)
+    {
+        var product = await _dbContext.Products.SingleOrDefaultAsync(p => p.Id == productId);
+
+        if (product != null)
         {
-            _dbContext = dbContext;
+            return product;
         }
 
-        public async Task<bool> CreateProduct(Product product)
-        {
-            await _dbContext.AddAsync(product);
+        throw new Exception("Product was not found");
+    }
 
-            return await Save();
-        }
+    public async Task<ICollection<Product>> GetProductByCategory(int categoryId)
+    {
+        var productsByCategory = await _dbContext.Products.Where(pc => pc.CategoryId == categoryId).ToListAsync();
 
-        public async Task<bool> DeleteProduct(Product product)
-        {
-            _dbContext.Remove(product);
+        return productsByCategory;
+    }
 
-            return await Save();
-        }
+    public async Task<ICollection<Product>> GetProducts()
+    {
+        var products = await _dbContext.Products.ToListAsync();
 
-        public async Task<Product> GetProduct(int productId)
-        {
-            var product = await _dbContext.Products.SingleOrDefaultAsync(p => p.Id == productId);
+        return products;
+    }
 
-            if (product != null)
-            {
-                return product;
-            }
+    public async Task<bool> ProductExist(int productId)
+    {
+        var productExist = await _dbContext.Products.AnyAsync(p => p.Id == productId);
 
-            throw new Exception("Product was not found");
-        }
+        return productExist;
+    }
 
-        public async Task<ICollection<Product>> GetProductByCategory(int categoryId)
-        {
-            var productsByCategory = await _dbContext.Products.Where(pc => pc.CategoryId == categoryId).ToListAsync();
+    public async Task<bool> Save()
+    {
+        var save = await _dbContext.SaveChangesAsync();
 
-            return productsByCategory;
-        }
+        return save > 0;
+    }
 
-        public async Task<ICollection<Product>> GetProducts()
-        {
-            var products = await _dbContext.Products.ToListAsync();
+    public async Task<bool> UpdateProduct(Product product)
+    {
+        _dbContext.Update(product);
 
-            return products;
-        }
-
-        public async Task<bool> ProductExist(int productId)
-        {
-            var productExist = await _dbContext.Products.AnyAsync(p => p.Id == productId);
-
-            return productExist;
-        }
-
-        public async Task<bool> Save()
-        {
-            var save = await _dbContext.SaveChangesAsync();
-
-            return save > 0;
-        }
-
-        public async Task<bool> UpdateProduct(Product product)
-        {
-            _dbContext.Update(product);
-
-            return await Save();
-        }
+        return await Save();
     }
 }

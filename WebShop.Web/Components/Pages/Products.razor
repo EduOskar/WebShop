@@ -1,0 +1,44 @@
+﻿@page "/"
+
+
+@if (Product == null)
+{
+    <h1>Cant load Products</h1>
+}
+else
+{
+    <h3 class="mb-5">Products</h3>
+
+    var productCount = Product.Count();
+
+     <div class="row mt-3">
+         <DisplayProducts></DisplayProducts>
+     </div>
+     <h3 class="mb-3" />
+}
+
+@code {
+    [Inject]
+    public IProductsService ProductService { get; set; }
+
+    public IEnumerable<ProductDto> Product { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Product = await ProductService.GetProducts();
+    }
+
+    // protected IOrderedEnumerable<IGrouping<int, ProductDto>> GetGroupedPRoductsByCategory()
+    // {
+    //     return from product in Product
+    //            group product by product.CategoryId into prodByCatGroup
+    //            orderby prodByCatGroup
+    //            select prodByCatGroup;
+    // }
+
+    // protected string GetCategoryName(IGrouping<int, ProductDto> groupedProductDto)
+    // {
+    //     return groupedProductDto.FirstOrDefault(pg => pg.CategoryId == groupedProductDto.Any());
+    // }
+
+}

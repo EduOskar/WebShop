@@ -1,22 +1,21 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace WebShop.Api.Entity
+namespace WebShop.Api.Entity;
+
+public class CartItem
 {
-    public class CartItem
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
 
-        public int CartId { get; set; }
-        public virtual Cart Cart { get; set; } = new Cart();
+    public int CartId { get; set; }
+    public virtual Cart? Cart { get; set; }
 
-        public int ProductId { get; set; }
-        public virtual Product Product { get; set; } = new Product();
+    public int ProductId { get; set; }
+    public virtual Product? Product { get; set; }
 
-        [MaxLength(200)]
-        public int Qty { get; set; }
+    [MaxLength(200)]
+    public int Qty { get; set; }
 
-    }
 }
