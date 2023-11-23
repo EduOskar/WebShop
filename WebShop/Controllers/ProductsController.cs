@@ -29,8 +29,10 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(200)]
     public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
     {
+
         var products = _mapper.Map<List<ProductDto>>(
             await _productRepository.GetProducts());
+
 
         if (!ModelState.IsValid)
         {
@@ -46,6 +48,8 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(404)]
     public async Task<ActionResult<Product>> GetProduct(int productId)
     {
+        
+
         if (!await _productRepository.ProductExist(productId))
         {
             return NotFound();

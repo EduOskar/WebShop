@@ -1,4 +1,8 @@
-﻿using WebShop.Models.DTOs;
+﻿using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
+using WebShop.Models.DTOs;
 using WebShop.Web.Services.Contracts;
 
 namespace WebShop.Web.Services;
@@ -12,14 +16,56 @@ public class ProductsService : IProductsService
         _httpClient = httpClient;
     }
 
-    public Task<bool> CreateProduct(ProductDto product)
+    public async Task<ProductDto> CreateProduct(ProductDto productCreate)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync<ProductDto>("api/Products", productCreate);
+
+            if (response.IsSuccessStatusCode)
+            {
+                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                {
+                    return null!;
+                }
+
+                var product = await response.Content.ReadFromJsonAsync<ProductDto>();
+
+                return product!;
+            }
+            else
+            {
+                var message = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Http status:{response.StatusCode} Message -{message}");
+            }
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
     }
 
-    public Task<bool> DeleteProduct(ProductDto product)
+    public async Task<ProductDto> DeleteProduct(int productId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var response = await _httpClient.DeleteAsync($"api/Products/{productId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var productDelete = await response.Content.ReadFromJsonAsync<ProductDto>();
+
+                return productDelete!;
+            }
+
+            return null!;
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
     }
 
     public async Task<ProductDto> GetProduct(int productId)
@@ -32,10 +78,11 @@ public class ProductsService : IProductsService
             {
                 if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 {
-                    return null;
+                    return null!;
                 }
 
-                return await response.Content.ReadFromJsonAsync<ProductDto>();
+                var product = await response.Content.ReadFromJsonAsync<ProductDto>();
+                return product!;
             }
             else
             {
@@ -48,11 +95,6 @@ public class ProductsService : IProductsService
 
             throw;
         }
-    }
-
-    public Task<ICollection<ProductDto>> GetProductByCategory(int categoryId)
-    {
-        throw new NotImplementedException();
     }
 
     public async Task<ICollection<ProductDto>> GetProducts()
@@ -65,9 +107,10 @@ public class ProductsService : IProductsService
             {
                 if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 {
-                    return null;
+                    return null!;
                 }
-                return await response.Content.ReadFromJsonAsync<ICollection<ProductDto>>();
+                var products = await response.Content.ReadFromJsonAsync<ICollection<ProductDto>>();
+                return products!;
             }
             else
             {
@@ -82,19 +125,29 @@ public class ProductsService : IProductsService
             throw;
         }
     }
-
-    public Task<bool> ProductExist(int productId)
+    //Kan bli error för i repository är det bool, här är det en ProductDto
+    public async Task<ProductDto> UpdateProduct(ProductDto productUpdate)
     {
-        throw new NotImplementedException();
-    }
+        try
+        {
+            var jsonRequest = JsonConvert.SerializeObject(productUpdate);
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json-patch+json");
 
-    public Task<bool> Save()
-    {
-        throw new NotImplementedException();
-    }
+            var response = await _httpClient.PutAsync($"api/Products/{productUpdate.Id}", content);
 
-    public Task<bool> UpdateProduct(ProductDto product)
-    {
-        throw new NotImplementedException();
+            if (response.IsSuccessStatusCode)
+            {
+                var product = await response.Content.ReadFromJsonAsync<ProductDto>();
+
+                return product!;
+            }
+
+            return null!;
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
     }
 }

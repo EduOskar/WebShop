@@ -2,20 +2,19 @@
 using WebShop.Api.Entity;
 using WebShop.Models.DTOs;
 
-namespace WebShop.Api.Helper
+namespace WebShop.Api.Helper;
+
+public class MappingProfile : Profile
 {
-    public class MappingProfile : Profile
+    public MappingProfile()
     {
-       public MappingProfile() 
-        { 
-            CreateMap<Cart, CartDto>().ReverseMap();
-            CreateMap<CartItem, CartItemDto>().ReverseMap();  
-            CreateMap<Order, OrderDto>().ReverseMap();
-            CreateMap<OrderItem, OrderItemDto>().ReverseMap();
-            CreateMap<ProductCategory, ProductCategoryDto>().ReverseMap();
-            CreateMap<Product, ProductDto>().ReverseMap();
-            CreateMap<User, UserDto>().ReverseMap();
-            CreateMap<Review, ReviewDto>().ReverseMap();
-        }
+        CreateMap<Cart, CartDto>().ReverseMap();
+        CreateMap<CartItem, CartItemDto>().ReverseMap();
+        CreateMap<Order, OrderDto>().ReverseMap();
+        CreateMap<OrderItem, OrderItemDto>().ReverseMap();
+        CreateMap<ProductCategory, ProductCategoryDto>().ReverseMap();
+        CreateMap<Product, ProductDto>();
+        CreateMap<User, UserDto>().ReverseMap();
+        CreateMap<Review, ReviewDto>().ReverseMap();
     }
 }

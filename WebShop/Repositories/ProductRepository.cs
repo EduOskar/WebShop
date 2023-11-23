@@ -30,7 +30,9 @@ public class ProductRepository : IProductRepository
 
     public async Task<Product> GetProduct(int productId)
     {
-        var product = await _dbContext.Products.SingleOrDefaultAsync(p => p.Id == productId);
+        var product = await _dbContext.Products
+            .Include(p => p.Category)
+            .SingleOrDefaultAsync(p => p.Id == productId);
 
         if (product != null)
         {
@@ -49,7 +51,9 @@ public class ProductRepository : IProductRepository
 
     public async Task<ICollection<Product>> GetProducts()
     {
-        var products = await _dbContext.Products.ToListAsync();
+        var products = await _dbContext.Products
+            .Include(p => p.Category)
+            .ToListAsync();
 
         return products;
     }

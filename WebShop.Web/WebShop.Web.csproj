@@ -7,23 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Components\Pages\DisplayProducts.razor" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Models\WebShop.Models.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Components\Pages\DisplayProducts.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Components\Pages\DisplayProducts.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Components\Pages\DisplayProducts.razor" />
   </ItemGroup>
 
 </Project>

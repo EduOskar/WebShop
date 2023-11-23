@@ -1,44 +1,53 @@
 ﻿@page "/"
 
-
-@if (Product == null)
+@if (ProductList == null)
 {
-    <h1>Cant load Products</h1>
+    <DisplaySpinner />
 }
 else
 {
     <h3 class="mb-5">Products</h3>
 
-    var productCount = Product.Count();
+    var productCount = ProductList.Count();
 
-     <div class="row mt-3">
-         <DisplayProducts></DisplayProducts>
-     </div>
-     <h3 class="mb-3" />
+    @if (productCount > 0)
+    {
+
+        @foreach (var prodGroup in GetGroupedProductsByCategory())
+        {
+            <h4>@GetCategoryName(prodGroup)</h4>
+
+            <div class="row mt-3">
+                <DisplayProducts ProductList="@prodGroup"></DisplayProducts>
+            </div>
+            <hr class="mb-3" />
+        }
+
+    }
 }
+
 
 @code {
     [Inject]
-    public IProductsService ProductService { get; set; }
+    public IProductsService ProductService { get; set; } = default!;
 
-    public IEnumerable<ProductDto> Product { get; set; }
+    public IEnumerable<ProductDto> ProductList { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
-        Product = await ProductService.GetProducts();
+        ProductList = await ProductService.GetProducts();
     }
 
-    // protected IOrderedEnumerable<IGrouping<int, ProductDto>> GetGroupedPRoductsByCategory()
-    // {
-    //     return from product in Product
-    //            group product by product.CategoryId into prodByCatGroup
-    //            orderby prodByCatGroup
-    //            select prodByCatGroup;
-    // }
+    protected IOrderedEnumerable<IGrouping<int, ProductDto>> GetGroupedProductsByCategory()
+    {
+        return from product in ProductList
+               group product by product.CategoryId into prodByCatGroup
+               orderby prodByCatGroup.Key
+               select prodByCatGroup;
+    }
 
-    // protected string GetCategoryName(IGrouping<int, ProductDto> groupedProductDto)
-    // {
-    //     return groupedProductDto.FirstOrDefault(pg => pg.CategoryId == groupedProductDto.Any());
-    // }
-
+    protected string GetCategoryName(IGrouping<int, ProductDto> groupedProductDto)
+    {
+        return groupedProductDto?.FirstOrDefault(pg => pg.CategoryId == groupedProductDto.Key)!.CategoryName!;
+    }
 }
