@@ -2,9 +2,9 @@
 
 @if (Product == null && ErrorMessage == null)
 {
-    <DisplaySpinner/>
+    <DisplaySpinner />
 }
-else if(ErrorMessage != null)
+else if (ErrorMessage != null)
 {
     <DisplayError ErrorMessage="@ErrorMessage"></DisplayError>
 }
@@ -23,16 +23,31 @@ else
                     @Product?.Price.ToString("C")&nbsp;(@Product?.Qty items in stock);
                 </b>
             </p>
+            <div class="btn btn-success"
+                 @onclick="() => (AddToCart_Click( new CartItemDto{
+                CartId = HardCoded.CartId,
+                ProductId = Product!.Id,
+                Qty = 1
+            }))">
+                <b>Add to Cart</b>
+            </div>
         </div>
     </div>
 }
 
 @code {
+
     [Parameter]
     public int productId { get; set; }
 
     [Inject]
     public IProductsService ProductsService { get; set; } = default!;
+
+    [Inject]
+    public ICartItemsService CartItemsService { get; set; } = default!;
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; } = default!;
 
     public ProductDto Product { get; set; } = default!;
 
@@ -40,7 +55,27 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Product = await ProductsService.GetProduct(productId)!;
+        try
+        {
+            Product = await ProductsService.GetProduct(productId)!;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
 
+    protected async Task AddToCart_Click(CartItemDto cartItemCreate)
+    {
+        try
+        {
+            var cartItem = await CartItemsService.CreateCartItem(cartItemCreate);
+            NavigationManager.NavigateTo("/ShoppingCart");
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
     }
 }

@@ -4,7 +4,7 @@ namespace WebShop.Api.Repositories.Contracts;
 
 public interface ICartItemRepository
 {
-    Task<ICollection<CartItem>> GetCartItems();
+    Task<ICollection<CartItem>> GetCartItems(int userId);
     Task<CartItem> GetCartItem(int cartItemId);
     Task<bool> CartItemExist(int cartItemId);
     Task<bool> CreateCartItem(CartItem cartItem);

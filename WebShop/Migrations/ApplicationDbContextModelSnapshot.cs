@@ -30,14 +30,13 @@ namespace WebShop.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId")
-                        .IsUnique()
-                        .HasFilter("[UserId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("Carts");
 
@@ -141,10 +140,12 @@ namespace WebShop.Api.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasMaxLength(5000)
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageURL")
+                        .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
@@ -550,7 +551,9 @@ namespace WebShop.Api.Migrations
                 {
                     b.HasOne("WebShop.Api.Entity.User", "User")
                         .WithOne()
-                        .HasForeignKey("WebShop.Api.Entity.Cart", "UserId");
+                        .HasForeignKey("WebShop.Api.Entity.Cart", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });

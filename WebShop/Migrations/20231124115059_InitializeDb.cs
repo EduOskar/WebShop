@@ -35,7 +35,7 @@ namespace WebShop.Api.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Credit = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Credit = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     Adress = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Phonenumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -52,9 +52,9 @@ namespace WebShop.Api.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(max)", maxLength: 5000, nullable: true),
-                    ImageURL = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", maxLength: 5000, nullable: false),
+                    ImageURL = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", maxLength: 100000, nullable: false),
                     Qty = table.Column<int>(type: "int", maxLength: 500, nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false)
@@ -76,7 +76,7 @@ namespace WebShop.Api.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: true)
+                    UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -85,7 +85,8 @@ namespace WebShop.Api.Migrations
                         name: "FK_Carts_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -262,8 +263,7 @@ namespace WebShop.Api.Migrations
                 name: "IX_Carts_UserId",
                 table: "Carts",
                 column: "UserId",
-                unique: true,
-                filter: "[UserId] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderItems_OrderId",

@@ -6,9 +6,7 @@ public interface ICartsService
 {
     Task<ICollection<CartDto>> GetCarts();
     Task<CartDto> GetCart(int cartId);
-    Task<bool> CartExist(int cartId);
-    Task<bool> CreateCart(CartDto cart);
-    Task<bool> UpdateCart(CartDto cart);
-    Task<bool> DeleteCart(CartDto cart);
-    Task<bool> Save();
+    Task<CartDto> CreateCart(CartDto cart);
+    Task<CartDto> UpdateCart(CartDto cart);
+    Task<CartDto> DeleteCart(CartDto cart);
 }

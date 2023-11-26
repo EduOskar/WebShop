@@ -6,9 +6,7 @@ public interface IOrderItemsService
 {
     Task<ICollection<OrderItemDto>> GetOrderItems();
     Task<OrderItemDto> GetOrderItem(int orderItemId);
-    Task<bool> OrderItemExist(int orderItemId);
-    Task<bool> CreateOrderItem(OrderItemDto orderItem);
-    Task<bool> UpdateOrderItem(OrderItemDto orderItem);
-    Task<bool> DeleteOrderItem(OrderItemDto orderItem);
-    Task<bool> Save();
+    Task<OrderItemDto> CreateOrderItem(OrderItemDto orderItem);
+    Task<OrderItemDto> UpdateOrderItem(OrderItemDto orderItem);
+    Task<OrderItemDto> DeleteOrderItem(OrderItemDto orderItem);
 }

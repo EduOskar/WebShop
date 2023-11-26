@@ -6,9 +6,8 @@ public interface IProductsCategoryService
 {
     Task<ICollection<ProductCategoryDto>> GetCategories();
     Task<ProductCategoryDto> GetCategory(int categoryId);
-    Task<bool> CategoryExist(int categoryId);
-    Task<bool> CreateCategory(ProductCategoryDto category);
-    Task<bool> UpdateCategory(ProductCategoryDto category);
-    Task<bool> DeleteCategory(ProductCategoryDto category);
-    Task<bool> Save();
+    Task<ProductCategoryDto> CategoryExist(int categoryId);
+    Task<ProductCategoryDto> CreateCategory(ProductCategoryDto category);
+    Task<ProductCategoryDto> UpdateCategory(ProductCategoryDto category);
+    Task<ProductCategoryDto> DeleteCategory(ProductCategoryDto category);
 }

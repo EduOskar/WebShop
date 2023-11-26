@@ -36,7 +36,11 @@ public class CartItemRepository : ICartItemRepository
 
     public async Task<CartItem> GetCartItem(int cartItemId)
     {
-        var cartItem = await _dbContext.CartItems.Where(ci => ci.Id == cartItemId).FirstOrDefaultAsync();
+        var cartItem = await _dbContext.CartItems
+            .Include(ci => ci.Cart)
+            .Include(p => p.Product)
+            .Where(ci => ci.Id == cartItemId)
+            .FirstOrDefaultAsync();
 
         if (cartItem != null)
         {
@@ -46,9 +50,13 @@ public class CartItemRepository : ICartItemRepository
         throw new Exception("There was no cartItem with that Id");
     }
 
-    public async Task<ICollection<CartItem>> GetCartItems()
+    public async Task<ICollection<CartItem>> GetCartItems(int userId)
     {
-        var cartItems = await _dbContext.CartItems.ToListAsync();
+        var cartItems = await _dbContext.CartItems
+            .Include(ci => ci.Cart)
+            .Include(p => p.Product)
+            .Where(ci => ci.Cart!.UserId == userId)
+            .ToListAsync();
 
         return cartItems;
     }

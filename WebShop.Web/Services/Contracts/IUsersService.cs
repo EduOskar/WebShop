@@ -6,9 +6,7 @@ public interface IUsersService
 {
     Task<ICollection<UserDto>> GetUsers();
     Task<UserDto> GetUser(int userId);
-    Task<bool> UserExist(int userId);
-    Task<bool> CreateUser(UserDto user);
-    Task<bool> UpdateUser(UserDto user);
-    Task<bool> DeleteUser(UserDto user);
-    Task<bool> Save();
+    Task<UserDto> CreateUser(UserDto user);
+    Task<UserDto> UpdateUser(UserDto user);
+    Task<UserDto> DeleteUser(int userId);
 }

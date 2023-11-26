@@ -12,7 +12,7 @@ using WebShop.Api.Data;
 namespace WebShop.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231121091122_InitializeDb")]
+    [Migration("20231124115059_InitializeDb")]
     partial class InitializeDb
     {
         /// <inheritdoc />
@@ -33,14 +33,13 @@ namespace WebShop.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId")
-                        .IsUnique()
-                        .HasFilter("[UserId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("Carts");
 
@@ -144,14 +143,17 @@ namespace WebShop.Api.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasMaxLength(5000)
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageURL")
+                        .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
@@ -491,7 +493,7 @@ namespace WebShop.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Credit")
+                    b.Property<decimal?>("Credit")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Email")
@@ -552,7 +554,9 @@ namespace WebShop.Api.Migrations
                 {
                     b.HasOne("WebShop.Api.Entity.User", "User")
                         .WithOne()
-                        .HasForeignKey("WebShop.Api.Entity.Cart", "UserId");
+                        .HasForeignKey("WebShop.Api.Entity.Cart", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -624,7 +628,7 @@ namespace WebShop.Api.Migrations
                         .HasForeignKey("ProductId");
 
                     b.HasOne("WebShop.Api.Entity.User", "User")
-                        .WithMany("Revíews")
+                        .WithMany("Reviews")
                         .HasForeignKey("UserId");
 
                     b.Navigation("Product");
@@ -651,7 +655,7 @@ namespace WebShop.Api.Migrations
                 {
                     b.Navigation("Orders");
 
-                    b.Navigation("Revíews");
+                    b.Navigation("Reviews");
                 });
 #pragma warning restore 612, 618
         }

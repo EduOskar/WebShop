@@ -18,7 +18,7 @@ public class CartItemsController : ControllerBase
 
     public CartItemsController(ICartItemRepository cartItemRepository,
         ICartRepository cartRepository,
-        IProductRepository productRepository, 
+        IProductRepository productRepository,
         IMapper mapper)
     {
         _cartItemRepository = cartItemRepository;
@@ -27,12 +27,12 @@ public class CartItemsController : ControllerBase
         _mapper = mapper;
     }
 
-    [HttpGet]
+    [HttpGet("GetUsersCartItems/{userId}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
-    public async Task<ActionResult<IEnumerable<CartItem>>> GetCartItems()
+    public async Task<ActionResult<IEnumerable<CartItem>>> GetCartItems(int userId)
     {
-        var cartItems = _mapper.Map<List<CartItemDto>>(await _cartItemRepository.GetCartItems());
+        var cartItems = _mapper.Map<List<CartItemDto>>(await _cartItemRepository.GetCartItems(userId));
 
         if (!ModelState.IsValid)
         {
@@ -68,10 +68,10 @@ public class CartItemsController : ControllerBase
     [ProducesResponseType(400)]
     public async Task<ActionResult> CreateCartItem([FromBody] CartItemDto cartItemCreate)
     {
-        if (cartItemCreate == null)
-        {
-            return BadRequest();
-        }
+        //if (cartItemCreate == null)
+        //{
+        //    return BadRequest();
+        //}
         if (!ModelState.IsValid)
         {
             return BadRequest();
