@@ -1,0 +1,105 @@
+﻿@page "/Checkout"
+@inject IJSRuntime js
+
+<h3 class="mb-5">Checkout</h3>
+<div class="row">
+    <div class="col-md-6">
+        <div class="col-md-6">
+            <h4 class="mb-2">Payment Method</h4>
+            <div id="smart-button-container">
+                <input type="hidden" name="descriptionInput" id="description" @bind="PaymentDescription" />
+                <input name="amountInput" type="hidden" id="amount" @bind="PaymentAmount">
+                <div style="text-align: center; margin-top: 0.625rem;" id="paypal-button-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ShoppingCartItems == null)
+{
+    <DisplaySpinner />
+}
+else
+{
+    <div class="col-md-6">
+        <h4 class="mb-2">Payment Summary</h4>
+        @if (ShoppingCartItems.Count() > 0)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in ShoppingCartItems)
+                    {
+                        <tr>
+                            <td>@item.Qty x @item.ProductName</td>
+                            <td>@item.TotalPrice.ToString("C")</td>
+                        </tr>
+                    }
+                    <tr>
+                        <td><b>Total</b></td>
+                        <td><b></b>@PaymentAmount.ToString("C")</td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>You currently have no items in your shopping cart</p>
+        }
+    </div>
+}
+
+@code {
+
+    protected IEnumerable<CartItemDto> ShoppingCartItems { get; set; } = default!;
+
+    protected int TotalQty { get; set; } = default!;
+
+    protected string PaymentDescription { get; set; } = default!;
+
+    protected decimal PaymentAmount { get; set; }
+
+    [Inject] ICartItemsService CartItemService { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            ShoppingCartItems = await CartItemService.GetCartItems(HardCoded.UserId);
+
+            if (ShoppingCartItems != null)
+            {
+                Guid orderGuid = Guid.NewGuid();
+                PaymentAmount = ShoppingCartItems.Sum(p => p.TotalPrice);
+                TotalQty = ShoppingCartItems.Sum(p => p.Qty);
+                PaymentDescription = $"O_{HardCoded.UserId}_{orderGuid}";
+            }
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        try
+        {
+            if (firstRender)
+            {
+                await js.InvokeVoidAsync("initPayPalButton");
+            }
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+}

@@ -52,11 +52,14 @@ else
     public ProductDto Product { get; set; } = default!;
 
     public string? ErrorMessage { get; set; }
+    private List<CartItemDto>? ShoppingCartItems { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
+            ShoppingCartItems = await CartItemsService.GetCartItems(HardCoded.UserId);
+
             Product = await ProductsService.GetProduct(productId)!;
         }
         catch (Exception)

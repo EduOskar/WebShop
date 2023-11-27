@@ -10,6 +10,8 @@ namespace WebShop.Web.Services
     {
         private readonly HttpClient _httpClient;
 
+        public event Action<int> OnShoppingCartChanged;
+
         public CartItemsService(HttpClient httpClient)
         {
             _httpClient = httpClient;
@@ -123,6 +125,14 @@ namespace WebShop.Web.Services
             {
 
                 throw;
+            }
+        }
+
+        public void RaiseEventOnShoppingCartChanged(int totalQty)
+        {
+            if (OnShoppingCartChanged != null)
+            {
+                OnShoppingCartChanged.Invoke(totalQty);
             }
         }
 

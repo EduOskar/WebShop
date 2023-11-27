@@ -28,7 +28,7 @@ else
                             <span>
                                 Price: <b>@item.Price.ToString("C")</b>
 
-                                @* <input @oninput="()=>UpdateQty_input(item.Id)" *@
+                                @*<input @oninput="()=>UpdateQty_input(item.Id)" *@
                                 <input type="number" @bind="@item.Qty" />
                                 <button data-itemId="@item.Id" class="btn btn-info btn-sm update-qty"
                                         @onclick="(() => UpdateQtyCartItem_Click(item.Id, item.Qty))">
@@ -84,7 +84,8 @@ else
         try
         {
             ShoppingCartItems = await CartItemsService.GetCartItems(HardCoded.UserId);
-            CalculateCartSummaryTotals();
+
+            CartChanged();
         }
         catch (Exception ex)
         {
@@ -98,8 +99,7 @@ else
         var cartItemDelete = await CartItemsService.DeleteCartItem(cartItemid);
 
         RemoveCartItem(cartItemid);
-
-        CalculateCartSummaryTotals();
+        CartChanged();
     }
 
     protected async Task UpdateQtyCartItem_Click(int cartItemid, int qty)
@@ -117,10 +117,9 @@ else
                 var returnedUpdatedItemDto = await CartItemsService.UpdateCartItemQty(updateItemDto);
 
                 UpdateItemTotalPrice(returnedUpdatedItemDto);
+                CartChanged();
 
-                CalculateCartSummaryTotals();
-
-                // await MakeUpdateQtyButtonVisible(cartItemid, false);
+                // await MakeUpdateQtyButtonVisible(cartItemid, false); Fungerar inte
 
             }
             else
@@ -191,6 +190,11 @@ else
         var cartItem = GetCartItem(cartItemId);
 
         ShoppingCartItems.Remove(cartItem);
+    }
 
+    private void CartChanged()
+    {
+        CalculateCartSummaryTotals();
+        CartItemsService.RaiseEventOnShoppingCartChanged(TotalQuantity);
     }
 }

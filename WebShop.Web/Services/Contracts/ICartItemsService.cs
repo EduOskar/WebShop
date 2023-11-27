@@ -10,4 +10,6 @@ public interface ICartItemsService
     Task<CartItemDto> UpdateCartItem(CartItemDto cartItem);
     Task<CartItemDto> UpdateCartItemQty(CartItemQtyUpdateDto cartItemQty);
     Task<CartItemDto> DeleteCartItem(int cartItemId);
+    event Action<int> OnShoppingCartChanged;
+    void RaiseEventOnShoppingCartChanged(int totalQty);
 }

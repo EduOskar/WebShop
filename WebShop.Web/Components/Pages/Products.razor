@@ -31,11 +31,29 @@ else
     [Inject]
     public IProductsService ProductService { get; set; } = default!;
 
+    [Inject]
+    public ICartItemsService CartitemService { get; set; } = default!;
+
     public IEnumerable<ProductDto> ProductList { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
-        ProductList = await ProductService.GetProducts();
+        try
+        {
+            ProductList = await ProductService.GetProducts();
+
+            var shoppingCartItems = await CartitemService.GetCartItems(HardCoded.UserId);
+
+            var totalQty = shoppingCartItems.Sum(ci => ci.Qty);
+
+            CartitemService.RaiseEventOnShoppingCartChanged(totalQty);
+        }
+        catch (Exception)
+        {
+            
+            throw;
+        }
+       
     }
 
     protected IOrderedEnumerable<IGrouping<int, ProductDto>> GetGroupedProductsByCategory()
