@@ -4,9 +4,10 @@ namespace WebShop.Web.Services.Contracts;
 
 public interface ICartItemsService
 {
-    Task<ICollection<CartItemDto>> GetCartItems(int userId);
+    Task<List<CartItemDto>> GetCartItems(int userId);
     Task<CartItemDto> GetCartItem(int cartItemId);
     Task<CartItemDto> CreateCartItem(CartItemDto cartItem);
     Task<CartItemDto> UpdateCartItem(CartItemDto cartItem);
-    Task<CartItemDto> DeleteCartItem(CartItemDto cartItem);
+    Task<CartItemDto> UpdateCartItemQty(CartItemQtyUpdateDto cartItemQty);
+    Task<CartItemDto> DeleteCartItem(int cartItemId);
 }

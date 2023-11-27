@@ -64,6 +64,9 @@ namespace WebShop.Api.Migrations
                     b.Property<int>("CartId")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 

@@ -10,10 +10,12 @@ public class MappingProfile : Profile
     {
         CreateMap<Cart, CartDto>().ReverseMap();
         CreateMap<CartItem, CartItemDto>().ReverseMap();
+        CreateMap<CartItem, CartItemQtyUpdateDto>().ReverseMap();
+        CreateMap<CartItemDto, CartItemQtyUpdateDto>().ReverseMap();
         CreateMap<Order, OrderDto>().ReverseMap();
         CreateMap<OrderItem, OrderItemDto>().ReverseMap();
         CreateMap<ProductCategory, ProductCategoryDto>().ReverseMap();
-        CreateMap<Product, ProductDto>();
+        CreateMap<Product, ProductDto>().ReverseMap();
         CreateMap<User, UserDto>().ReverseMap();
         CreateMap<Review, ReviewDto>().ReverseMap();
     }

@@ -14,6 +14,7 @@ public class CartItem
 
     public int ProductId { get; set; }
     public virtual Product? Product { get; set; }
+    public virtual decimal Price { get; set; }
 
     [MaxLength(200)]
     public int Qty { get; set; }

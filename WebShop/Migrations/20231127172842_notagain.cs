@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebShop.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class InitializeDb : Migration
+    public partial class notagain : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -144,6 +144,7 @@ namespace WebShop.Api.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CartId = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Qty = table.Column<int>(type: "int", maxLength: 200, nullable: false)
                 },
                 constraints: table =>

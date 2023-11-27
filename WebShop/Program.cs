@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
+using System.Text.Json.Serialization;
 using WebShop.Api.Data;
 using WebShop.Api.Repositories;
 using WebShop.Api.Repositories.Contracts;
@@ -10,7 +11,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddEndpointsApiExplorer();
@@ -20,6 +20,11 @@ builder.Services.AddDbContextPool<ApplicationDbContext>(options =>
     options.UseSqlServer(builder
     .Configuration.GetConnectionString("WebShop")));
 
+builder.Services.AddControllers()
+   .AddJsonOptions(options =>
+   {
+       options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+   });
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();

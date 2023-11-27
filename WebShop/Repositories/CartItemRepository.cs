@@ -2,6 +2,7 @@
 using WebShop.Api.Data;
 using WebShop.Api.Entity;
 using WebShop.Api.Repositories.Contracts;
+using WebShop.Models.DTOs;
 
 namespace WebShop.Api.Repositories;
 
@@ -15,7 +16,10 @@ public class CartItemRepository : ICartItemRepository
     }
     public async Task<bool> CartItemExist(int cartItemId)
     {
-        var cartItemExist = await _dbContext.CartItems.AnyAsync(ci => ci.Id == cartItemId);
+        var cartItemExist = await _dbContext.CartItems
+            .Include(ci => ci.Product)
+            .AnyAsync(ci => ci.Id == cartItemId);
+
 
         return cartItemExist;
     }
@@ -23,10 +27,8 @@ public class CartItemRepository : ICartItemRepository
     public async Task<bool> CreateCartItem(CartItem cartItem)
     {
         await _dbContext.AddAsync(cartItem);
-
         return await Save();
     }
-
     public async Task<bool> DeleteCartItem(CartItem cartItem)
     {
         _dbContext.Remove(cartItem);
@@ -54,8 +56,8 @@ public class CartItemRepository : ICartItemRepository
     {
         var cartItems = await _dbContext.CartItems
             .Include(ci => ci.Cart)
-            .Include(p => p.Product)
             .Where(ci => ci.Cart!.UserId == userId)
+            .Include(p => p.Product)
             .ToListAsync();
 
         return cartItems;
@@ -70,8 +72,26 @@ public class CartItemRepository : ICartItemRepository
 
     public async Task<bool> UpdateCartItem(CartItem cartItem)
     {
+
         _dbContext.Update(cartItem);
 
         return await Save();
+    }
+
+    public async Task<bool> UpdateCartItemQty(int cartItemId, CartItemQtyUpdateDto updatedQty)
+    {
+        var cartItem = await _dbContext.CartItems
+            .FindAsync(cartItemId);
+
+        if (cartItem != null)
+        {
+            cartItem.Qty = updatedQty.Qty;
+
+            _dbContext.Update(cartItem);
+
+            return await Save();
+        }
+
+        throw new Exception("There was no cartItem with that Id");
     }
 }

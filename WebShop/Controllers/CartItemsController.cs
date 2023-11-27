@@ -30,9 +30,20 @@ public class CartItemsController : ControllerBase
     [HttpGet("GetUsersCartItems/{userId}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
-    public async Task<ActionResult<IEnumerable<CartItem>>> GetCartItems(int userId)
+    public async Task<ActionResult<List<CartItem>>> GetCartItems(int userId)
     {
         var cartItems = _mapper.Map<List<CartItemDto>>(await _cartItemRepository.GetCartItems(userId));
+
+        foreach (var item in cartItems)
+        {
+            var product = await _productRepository.GetProduct(item.ProductId);
+
+            if (product != null)
+            {
+                item.Price = product.Price;
+                item.TotalPrice = product.Price * item.Qty;
+            }
+        }
 
         if (!ModelState.IsValid)
         {
@@ -52,8 +63,11 @@ public class CartItemsController : ControllerBase
         {
             return NotFound();
         }
-
+       
         var cartItem = _mapper.Map<CartItemDto>(await _cartItemRepository.GetCartItem(cartItemId));
+        var product = await _productRepository.GetProduct(cartItem.ProductId);
+        cartItem.Price = product.Price;
+        cartItem.TotalPrice = product.Price * cartItem.Qty;
 
         if (!ModelState.IsValid)
         {
@@ -93,11 +107,11 @@ public class CartItemsController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        var orderItemMap = _mapper.Map<CartItem>(cartItemCreate);
-        orderItemMap.Cart = await _cartRepository.GetCart(cartItemCreate.CartId);
-        orderItemMap.Product = await _productRepository.GetProduct(cartItemCreate.ProductId);
+        var cartItemMap = _mapper.Map<CartItem>(cartItemCreate);
+        cartItemMap.Cart = await _cartRepository.GetCart(cartItemCreate.CartId);
+        cartItemMap.Product = await _productRepository.GetProduct(cartItemCreate.ProductId);
 
-        if (!await _cartItemRepository.CreateCartItem(orderItemMap))
+        if (!await _cartItemRepository.CreateCartItem(cartItemMap))
         {
             ModelState.AddModelError("", "There was an error saving");
             return BadRequest(ModelState);
@@ -107,7 +121,7 @@ public class CartItemsController : ControllerBase
     }
 
     [HttpPut("{cartItemId:int}")]
-    [ProducesResponseType(204)]
+    [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
     public async Task<ActionResult> UpdateCartItem(int cartItemId, [FromBody] CartItemDto updateCartItem)
@@ -158,14 +172,62 @@ public class CartItemsController : ControllerBase
             return BadRequest();
         }
 
-        return NoContent();
+        return Ok(cartItemMap);
     }
 
-    [HttpDelete("{cartItemId}")]
+    [HttpPatch("{cartItemId:int}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public async Task<ActionResult> UpdateCartItemQty(int cartItemId, [FromBody]CartItemQtyUpdateDto cartItemUpdateQty)
+    {
+
+        if (cartItemUpdateQty == null)
+        {
+            return NotFound();
+        }
+
+
+        if (cartItemId != cartItemUpdateQty.CartItemId)
+        {
+            return BadRequest();
+        }
+
+        if (!await _cartItemRepository.CartItemExist(cartItemId))
+        {
+            return NotFound();
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest();
+        }
+
+        var cartItem = await _cartItemRepository.GetCartItem(cartItemId);
+
+        if (cartItem == null)
+        {
+            ModelState.AddModelError("", $"Cart with Id {cartItemUpdateQty.CartItemId} does not exist");
+            return BadRequest(ModelState);
+        }
+
+        var cartItemMap = _mapper.Map<CartItem>(cartItem);
+        cartItemMap.Qty = cartItemUpdateQty.Qty;
+        cartItemMap.Price = cartItem.Price;
+
+        if (!await _cartItemRepository.UpdateCartItem(cartItemMap))
+        {
+            return BadRequest();
+        }
+
+        return Ok(cartItemMap);
+    }
+
+    [HttpDelete("{cartItemId:int}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
-    public async Task<ActionResult> DeleteOrderItem(int cartItemId)
+    public async Task<ActionResult> DeleteCartItem(int cartItemId)
     {
         if (!await _cartItemRepository.CartItemExist(cartItemId))
         {
@@ -174,11 +236,15 @@ public class CartItemsController : ControllerBase
 
         var cartItemDelete = await _cartItemRepository.GetCartItem(cartItemId);
 
+        var productDelete = await _productRepository.GetProduct(cartItemDelete.Product!.Id);
+
+        cartItemDelete.Product = productDelete;
+
         if (!await _cartItemRepository.DeleteCartItem(cartItemDelete))
         {
             return BadRequest();
         }
 
-        return NoContent();
+        return Ok(cartItemDelete);
     }
 }

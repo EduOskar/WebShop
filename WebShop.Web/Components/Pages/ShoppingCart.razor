@@ -1,4 +1,5 @@
 ﻿@page "/ShoppingCart"
+@inject IJSRuntime Js
 
 @if (ShoppingCartItems == null && ErrorMessage == null)
 {
@@ -10,54 +11,186 @@ else if (ErrorMessage != null)
 }
 else
 {
-    <h3 class="mb-5"></h3>
-    <div class="row mb-5">
-        <div col-md-9>
-            @foreach (var items in ShoppingCartItems!)
-            {
-                <div class="row mb-4">
-                    <div class="col-md-4">
-                        <img src="@items.ProductImageUrl" width="300" class="img-thumbnail">
+    <h3 class="mb-5">Shopping Cart</h3>
+    if (ShoppingCartItems?.Count() > 0)
+    {
+        <div class="row mb-5">
+            <div class="col-md-9">
+                @foreach (var item in ShoppingCartItems)
+                {
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <img src="@item.ProductImageUrl" width="300" class="img-thumbnail" />
+                        </div>
+                        <div class="col-md-8">
+                            <h5>@item.ProductName</h5>
+                            <div class="mb-4">@item.ProductDescription</div>
+                            <span>
+                                Price: <b>@item.Price.ToString("C")</b>
+
+                                @* <input @oninput="()=>UpdateQty_input(item.Id)" *@
+                                <input type="number" @bind="@item.Qty" />
+                                <button data-itemId="@item.Id" class="btn btn-info btn-sm update-qty"
+                                        @onclick="(() => UpdateQtyCartItem_Click(item.Id, item.Qty))">
+                                    Update Qty
+                                </button>
+                            </span>
+
+
+                            <div>
+                                <button @onclick="(() => DeleteCartItem_click(item.Id))"
+                                        class="btn btn-danger sm">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-8">
-                        <h5>@items.ProductName</h5>
-                        <div class="mb-4">@items.ProductDescription</div>
-                        <span>Price: <b>@items.Price.ToString("C")</b></span>                            
-                    </div>
+                }
+
+            </div>
+            <div class="col-md-3">
+                <h5>Cart Summary</h5>
+                <div class="mt-2">
+                    <div>Total - (@TotalQuantity)&nbsp;<b>@TotalPrice</b> </div>
+                    <a href="Checkout" class="btn btn-success">
+                        <span class="pointer-event oi-credit-card"></span>&nbsp; Proceed to Cheeckout
+                    </a>
                 </div>
-            }
-        </div>
-        <div class="col-md-3">
-            <h5>Cart summary</h5>
-            <div class="mt-2">
-                <div>Total - </div>
-                <a href="#" class="btn btn-success">
-                    <span class="oi oi-credit-card"></span>&nbsp; Proceed to Checkout
-                </a>
             </div>
         </div>
-    </div>
+    }
+    else
+    {
+        <h4>There are currently no items in your shopping Cart</h4>
+    }
 }
 
 
 @code {
+
+
     [Inject]
     public ICartItemsService CartItemsService { get; set; } = default!;
 
-    public IEnumerable<CartItemDto> ShoppingCartItems { get; set; } = default!;
+    public List<CartItemDto> ShoppingCartItems { get; set; } = default!;
 
     public string? ErrorMessage { get; set; }
+
+    protected string TotalPrice { get; set; } = default!;
+    protected int TotalQuantity { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
             ShoppingCartItems = await CartItemsService.GetCartItems(HardCoded.UserId);
+            CalculateCartSummaryTotals();
         }
         catch (Exception ex)
         {
 
             ErrorMessage = ex.Message;
         }
+    }
+
+    protected async Task DeleteCartItem_click(int cartItemid)
+    {
+        var cartItemDelete = await CartItemsService.DeleteCartItem(cartItemid);
+
+        RemoveCartItem(cartItemid);
+
+        CalculateCartSummaryTotals();
+    }
+
+    protected async Task UpdateQtyCartItem_Click(int cartItemid, int qty)
+    {
+        try
+        {
+            if (qty > 0)
+            {
+                var updateItemDto = new CartItemQtyUpdateDto
+                    {
+                        CartItemId = cartItemid,
+                        Qty = qty
+                    };
+
+                var returnedUpdatedItemDto = await CartItemsService.UpdateCartItemQty(updateItemDto);
+
+                UpdateItemTotalPrice(returnedUpdatedItemDto);
+
+                CalculateCartSummaryTotals();
+
+                // await MakeUpdateQtyButtonVisible(cartItemid, false);
+
+            }
+            else
+            {
+                var cartItem = ShoppingCartItems.FirstOrDefault(i => i.Id == cartItemid);
+
+                if (cartItem != null)
+                {
+                    cartItem.Qty = 1;
+                    cartItem.TotalPrice = cartItem.Price;
+                }
+            }
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
+    //dont work for the moment -> have to learn afterRender
+    protected async Task UpdateQty_input(int id)
+    {
+        await MakeUpdateQtyButtonVisible(id, true);
+    }
+    //dont work for the moment -> have to learn afterRender
+    private async Task MakeUpdateQtyButtonVisible(int id, bool visible)
+    {
+        await Js.InvokeVoidAsync("MakeUpdateQtyButtonVisible", id, visible);
+    }
+
+    private void UpdateItemTotalPrice(CartItemDto cartItemDto)
+    {
+        var cartItem = GetCartItem(cartItemDto.Id);
+
+        if (cartItem != null)
+        {
+            cartItem.TotalPrice = cartItem.Price * cartItem.Qty;
+        }
+    }
+
+    private void CalculateCartSummaryTotals()
+    {
+        SetTotalPrice();
+        SetTotalQuantity();
+    }
+
+    private void SetTotalPrice()
+    {
+        TotalPrice = ShoppingCartItems.Sum(p => p.TotalPrice).ToString("C");
+    }
+
+    private void SetTotalQuantity()
+    {
+        TotalQuantity = ShoppingCartItems.Sum(p => p.Qty);
+    }
+
+    private CartItemDto GetCartItem(int userId)
+    {
+        var cartItems = ShoppingCartItems.FirstOrDefault(ci => ci.Id == userId);
+
+        return cartItems!;
+
+    }
+
+    private void RemoveCartItem(int cartItemId)
+    {
+        var cartItem = GetCartItem(cartItemId);
+
+        ShoppingCartItems.Remove(cartItem);
+
     }
 }

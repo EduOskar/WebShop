@@ -41,6 +41,7 @@ namespace WebShop.Api.Data
 
             modelBuilder.Entity<CartItem>(cartItem =>
             {
+                
                 cartItem
                     .HasOne(ci => ci.Cart)
                     .WithMany(ca => ca.CartItems)
