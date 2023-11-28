@@ -64,7 +64,8 @@ else
 
     protected decimal PaymentAmount { get; set; }
 
-    [Inject] ICartItemsService CartItemService { get; set; } = default!;
+    [Inject]
+    ICartItemsService CartItemService { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -101,5 +102,5 @@ else
 
             throw;
         }
-    }
+    } 
 }

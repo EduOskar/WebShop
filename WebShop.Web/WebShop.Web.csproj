@@ -14,4 +14,8 @@
     <ProjectReference Include="..\Models\WebShop.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\js\" />
+  </ItemGroup>
+
 </Project>

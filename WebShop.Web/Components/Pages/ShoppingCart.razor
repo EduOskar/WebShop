@@ -28,7 +28,6 @@ else
                             <span>
                                 Price: <b>@item.Price.ToString("C")</b>
 
-                                @*<input @oninput="()=>UpdateQty_input(item.Id)" *@
                                 <input type="number" @bind="@item.Qty" />
                                 <button data-itemId="@item.Id" class="btn btn-info btn-sm update-qty"
                                         @onclick="(() => UpdateQtyCartItem_Click(item.Id, item.Qty))">
@@ -119,8 +118,6 @@ else
                 UpdateItemTotalPrice(returnedUpdatedItemDto);
                 CartChanged();
 
-                // await MakeUpdateQtyButtonVisible(cartItemid, false); Fungerar inte
-
             }
             else
             {
@@ -140,16 +137,6 @@ else
         }
     }
 
-    //dont work for the moment -> have to learn afterRender
-    protected async Task UpdateQty_input(int id)
-    {
-        await MakeUpdateQtyButtonVisible(id, true);
-    }
-    //dont work for the moment -> have to learn afterRender
-    private async Task MakeUpdateQtyButtonVisible(int id, bool visible)
-    {
-        await Js.InvokeVoidAsync("MakeUpdateQtyButtonVisible", id, visible);
-    }
 
     private void UpdateItemTotalPrice(CartItemDto cartItemDto)
     {

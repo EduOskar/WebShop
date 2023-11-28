@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebShop.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class notagain : Migration
+    public partial class Notagain : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
