@@ -3,7 +3,7 @@ using WebShop.Web.Services.Contracts;
 
 namespace WebShop.Web.Services;
 
-public class CartService : ICartsService
+public class CartsService : ICartsService
 {
     public Task<CartDto> CreateCart(CartDto cart)
     {

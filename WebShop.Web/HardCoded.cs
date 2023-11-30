@@ -1,4 +1,6 @@
-﻿namespace WebShop.Web;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace WebShop.Web;
 
 public class HardCoded
 {

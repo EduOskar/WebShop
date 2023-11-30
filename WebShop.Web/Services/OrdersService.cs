@@ -1,26 +1,23 @@
-﻿using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json.Serialization;
+﻿using System.Text;
 using Newtonsoft.Json;
 using WebShop.Models.DTOs;
 using WebShop.Web.Services.Contracts;
 
 namespace WebShop.Web.Services;
 
-public class ProductsService : IProductsService
+public class OrdersService : IOrdersService
 {
     private readonly HttpClient _httpClient;
 
-    public ProductsService(HttpClient httpClient)
+    public OrdersService(HttpClient httpClient)
     {
         _httpClient = httpClient;
     }
-
-    public async Task<ProductDto> CreateProduct(ProductDto productCreate)
+    public async Task<OrderDto> CreateOrder(OrderDto orderCreate)
     {
         try
         {
-            var response = await _httpClient.PostAsJsonAsync<ProductDto>("api/Products", productCreate);
+            var response = await _httpClient.PostAsJsonAsync<OrderDto>("api/Orders", orderCreate);
 
             if (response.IsSuccessStatusCode)
             {
@@ -29,14 +26,14 @@ public class ProductsService : IProductsService
                     return null!;
                 }
 
-                var product = await response.Content.ReadFromJsonAsync<ProductDto>();
+                var order = await response.Content.ReadFromJsonAsync<OrderDto>();
 
-                return product!;
+                return order!;
             }
             else
             {
                 var message = await response.Content.ReadAsStringAsync();
-                throw new Exception($"Http status:{response.StatusCode} Message -{message}");
+                throw new Exception($"Http stats:{response.StatusCode} Message- {message}");
             }
         }
         catch (Exception)
@@ -46,17 +43,17 @@ public class ProductsService : IProductsService
         }
     }
 
-    public async Task<ProductDto> DeleteProduct(int productId)
+    public async Task<OrderDto> DeleteOrder(int orderId)
     {
         try
         {
-            var response = await _httpClient.DeleteAsync($"api/Products/{productId}");
+            var response = await _httpClient.DeleteAsync($"api/Orders/{orderId}");
 
             if (response.IsSuccessStatusCode)
             {
-                var productDelete = await response.Content.ReadFromJsonAsync<ProductDto>();
+                var orderDelete = await response.Content.ReadFromJsonAsync<OrderDto> ();
 
-                return productDelete!;
+                return orderDelete!;
             }
 
             return null!;
@@ -68,11 +65,11 @@ public class ProductsService : IProductsService
         }
     }
 
-    public async Task<ProductDto> GetProduct(int productId)
+    public async Task<OrderDto> GetOrder(int orderId)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"api/Products/{productId}");
+            var response = await _httpClient.GetAsync($"api/Orders/{orderId}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -81,37 +78,8 @@ public class ProductsService : IProductsService
                     return null!;
                 }
 
-                var product = await response.Content.ReadFromJsonAsync<ProductDto>();
-                return product!;
-            }
-            else
-            {
-                var message = await response.Content.ReadAsStringAsync();
-                throw new Exception($"Http status:{response.StatusCode} Message -{message}");
-            }
-        }
-        catch (Exception)
-        {
-
-            throw;
-        }
-    }
-
-    public async Task<ICollection<ProductDto>> GetProducts()
-    {
-        try
-        {
-            var response = await _httpClient.GetAsync("api/Products");
-
-            if (response.IsSuccessStatusCode)
-            {
-                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
-                {
-                    return null!;
-                }
-
-                var products = await response.Content.ReadFromJsonAsync<ICollection<ProductDto>>();
-                return products!;
+                var order = await response.Content.ReadFromJsonAsync<OrderDto>();
+                return order!;
             }
             else
             {
@@ -126,21 +94,51 @@ public class ProductsService : IProductsService
             throw;
         }
     }
-    public async Task<ProductDto> UpdateProduct(ProductDto productUpdate)
+
+    public async Task<ICollection<OrderDto>> GetOrders()
     {
         try
         {
-            var jsonRequest = JsonConvert.SerializeObject(productUpdate);
+            var response = await _httpClient.GetAsync("api/Orders");
+
+            if (response.IsSuccessStatusCode)
+            {
+                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                {
+                    return null!;
+                }
+
+                var orders = await response.Content.ReadFromJsonAsync<ICollection<OrderDto>>();
+                return orders!;
+            }
+            else
+            {
+                var message = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Http status:{response.StatusCode} Message -{message}");
+            }
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
+    public async Task<OrderDto> UpdateOrder(OrderDto orderUpdate)
+    {
+        try
+        {
+            var jsonRequest = JsonConvert.SerializeObject(orderUpdate);
 
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json-patch+json");
 
-            var response = await _httpClient.PutAsync($"api/Products/{productUpdate.Id}", content);
+            var response = await _httpClient.PutAsync($"api/Orders/{orderUpdate.Id}", content);
 
             if (response.IsSuccessStatusCode)
             {
-                var product = await response.Content.ReadFromJsonAsync<ProductDto>();
+                var order = await response.Content.ReadFromJsonAsync<OrderDto>();
 
-                return product!;
+                return order!;
             }
 
             return null!;

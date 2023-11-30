@@ -12,7 +12,11 @@ builder.Services.AddRazorComponents()
 builder.Services.AddHttpClient();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7066/") });
 builder.Services.AddHttpClient<IProductsService, ProductsService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
+builder.Services.AddHttpClient<ICartsService, CartsService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
 builder.Services.AddHttpClient<ICartItemsService, CartItemsService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
+builder.Services.AddHttpClient<IUsersService, UsersServices>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
+builder.Services.AddHttpClient<IOrdersService, OrdersService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
+builder.Services.AddHttpClient<IOrderItemsService, OrderItemsService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
 
 var app = builder.Build();
 

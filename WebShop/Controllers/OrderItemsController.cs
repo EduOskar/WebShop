@@ -42,11 +42,11 @@ public class OrderItemsController : ControllerBase
         return Ok(orderItems);
     }
 
-    [HttpGet("{orderItemId}")]
+    [HttpGet("{orderItemId:int}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
-    public async Task<ActionResult<OrderItemDto>> GetOrder(int orderItemId)
+    public async Task<ActionResult<OrderItemDto>> GetOrderItem(int orderItemId)
     {
         if (!await _orderItemRepository.OrderItemExist(orderItemId))
         {
@@ -81,7 +81,7 @@ public class OrderItemsController : ControllerBase
 
         if (!orderExist)
         {
-            ModelState.AddModelError("", $"User with Id {orderItemCreate.OrderId} does not exist");
+            ModelState.AddModelError("", $"Order with Id {orderItemCreate.OrderId} does not exist");
             return BadRequest(ModelState);
         }
 
@@ -103,7 +103,7 @@ public class OrderItemsController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        return CreatedAtAction("GetOrderItem", new { orderItemId = orderItemCreate.Id }, orderItemCreate);
+        return CreatedAtAction("GetOrderItem", new { orderItemId = orderItemMap.Id }, orderItemMap);
     }
 
     [HttpPut("{orderItemId:int}")]

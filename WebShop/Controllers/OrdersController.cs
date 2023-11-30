@@ -6,6 +6,7 @@ using WebShop.Api.Repositories.Contracts;
 using WebShop.Models.DTOs;
 
 namespace WebShop.Api.Controllers;
+
 [Route("api/[controller]")]
 [ApiController]
 public class OrdersController : ControllerBase
@@ -38,7 +39,7 @@ public class OrdersController : ControllerBase
         return Ok(orders);
     }
 
-    [HttpGet("{orderId}")]
+    [HttpGet("{orderId:int}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
@@ -90,7 +91,7 @@ public class OrdersController : ControllerBase
             ModelState.AddModelError("", "There was an error saving");
         }
 
-        return CreatedAtAction("GetOrder", new {orderId = orderCreate.Id}, orderCreate);
+        return CreatedAtAction("GetOrder", new {orderId = orderMap.Id}, orderMap);
     }
 
     [HttpPut("{orderId:int}")]

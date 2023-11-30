@@ -48,7 +48,6 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(404)]
     public async Task<ActionResult<Product>> GetProduct(int productId)
     {
-        
 
         if (!await _productRepository.ProductExist(productId))
         {

@@ -11,6 +11,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebShop.Models", "Models\WebShop.Models.csproj", "{CAC01A66-F5DE-483F-A205-FE7EA6D5167A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebShop.Web", "WebShop.Web\WebShop.Web.csproj", "{7A6910A7-5BD7-46B1-B92A-5AD070FE5D07}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CAC01A66-F5DE-483F-A205-FE7EA6D5167A} = {CAC01A66-F5DE-483F-A205-FE7EA6D5167A}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

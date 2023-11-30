@@ -4,166 +4,167 @@ using System.Text;
 using WebShop.Models.DTOs;
 using WebShop.Web.Services.Contracts;
 
-namespace WebShop.Web.Services
+namespace WebShop.Web.Services;
+
+public class CartItemsService : ICartItemsService
 {
-    public class CartItemsService : ICartItemsService
+    private readonly HttpClient _httpClient;
+
+    public CartItemsService(HttpClient httpClient)
     {
-        private readonly HttpClient _httpClient;
+        _httpClient = httpClient;
+    }
 
-        public event Action<int> OnShoppingCartChanged;
+    public event Action<int>? OnShoppingCartChanged;
 
-        public CartItemsService(HttpClient httpClient)
+    public async Task<CartItemDto> CreateCartItem(CartItemDto cartItemCreate)
+    {
+        try
         {
-            _httpClient = httpClient;
-        }
+            var response = await _httpClient.PostAsJsonAsync<CartItemDto>("api/CartItems", cartItemCreate);
 
-        public async Task<CartItemDto> CreateCartItem(CartItemDto cartItemCreate)
-        {
-            try
+            if (response.IsSuccessStatusCode)
             {
-                var response = await _httpClient.PostAsJsonAsync<CartItemDto>("api/CartItems", cartItemCreate);
-
-                if (response.IsSuccessStatusCode)
+                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 {
-                    if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
-                    {
-                        return null!;
-                    }
-
-                    var cartItem = await response.Content.ReadFromJsonAsync<CartItemDto>();
-
-                    return cartItem!;
+                    return null!;
                 }
-                else
-                {
-                    var message = await response.Content.ReadAsStringAsync();
-                    throw new Exception($"Http status:{response.StatusCode} Message -{message}");
-                }
+
+                var cartItem = await response.Content.ReadFromJsonAsync<CartItemDto>();
+
+                return cartItem!;
             }
-            catch (Exception)
+            else
             {
-
-                throw;
+                var message = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Http status:{response.StatusCode} Message -{message}");
             }
         }
-
-        public async Task<CartItemDto> DeleteCartItem(int cartItemId)
+        catch (Exception)
         {
-            try
+
+            throw;
+        }
+    }
+
+    public async Task<CartItemDto> DeleteCartItem(int cartItemId)
+    {
+        try
+        {
+            var response = await _httpClient.DeleteAsync($"api/CartItems/{cartItemId}");
+
+            if (response.IsSuccessStatusCode)
             {
-                var response = await _httpClient.DeleteAsync($"api/CartItems/{cartItemId}");
 
-                if (response.IsSuccessStatusCode)
+                var CartItemDelete = await response.Content.ReadFromJsonAsync<CartItemDto>();
+                
+                return CartItemDelete!;
+            }
+
+            return null!;
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
+    public async Task<CartItemDto> GetCartItem(int cartItemId)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"api/CartItems{cartItemId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 {
-
-                    var itemDelete = await response.Content.ReadFromJsonAsync<CartItemDto>();
-                    return itemDelete!;
-
+                    return null!;
                 }
 
-                return null!;
-            }
-            catch (Exception)
-            {
+                var cartItem = await response.Content.ReadFromJsonAsync<CartItemDto>();
 
-                throw;
+                return cartItem!;
+            }
+            else
+            {
+                var message = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Http status:{response.StatusCode} Message -{message}");
             }
         }
-
-        public async Task<CartItemDto> GetCartItem(int cartItemId)
+        catch (Exception)
         {
-            try
+
+            throw;
+        }
+    }
+
+    public async Task<List<CartItemDto>> GetCartItems(int userId)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"api/CartItems/GetUsersCartItems/{userId}");
+
+            if (response.IsSuccessStatusCode)
             {
-                var response = await _httpClient.GetAsync($"api/GetCartItem{cartItemId}");
-
-                if (response.IsSuccessStatusCode)
+                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 {
-                    if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
-                    {
-                        return null!;
-                    }
+                    return null!;
+                }
 
-                    var cartItem = await response.Content.ReadFromJsonAsync<CartItemDto>();
-                    return cartItem!;
-                }
-                else
-                {
-                    var message = await response.Content.ReadAsStringAsync();
-                    throw new Exception(message);
-                }
+                var cartItems = await response.Content.ReadFromJsonAsync<List<CartItemDto>>();
+
+                return cartItems!;
             }
-            catch (Exception)
+            else
             {
-
-                throw;
+                var message = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Http status:{response.StatusCode} Message -{message}");
             }
         }
-
-        public async Task<List<CartItemDto>> GetCartItems(int userId)
+        catch (Exception)
         {
-            try
-            {
-                var response = await _httpClient.GetAsync($"api/CartItems/GetUsersCartItems/{userId}");
 
-                if (response.IsSuccessStatusCode)
-                {
-                    if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
-                    {
-                        return null!;
-                    }
-
-                    var cartItems = await response.Content.ReadFromJsonAsync<List<CartItemDto>>();
-                    return cartItems!;
-                }
-                else
-                {
-                    var message = await response.Content.ReadAsStringAsync();
-                    throw new Exception(message);
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
+            throw;
         }
+    }
 
-        public void RaiseEventOnShoppingCartChanged(int totalQty)
+    public void RaiseEventOnShoppingCartChanged(int totalQuantity)
+    {
+        if ( OnShoppingCartChanged != null)
         {
-            if (OnShoppingCartChanged != null)
-            {
-                OnShoppingCartChanged.Invoke(totalQty);
-            }
+            OnShoppingCartChanged.Invoke(totalQuantity);
         }
+    }
 
-        public Task<CartItemDto> UpdateCartItem(CartItemDto cartItem)
+    public Task<CartItemDto> UpdateCartItem(CartItemDto cartItem)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<CartItemDto> UpdateCartItemQty(CartItemQtyUpdateDto cartItemQty)
+    {
+        try
         {
-            throw new NotImplementedException();
+            var jsonRequest = JsonConvert.SerializeObject(cartItemQty);
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json-patch+json");
+
+            var response = await _httpClient.PatchAsync($"api/CartItems/{cartItemQty.CartItemId}", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var QtyUpdate = await response.Content.ReadFromJsonAsync<CartItemDto>();
+
+                return QtyUpdate!;
+            }
+
+            return null!;
         }
-
-        public async Task<CartItemDto> UpdateCartItemQty(CartItemQtyUpdateDto cartItemQty)
+        catch (Exception)
         {
-            try
-            {
-                var jsonRequest = JsonConvert.SerializeObject(cartItemQty);
-                var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json-patch+json");
 
-                var response = await _httpClient.PatchAsync($"api/CartItems/{cartItemQty.CartItemId}", content);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var QtyUpdate = await response.Content.ReadFromJsonAsync<CartItemDto>();
-
-                    return QtyUpdate!;
-                }
-
-                return null!;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
+            throw;
         }
     }
 }
