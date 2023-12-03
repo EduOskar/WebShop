@@ -19,7 +19,7 @@ public class CartOrderTransferService : ICartOrderTransferService
 
             if (response.IsSuccessStatusCode)
             {
-                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 {
                     var result = await response.Content.ReadAsAsync<bool>();
                     return result;

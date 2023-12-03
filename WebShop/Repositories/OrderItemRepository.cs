@@ -30,7 +30,10 @@ public class OrderItemRepository : IOrderItemRepository
 
     public async Task<OrderItem> GetOrderItem(int orderItemId)
     {
-        var orderItem = await _dbContext.OrderItems.FindAsync(orderItemId);
+        var orderItem = await _dbContext.OrderItems
+            .Include(p => p.Product)
+            .Where(oi => oi.Id == orderItemId)
+            .FirstOrDefaultAsync();
 
         if (orderItem != null)
         {
@@ -42,7 +45,9 @@ public class OrderItemRepository : IOrderItemRepository
 
     public async Task<ICollection<OrderItem>> GetOrderItems()
     {
-        var orderItem = await _dbContext.OrderItems.ToListAsync();
+        var orderItem = await _dbContext.OrderItems
+            .Include(p => p.Product)
+            .ToListAsync();
 
         return orderItem;
     }

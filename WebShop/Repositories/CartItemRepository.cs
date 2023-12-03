@@ -56,8 +56,8 @@ public class CartItemRepository : ICartItemRepository
     {
         var cartItems = await _dbContext.CartItems
             .Include(ci => ci.Cart)
-            .Where(ci => ci.Cart!.UserId == userId)
             .Include(p => p.Product)
+            .Where(ci => ci.Cart!.UserId == userId)
             .ToListAsync();
 
         return cartItems;

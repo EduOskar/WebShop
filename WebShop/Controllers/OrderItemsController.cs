@@ -30,7 +30,7 @@ public class OrderItemsController : ControllerBase
     [HttpGet]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
-    public async Task<ActionResult<IEnumerable<OrderItem>>> GetOrders()
+    public async Task<ActionResult<IEnumerable<OrderItem>>> GetOrderItems()
     {
         var orderItems = _mapper.Map<List<OrderItemDto>>(await _orderItemRepository.GetOrderItems());
 

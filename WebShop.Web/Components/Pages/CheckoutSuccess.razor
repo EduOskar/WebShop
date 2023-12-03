@@ -1,6 +1,44 @@
 ﻿@page "/CheckoutSuccess"
-<h3>CheckoutSuccess</h3>
 
+
+<h5>Congratulations, your order is now being sent to your adress!</h5>
+<br />
+@Message
+                            
 @code {
 
+    protected List<CartItemDto> ShoppingCartItems { get; set; } = default!;
+
+    protected int TotalQuantity { get; set; } = default!;
+
+    public string Message { get; set; } = default!;
+
+    [Inject]
+    ICartOrderTransferService CartOrderTransferService { get; set; } = default!;
+
+    [Inject]
+    ICartItemsService CartItemService { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ShoppingCartItems != null)
+        {
+            await CartOrderTransfer();
+        }
+        Message = "CartOrderTransfer was completed by this string woho";
+    }
+
+    private List<CartItemDto> GetCartItems(int userId)
+    {
+        var cartItems = ShoppingCartItems
+        .Where(ci => ci.Id == HardCoded.CartId)
+        .ToList();
+
+        return cartItems!;
+    }
+
+    protected async Task CartOrderTransfer()
+    {
+        await CartOrderTransferService.CartOrderTransfer(HardCoded.UserId);
+    }
 }

@@ -108,20 +108,20 @@ public class CartOrderTransfersController : ControllerBase
         {
             var orderItems = new OrderItemDto
             {
-                OrderId = orderMap.Id,
-                ProductId = cartItem.ProductId,
-                Qty = cartItem.Qty,
             };
 
             var orderItemMap = _mapper.Map<OrderItem>(orderItems);
+            orderItemMap.Order = await _orderRepository.GetOrder(orderMap.Id);
+            orderItemMap.Product = await _productRepository.GetProduct(cartItem.ProductId);
+            orderItemMap.Qty = cartItem.Qty;
 
             await _orderItemRepository.CreateOrderItem(orderItemMap);
 
             var productCondition = products.Where(p => p.Id == cartItem.ProductId);
 
-            foreach (var product in productCondition)
+            foreach (var item in productCondition)
             {
-                product.Qty -= cartItem.Qty;
+                item.Qty -= cartItem.Qty;
 
             }
 
