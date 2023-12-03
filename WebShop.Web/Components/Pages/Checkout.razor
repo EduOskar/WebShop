@@ -71,13 +71,20 @@ else
 
     protected decimal PaymentAmount { get; set; }
 
+    protected bool PaymentSuccessfull { get; set; }
+
+    [Inject]
+    ICartOrderTransferService CartOrderTransferService { get; set; } = default!;
+
     [Inject]
     ICartItemsService CartItemService { get; set; } = default!;
 
     [Inject]
     IOrdersService OrderService { get; set; } = default!;
+
     [Inject]
     IOrderItemsService OrderItemsService { get; set; } = default!;
+
     [Inject]
     IProductsService ProductsService { get; set; } = default!;
 
@@ -88,6 +95,8 @@ else
 
             ShoppingCartItems = await CartItemService.GetCartItems(HardCoded.UserId);
 
+            await CartOrderTransfer(HardCoded.UserId);
+
             if (ShoppingCartItems != null)
             {
                 Guid orderGuid = Guid.NewGuid();
@@ -96,7 +105,6 @@ else
                 PaymentDescription = $"O_{HardCoded.UserId}_{orderGuid}";
             }
 
-            await CartOrderTransfer();
         } 
         catch (Exception)
         {
@@ -111,8 +119,7 @@ else
         {
             if (firstRender)
             {
-                await js.InvokeVoidAsync("initPayPalButton");
-
+                await initiatePaypalButton();
             }
         }
         catch (Exception)
@@ -122,45 +129,9 @@ else
         }
     }
 
-    protected async Task<bool> CartOrderTransfer()
+    private async Task initiatePaypalButton()
     {
-
-        if (ShoppingCartItems == null)
-        {
-            return false;
-        }
-
-        var order = new OrderDto
-        {
-            PlacementTime = DateTime.UtcNow,
-            UserId = HardCoded.UserId
-        };
-
-
-        var createdOrder = await OrderService.CreateOrder(order);
-
-        foreach (var item in ShoppingCartItems.ToList())
-        {
-
-            var orderItem = new OrderItemDto
-            {
-                ProductId = item.ProductId,
-                OrderId = createdOrder.Id,
-                Qty = item.Qty
-            };
-
-            await OrderItemsService.CreateOrderItem(orderItem);
-
-            ShoppingCartItems.Remove(item);
-
-            await DeleteAllCartItems(item.Id);
-
-        }
-
-        CartChanged();
-
-        return true;
-
+        await js.InvokeVoidAsync("initiatePayPalButton");
     }
 
     private List<CartItemDto> GetCartItems(int userId)
@@ -170,6 +141,11 @@ else
         .ToList();
 
         return cartItems!;
+    }
+
+    protected async Task CartOrderTransfer(int userId)
+    {
+        await CartOrderTransferService.CartOrderTransfer(HardCoded.UserId);
     }
 
     protected async Task DeleteAllCartItems(int cartItemId)

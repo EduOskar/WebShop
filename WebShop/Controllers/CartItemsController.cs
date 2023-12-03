@@ -117,7 +117,7 @@ public class CartItemsController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        return CreatedAtAction("GetCartItem", new { cartItemId = cartItemCreate.Id }, cartItemCreate);
+        return CreatedAtAction("GetCartItem", new { cartItemId = cartItemMap.Id }, cartItemMap);
     }
 
     [HttpPut("{cartItemId:int}")]

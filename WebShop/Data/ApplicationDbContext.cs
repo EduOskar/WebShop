@@ -1,380 +1,379 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebShop.Api.Entity;
 
-namespace WebShop.Api.Data
+namespace WebShop.Api.Data;
+
+public class ApplicationDbContext : DbContext
 {
-    public class ApplicationDbContext : DbContext
-    {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-        { 
-        }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<User>(customer =>
-            {
-                customer
-                    .HasMany(c => c.Orders)
-                    .WithOne(o => o.User)
-                    .HasForeignKey(o => o.UserId);
-                customer
-                    .HasMany(c => c.Reviews)
-                    .WithOne(r => r.User)                              
-                    .HasForeignKey(r => r.UserId);
-            });
-
-            modelBuilder.Entity<Product>(product =>
-            {
-                product.HasOne(p => p.Category).WithMany().HasForeignKey(p => p.CategoryId);
-                product
-                    .HasMany(p => p.Reviews)
-                    .WithOne(r => r.Product)
-                    .HasForeignKey(r => r.ProductId);
-            });
-
-            modelBuilder.Entity<Cart>(cart =>
-            {
-                cart.HasOne(c => c.User).WithOne();
-            });
-
-            modelBuilder.Entity<CartItem>(cartItem =>
-            {
-                
-                cartItem
-                    .HasOne(ci => ci.Cart)
-                    .WithMany(ca => ca.CartItems)
-                    .HasForeignKey(ci => ci.CartId);
-                cartItem.HasOne(ci => ci.Product).WithMany().HasForeignKey(ci => ci.ProductId);
-            });
-
-            modelBuilder.Entity<OrderItem>(orderItem =>
-            {
-                orderItem
-                    .HasOne(oi => oi.Order)
-                    .WithMany(o => o.OrderItems)
-                    .HasForeignKey(oi => oi.OrderId);
-                orderItem.HasOne(oi => oi.Product).WithMany().HasForeignKey(oi => oi.ProductId);
-            });
-
-            //Products
-            //Beauty Category
-            modelBuilder.Entity<Product>().HasData(new Product
-            {
-                Id = 1,
-                Name = "Glossier - Beauty Kit",
-                Description = "A kit provided by Glossier, containing skin care, hair care and makeup products",
-                ImageURL = "/Images/Beauty/Beauty1.png",
-                Price = 1000,
-                Qty = 100,
-                CategoryId = 1
-
-            });
-            modelBuilder.Entity<Product>().HasData(new Product
-            {
-                Id = 2,
-                Name = "Curology - Skin Care Kit",
-                Description = "A kit provided by Curology, containing skin care products",
-                ImageURL = "/Images/Beauty/Beauty2.png",
-                Price = 500,
-                Qty = 45,
-                CategoryId = 1
-
-            });
-            modelBuilder.Entity<Product>().HasData(new Product
-            {
-                Id = 3,
-                Name = "Cocooil - Organic Coconut Oil",
-                Description = "A kit provided by Curology, containing skin care products",
-                ImageURL = "/Images/Beauty/Beauty3.png",
-                Price = 200,
-                Qty = 30,
-                CategoryId = 1
-
-            });
-            modelBuilder.Entity<Product>().HasData(new Product
-            {
-                Id = 4,
-                Name = "Schwarzkopf - Hair Care and Skin Care Kit",
-                Description = "A kit provided by Schwarzkopf, containing skin care and hair care products",
-                ImageURL = "/Images/Beauty/Beauty4.png",
-                Price = 500,
-                Qty = 60,
-                CategoryId = 1
-
-            });
-            modelBuilder.Entity<Product>().HasData(new Product
-            {
-                Id = 5,
-                Name = "Skin Care Kit",
-                Description = "Skin Care Kit, containing skin care and hair care products",
-                ImageURL = "/Images/Beauty/Beauty5.png",
-                Price = 300,
-                Qty = 85,
-                CategoryId = 1
-
-            });
-            //Electronics Category
-            modelBuilder.Entity<Product>().HasData(new Product
-            {
-                Id = 6,
-                Name = "Air Pods",
-                Description = "Air Pods - in-ear wireless headphones",
-                ImageURL = "/Images/Electronic/Electronics1.png",
-                Price = 1000,
-                Qty = 120,
-                CategoryId = 3
-
-            });
-            modelBuilder.Entity<Product>().HasData(new Product
-            {
-                Id = 7,
-                Name = "On-ear Golden Headphones",
-                Description = "On-ear Golden Headphones - these headphones are not wireless",
-                ImageURL = "/Images/Electronic/Electronics2.png",
-                Price = 499,
-                Qty = 200,
-                CategoryId = 3
-
-            });
-            modelBuilder.Entity<Product>().HasData(new Product
-            {
-                Id = 8,
-                Name = "On-ear Black Headphones",
-                Description = "On-ear Black Headphones - these headphones are not wireless",
-                ImageURL = "/Images/Electronic/Electronics3.png",
-                Price = 499,
-                Qty = 300,
-                CategoryId = 3
-
-            });
-            modelBuilder.Entity<Product>().HasData(new Product
-            {
-                Id = 9,
-                Name = "Sennheiser Digital Camera with Tripod",
-                Description = "Sennheiser Digital Camera - High quality digital camera provided by Sennheiser - includes tripod",
-                ImageURL = "/Images/Electronic/Electronics4.png",
-                Price = 5999,
-                Qty = 20,
-                CategoryId = 3
-
-            });
-            modelBuilder.Entity<Product>().HasData(new Product
-            {
-                Id = 10,
-                Name = "Canon Digital Camera",
-                Description = "Canon Digital Camera - High quality digital camera provided by Canon",
-                ImageURL = "/Images/Electronic/Electronics5.png",
-                Price = 6999,
-                Qty = 15,
-                CategoryId = 3
-
-            });
-            modelBuilder.Entity<Product>().HasData(new Product
-            {
-                Id = 11,
-                Name = "Nintendo Gameboy",
-                Description = "Gameboy - Provided by Nintendo",
-                ImageURL = "/Images/Electronic/Electronics6.png",
-                Price = 1050,
-                Qty = 60,
-                CategoryId = 3
-            });
-            //Furniture Category
-            modelBuilder.Entity<Product>().HasData(new Product
-            {
-                Id = 12,
-                Name = "Black Leather Office Chair",
-                Description = "Very comfortable black leather office chair",
-                ImageURL = "/Images/Furniture/Furniture1.png",
-                Price = 550,
-                Qty = 212,
-                CategoryId = 2
-            });
-
-            modelBuilder.Entity<Product>().HasData(new Product
-            {
-                Id = 13,
-                Name = "Pink Leather Office Chair",
-                Description = "Very comfortable pink leather office chair",
-                ImageURL = "/Images/Furniture/Furniture2.png",
-                Price = 500,
-                Qty = 112,
-                CategoryId = 2
-            });
-            modelBuilder.Entity<Product>().HasData(new Product
-            {
-                Id = 14,
-                Name = "Lounge Chair",
-                Description = "Very comfortable lounge chair",
-                ImageURL = "/Images/Furniture/Furniture3.png",
-                Price = 700,
-                Qty = 90,
-                CategoryId = 2
-            });
-            modelBuilder.Entity<Product>().HasData(new Product
-            {
-                Id = 15,
-                Name = "Silver Lounge Chair",
-                Description = "Very comfortable Silver lounge chair",
-                ImageURL = "/Images/Furniture/Furniture4.png",
-                Price = 1200,
-                Qty = 95,
-                CategoryId = 2
-            });
-            modelBuilder.Entity<Product>().HasData(new Product
-            {
-                Id = 16,
-                Name = "Porcelain Table Lamp",
-                Description = "White and blue Porcelain Table Lamp",
-                ImageURL = "/Images/Furniture/Furniture6.png",
-                Price = 150,
-                Qty = 100,
-                CategoryId = 2
-            });
-            modelBuilder.Entity<Product>().HasData(new Product
-            {
-                Id = 17,
-                Name = "Office Table Lamp",
-                Description = "Office Table Lamp",
-                ImageURL = "/Images/Furniture/Furniture7.png",
-                Price = 200,
-                Qty = 73,
-                CategoryId = 2
-            });
-            //Shoes Category
-            modelBuilder.Entity<Product>().HasData(new Product
-            {
-                Id = 18,
-                Name = "Puma Sneakers",
-                Description = "Comfortable Puma Sneakers in most sizes",
-                ImageURL = "/Images/Shoes/Shoes1.png",
-                Price = 1000,
-                Qty = 50,
-                CategoryId = 4
-            });
-            modelBuilder.Entity<Product>().HasData(new Product
-            {
-                Id = 19,
-                Name = "Colorful Trainers",
-                Description = "Colorful trainsers - available in most sizes",
-                ImageURL = "/Images/Shoes/Shoes2.png",
-                Price = 1500,
-                Qty = 60,
-                CategoryId = 4
-            });
-            modelBuilder.Entity<Product>().HasData(new Product
-            {
-                Id = 20,
-                Name = "Blue Nike Trainers",
-                Description = "Blue Nike Trainers - available in most sizes",
-                ImageURL = "/Images/Shoes/Shoes3.png",
-                Price = 2000,
-                Qty = 70,
-                CategoryId = 4
-            });
-            modelBuilder.Entity<Product>().HasData(new Product
-            {
-                Id = 21,
-                Name = "Colorful Hummel Trainers",
-                Description = "Colorful Hummel Trainers - available in most sizes",
-                ImageURL = "/Images/Shoes/Shoes4.png",
-                Price = 1200,
-                Qty = 120,
-                CategoryId = 4
-            });
-            modelBuilder.Entity<Product>().HasData(new Product
-            {
-                Id = 22,
-                Name = "Red Nike Trainers",
-                Description = "Red Nike Trainers - available in most sizes",
-                ImageURL = "/Images/Shoes/Shoes5.png",
-                Price = 2000,
-                Qty = 100,
-                CategoryId = 4
-            });
-            modelBuilder.Entity<Product>().HasData(new Product
-            {
-                Id = 23,
-                Name = "Birkenstock Sandles",
-                Description = "Birkenstock Sandles - available in most sizes",
-                ImageURL = "/Images/Shoes/Shoes6.png",
-                Price = 500,
-                Qty = 150,
-                CategoryId = 4
-            });
-
-            //Add users
-            modelBuilder.Entity<User>().HasData(new User
-            {
-                Id = 1,
-                FirstName = "Bob",
-                LastName = "Bobinsson",
-                UserName = "Bob",
-                Credit = 100000,
-                Adress = "Fakestreet 101",
-                Email = "Bob@Mail.com",
-                Phonenumber = "070-1231212",
-                Role = 1
-            });
-            modelBuilder.Entity<User>().HasData(new User
-            {
-                Id = 2,
-                FirstName = "Sarah",
-                LastName = "SarahsDaughter",
-                UserName = "Sarah",
-                Credit = 100000,
-                Adress = "Fakestreet 102",
-                Email = "Sarah@Mail.com",
-                Phonenumber = "070-3213232",
-                Role = 1
-            });
-
-            //Create Shopping Cart for Users
-            modelBuilder.Entity<Cart>().HasData(new Cart
-            {
-                Id = 1,
-                UserId = 1,
-
-
-            });
-            modelBuilder.Entity<Cart>().HasData(new Cart
-            {
-                Id = 2,
-                UserId = 2
-
-            });
-            //Add Product Categories
-            modelBuilder.Entity<ProductCategory>().HasData(new ProductCategory
-            {
-                Id = 1,
-                Name = "Beauty"
-            });
-            modelBuilder.Entity<ProductCategory>().HasData(new ProductCategory
-            {
-                Id = 2,
-                Name = "Furniture"
-            });
-            modelBuilder.Entity<ProductCategory>().HasData(new ProductCategory
-            {
-                Id = 3,
-                Name = "Electronics"
-            });
-            modelBuilder.Entity<ProductCategory>().HasData(new ProductCategory
-            {
-                Id = 4,
-                Name = "Shoes"
-            });
-                                   }
-        public DbSet<Cart> Carts { get; set; }
-        public DbSet<CartItem> CartItems { get; set; }
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderItem> OrderItems { get; set; }
-        public DbSet<Product> Products { get; set; }
-        public DbSet<ProductCategory> ProductCategories { get; set; }
-        public DbSet<User> Users { get; set; }
-        public DbSet<Review> Reviews { get; set; }
-
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+    { 
     }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<User>(customer =>
+        {
+            customer
+                .HasMany(c => c.Orders)
+                .WithOne(o => o.User)
+                .HasForeignKey(o => o.UserId);
+            customer
+                .HasMany(c => c.Reviews)
+                .WithOne(r => r.User)                              
+                .HasForeignKey(r => r.UserId);
+        });
+
+        modelBuilder.Entity<Product>(product =>
+        {
+            product.HasOne(p => p.Category).WithMany().HasForeignKey(p => p.CategoryId);
+            product
+                .HasMany(p => p.Reviews)
+                .WithOne(r => r.Product)
+                .HasForeignKey(r => r.ProductId);
+        });
+
+        modelBuilder.Entity<Cart>(cart =>
+        {
+            cart.HasOne(c => c.User).WithOne();
+        });
+
+        modelBuilder.Entity<CartItem>(cartItem =>
+        {
+            
+            cartItem
+                .HasOne(ci => ci.Cart)
+                .WithMany(ca => ca.CartItems)
+                .HasForeignKey(ci => ci.CartId);
+            cartItem.HasOne(ci => ci.Product).WithMany().HasForeignKey(ci => ci.ProductId);
+        });
+
+        modelBuilder.Entity<OrderItem>(orderItem =>
+        {
+            orderItem
+                .HasOne(oi => oi.Order)
+                .WithMany(o => o.OrderItems)
+                .HasForeignKey(oi => oi.OrderId);
+            orderItem.HasOne(oi => oi.Product).WithMany().HasForeignKey(oi => oi.ProductId);
+        });
+
+        //Products
+        //Beauty Category
+        modelBuilder.Entity<Product>().HasData(new Product
+        {
+            Id = 1,
+            Name = "Glossier - Beauty Kit",
+            Description = "A kit provided by Glossier, containing skin care, hair care and makeup products",
+            ImageURL = "/Images/Beauty/Beauty1.png",
+            Price = 1000,
+            Qty = 100,
+            CategoryId = 1
+
+        });
+        modelBuilder.Entity<Product>().HasData(new Product
+        {
+            Id = 2,
+            Name = "Curology - Skin Care Kit",
+            Description = "A kit provided by Curology, containing skin care products",
+            ImageURL = "/Images/Beauty/Beauty2.png",
+            Price = 500,
+            Qty = 45,
+            CategoryId = 1
+
+        });
+        modelBuilder.Entity<Product>().HasData(new Product
+        {
+            Id = 3,
+            Name = "Cocooil - Organic Coconut Oil",
+            Description = "A kit provided by Curology, containing skin care products",
+            ImageURL = "/Images/Beauty/Beauty3.png",
+            Price = 200,
+            Qty = 30,
+            CategoryId = 1
+
+        });
+        modelBuilder.Entity<Product>().HasData(new Product
+        {
+            Id = 4,
+            Name = "Schwarzkopf - Hair Care and Skin Care Kit",
+            Description = "A kit provided by Schwarzkopf, containing skin care and hair care products",
+            ImageURL = "/Images/Beauty/Beauty4.png",
+            Price = 500,
+            Qty = 60,
+            CategoryId = 1
+
+        });
+        modelBuilder.Entity<Product>().HasData(new Product
+        {
+            Id = 5,
+            Name = "Skin Care Kit",
+            Description = "Skin Care Kit, containing skin care and hair care products",
+            ImageURL = "/Images/Beauty/Beauty5.png",
+            Price = 300,
+            Qty = 85,
+            CategoryId = 1
+
+        });
+        //Electronics Category
+        modelBuilder.Entity<Product>().HasData(new Product
+        {
+            Id = 6,
+            Name = "Air Pods",
+            Description = "Air Pods - in-ear wireless headphones",
+            ImageURL = "/Images/Electronic/Electronics1.png",
+            Price = 1000,
+            Qty = 120,
+            CategoryId = 3
+
+        });
+        modelBuilder.Entity<Product>().HasData(new Product
+        {
+            Id = 7,
+            Name = "On-ear Golden Headphones",
+            Description = "On-ear Golden Headphones - these headphones are not wireless",
+            ImageURL = "/Images/Electronic/Electronics2.png",
+            Price = 499,
+            Qty = 200,
+            CategoryId = 3
+
+        });
+        modelBuilder.Entity<Product>().HasData(new Product
+        {
+            Id = 8,
+            Name = "On-ear Black Headphones",
+            Description = "On-ear Black Headphones - these headphones are not wireless",
+            ImageURL = "/Images/Electronic/Electronics3.png",
+            Price = 499,
+            Qty = 300,
+            CategoryId = 3
+
+        });
+        modelBuilder.Entity<Product>().HasData(new Product
+        {
+            Id = 9,
+            Name = "Sennheiser Digital Camera with Tripod",
+            Description = "Sennheiser Digital Camera - High quality digital camera provided by Sennheiser - includes tripod",
+            ImageURL = "/Images/Electronic/Electronics4.png",
+            Price = 5999,
+            Qty = 20,
+            CategoryId = 3
+
+        });
+        modelBuilder.Entity<Product>().HasData(new Product
+        {
+            Id = 10,
+            Name = "Canon Digital Camera",
+            Description = "Canon Digital Camera - High quality digital camera provided by Canon",
+            ImageURL = "/Images/Electronic/Electronics5.png",
+            Price = 6999,
+            Qty = 15,
+            CategoryId = 3
+
+        });
+        modelBuilder.Entity<Product>().HasData(new Product
+        {
+            Id = 11,
+            Name = "Nintendo Gameboy",
+            Description = "Gameboy - Provided by Nintendo",
+            ImageURL = "/Images/Electronic/Electronics6.png",
+            Price = 1050,
+            Qty = 60,
+            CategoryId = 3
+        });
+        //Furniture Category
+        modelBuilder.Entity<Product>().HasData(new Product
+        {
+            Id = 12,
+            Name = "Black Leather Office Chair",
+            Description = "Very comfortable black leather office chair",
+            ImageURL = "/Images/Furniture/Furniture1.png",
+            Price = 550,
+            Qty = 212,
+            CategoryId = 2
+        });
+
+        modelBuilder.Entity<Product>().HasData(new Product
+        {
+            Id = 13,
+            Name = "Pink Leather Office Chair",
+            Description = "Very comfortable pink leather office chair",
+            ImageURL = "/Images/Furniture/Furniture2.png",
+            Price = 500,
+            Qty = 112,
+            CategoryId = 2
+        });
+        modelBuilder.Entity<Product>().HasData(new Product
+        {
+            Id = 14,
+            Name = "Lounge Chair",
+            Description = "Very comfortable lounge chair",
+            ImageURL = "/Images/Furniture/Furniture3.png",
+            Price = 700,
+            Qty = 90,
+            CategoryId = 2
+        });
+        modelBuilder.Entity<Product>().HasData(new Product
+        {
+            Id = 15,
+            Name = "Silver Lounge Chair",
+            Description = "Very comfortable Silver lounge chair",
+            ImageURL = "/Images/Furniture/Furniture4.png",
+            Price = 1200,
+            Qty = 95,
+            CategoryId = 2
+        });
+        modelBuilder.Entity<Product>().HasData(new Product
+        {
+            Id = 16,
+            Name = "Porcelain Table Lamp",
+            Description = "White and blue Porcelain Table Lamp",
+            ImageURL = "/Images/Furniture/Furniture6.png",
+            Price = 150,
+            Qty = 100,
+            CategoryId = 2
+        });
+        modelBuilder.Entity<Product>().HasData(new Product
+        {
+            Id = 17,
+            Name = "Office Table Lamp",
+            Description = "Office Table Lamp",
+            ImageURL = "/Images/Furniture/Furniture7.png",
+            Price = 200,
+            Qty = 73,
+            CategoryId = 2
+        });
+        //Shoes Category
+        modelBuilder.Entity<Product>().HasData(new Product
+        {
+            Id = 18,
+            Name = "Puma Sneakers",
+            Description = "Comfortable Puma Sneakers in most sizes",
+            ImageURL = "/Images/Shoes/Shoes1.png",
+            Price = 1000,
+            Qty = 50,
+            CategoryId = 4
+        });
+        modelBuilder.Entity<Product>().HasData(new Product
+        {
+            Id = 19,
+            Name = "Colorful Trainers",
+            Description = "Colorful trainsers - available in most sizes",
+            ImageURL = "/Images/Shoes/Shoes2.png",
+            Price = 1500,
+            Qty = 60,
+            CategoryId = 4
+        });
+        modelBuilder.Entity<Product>().HasData(new Product
+        {
+            Id = 20,
+            Name = "Blue Nike Trainers",
+            Description = "Blue Nike Trainers - available in most sizes",
+            ImageURL = "/Images/Shoes/Shoes3.png",
+            Price = 2000,
+            Qty = 70,
+            CategoryId = 4
+        });
+        modelBuilder.Entity<Product>().HasData(new Product
+        {
+            Id = 21,
+            Name = "Colorful Hummel Trainers",
+            Description = "Colorful Hummel Trainers - available in most sizes",
+            ImageURL = "/Images/Shoes/Shoes4.png",
+            Price = 1200,
+            Qty = 120,
+            CategoryId = 4
+        });
+        modelBuilder.Entity<Product>().HasData(new Product
+        {
+            Id = 22,
+            Name = "Red Nike Trainers",
+            Description = "Red Nike Trainers - available in most sizes",
+            ImageURL = "/Images/Shoes/Shoes5.png",
+            Price = 2000,
+            Qty = 100,
+            CategoryId = 4
+        });
+        modelBuilder.Entity<Product>().HasData(new Product
+        {
+            Id = 23,
+            Name = "Birkenstock Sandles",
+            Description = "Birkenstock Sandles - available in most sizes",
+            ImageURL = "/Images/Shoes/Shoes6.png",
+            Price = 500,
+            Qty = 150,
+            CategoryId = 4
+        });
+
+        //Add users
+        modelBuilder.Entity<User>().HasData(new User
+        {
+            Id = 1,
+            FirstName = "Bob",
+            LastName = "Bobinsson",
+            UserName = "Bob",
+            Credit = 100000,
+            Adress = "Fakestreet 101",
+            Email = "Bob@Mail.com",
+            Phonenumber = "070-1231212",
+            Role = 1
+        });
+        modelBuilder.Entity<User>().HasData(new User
+        {
+            Id = 2,
+            FirstName = "Sarah",
+            LastName = "SarahsDaughter",
+            UserName = "Sarah",
+            Credit = 100000,
+            Adress = "Fakestreet 102",
+            Email = "Sarah@Mail.com",
+            Phonenumber = "070-3213232",
+            Role = 1
+        });
+
+        //Create Shopping Cart for Users
+        modelBuilder.Entity<Cart>().HasData(new Cart
+        {
+            Id = 1,
+            UserId = 1,
+
+
+        });
+        modelBuilder.Entity<Cart>().HasData(new Cart
+        {
+            Id = 2,
+            UserId = 2
+
+        });
+        //Add Product Categories
+        modelBuilder.Entity<ProductCategory>().HasData(new ProductCategory
+        {
+            Id = 1,
+            Name = "Beauty"
+        });
+        modelBuilder.Entity<ProductCategory>().HasData(new ProductCategory
+        {
+            Id = 2,
+            Name = "Furniture"
+        });
+        modelBuilder.Entity<ProductCategory>().HasData(new ProductCategory
+        {
+            Id = 3,
+            Name = "Electronics"
+        });
+        modelBuilder.Entity<ProductCategory>().HasData(new ProductCategory
+        {
+            Id = 4,
+            Name = "Shoes"
+        });
+                               }
+    public DbSet<Cart> Carts { get; set; }
+    public DbSet<CartItem> CartItems { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<Product> Products { get; set; }
+    public DbSet<ProductCategory> ProductCategories { get; set; }
+    public DbSet<User> Users { get; set; }
+    public DbSet<Review> Reviews { get; set; }
+
 }

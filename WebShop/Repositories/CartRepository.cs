@@ -46,6 +46,18 @@ public class CartRepository : ICartRepository
         throw new Exception("No cart with that Id was found");
     }
 
+    public async Task<Cart> GetCartByUser(int UserId)
+    {
+        var userCart = await _dbContext.Carts.Where(c => c.UserId == UserId).FirstOrDefaultAsync();
+
+        if (userCart != null)
+        {
+            return userCart;
+        }
+
+        throw new Exception("No cart was found with that user");
+    }
+
     public async Task<ICollection<Cart>> GetCarts()
     {
         var carts = await _dbContext.Carts.ToListAsync();

@@ -4,70 +4,69 @@ using WebShop.Api.Data;
 using WebShop.Api.Entity;
 using WebShop.Api.Repositories.Contracts;
 
-namespace WebShop.Api.Repositories
+namespace WebShop.Api.Repositories;
+
+public class UserRepository : IUserRepository
 {
-    public class UserRepository : IUserRepository
+    private readonly ApplicationDbContext _dbContext;
+
+    public UserRepository(ApplicationDbContext dbContext)
     {
-        private readonly ApplicationDbContext _dbContext;
+        _dbContext = dbContext;
+    }
+    public async Task<bool> CreateUser(User user)
+    {
+        await _dbContext.AddAsync(user);
 
-        public UserRepository(ApplicationDbContext dbContext)
+        return await Save();
+    }
+
+    public async Task<bool> DeleteUser(User user)
+    {
+        _dbContext.Remove(user);
+        
+        return await Save();
+    }
+
+    public async Task<User> GetUser(int userId)
+    {
+        var user = await _dbContext.Users.Where(u => u.Id == userId)
+            .Include(r => r.Reviews)
+            .SingleOrDefaultAsync();
+
+        if (user != null)
         {
-            _dbContext = dbContext;
-        }
-        public async Task<bool> CreateUser(User user)
-        {
-            await _dbContext.AddAsync(user);
-
-            return await Save();
-        }
-
-        public async Task<bool> DeleteUser(User user)
-        {
-            _dbContext.Remove(user);
-            
-            return await Save();
-        }
-
-        public async Task<User> GetUser(int userId)
-        {
-            var user = await _dbContext.Users.Where(u => u.Id == userId)
-                .Include(r => r.Reviews)
-                .SingleOrDefaultAsync();
-
-            if (user != null)
-            {
-                return user;
-            }
-
-            throw new Exception("No user by that Id");
+            return user;
         }
 
-        public async Task<ICollection<User>> GetUsers()
-        {
-            var users = await _dbContext.Users.ToListAsync();
+        throw new Exception("No user by that Id");
+    }
 
-            return users;
-        }
+    public async Task<ICollection<User>> GetUsers()
+    {
+        var users = await _dbContext.Users.ToListAsync();
 
-        public async Task<bool> Save()
-        {
-            var saved = await _dbContext.SaveChangesAsync();
+        return users;
+    }
 
-            return saved > 0; ;
-        }
+    public async Task<bool> Save()
+    {
+        var saved = await _dbContext.SaveChangesAsync();
 
-        public async Task<bool> UpdateUser(User user)
-        {
-            _dbContext.Update(user);
+        return saved > 0; ;
+    }
 
-            return await Save();
-        }
+    public async Task<bool> UpdateUser(User user)
+    {
+        _dbContext.Update(user);
 
-        public async Task<bool> UserExist(int userId)
-        {
-           var userExist = await _dbContext.Users.AnyAsync(u => u.Id == userId);
+        return await Save();
+    }
 
-            return userExist;
-        }
+    public async Task<bool> UserExist(int userId)
+    {
+       var userExist = await _dbContext.Users.AnyAsync(u => u.Id == userId);
+
+        return userExist;
     }
 }
