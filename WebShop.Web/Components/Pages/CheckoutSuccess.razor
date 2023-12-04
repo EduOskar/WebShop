@@ -1,17 +1,27 @@
 ﻿@page "/CheckoutSuccess"
 
+@if (ShoppingCartItems == null)
+{
+    <DisplaySpinner />
+}
+else if(ShoppingCartItems.Count > 0)
+{
+    <h5>Your Order is being proccesed</h5>
+    <br />
+    <DisplaySpinner />
+}
+else
+{
+    <h5>Your order has been sent to you</h5>
+}
 
-<h5>Congratulations, your order is now being sent to your adress!</h5>
-<br />
-@Message
-                            
 @code {
+    private bool cartOrderTransferred = false;
 
     protected List<CartItemDto> ShoppingCartItems { get; set; } = default!;
 
     protected int TotalQuantity { get; set; } = default!;
 
-    public string Message { get; set; } = default!;
 
     [Inject]
     ICartOrderTransferService CartOrderTransferService { get; set; } = default!;
@@ -21,23 +31,23 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (ShoppingCartItems != null)
+        try
         {
-            await CartOrderTransfer();
+            ShoppingCartItems = await CartItemService.GetCartItems(HardCoded.UserId);
+
+            if (ShoppingCartItems?.Count != 0)
+            {
+                await CartOrderTransfer(HardCoded.UserId);
+            }
         }
-        Message = "CartOrderTransfer was completed by this string woho";
+        catch (Exception)
+        {
+
+            throw;
+        }
+
     }
-
-    private List<CartItemDto> GetCartItems(int userId)
-    {
-        var cartItems = ShoppingCartItems
-        .Where(ci => ci.Id == HardCoded.CartId)
-        .ToList();
-
-        return cartItems!;
-    }
-
-    protected async Task CartOrderTransfer()
+    protected async Task CartOrderTransfer(int userId)
     {
         await CartOrderTransferService.CartOrderTransfer(HardCoded.UserId);
     }

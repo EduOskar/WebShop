@@ -15,8 +15,8 @@ public class OrdersController : ControllerBase
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
 
-    public OrdersController(IOrderRepository orderRepository, 
-        IUserRepository userRepository, 
+    public OrdersController(IOrderRepository orderRepository,
+        IUserRepository userRepository,
         IMapper mapper)
     {
         _orderRepository = orderRepository;
@@ -30,6 +30,21 @@ public class OrdersController : ControllerBase
     public async Task<ActionResult<ICollection<OrderDto>>> GetOrders()
     {
         var orders = _mapper.Map<List<OrderDto>>(await _orderRepository.GetOrders());
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest();
+        }
+
+        return Ok(orders);
+    }
+
+    [HttpGet("Get-Orders-By-User/{userId}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    public async Task<ActionResult<ICollection<OrderDto>>> GetOrdersFromUser(int userId)
+    {
+        var orders = _mapper.Map<List<OrderDto>>(await _orderRepository.GetOrderFromUser(userId));
 
         if (!ModelState.IsValid)
         {

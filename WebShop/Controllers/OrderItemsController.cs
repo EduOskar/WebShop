@@ -42,6 +42,21 @@ public class OrderItemsController : ControllerBase
         return Ok(orderItems);
     }
 
+    [HttpGet("Order-Items-From-User/{orderId}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    public async Task<ActionResult<IEnumerable<OrderItem>>> GetOrderItemsFromUser(int orderId)
+    {
+        var orderItems = _mapper.Map<List<OrderItemDto>>(await _orderItemRepository.GetOrderItemsFromOrder(orderId));
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest();
+        }
+
+        return Ok(orderItems);
+    }
+
     [HttpGet("{orderItemId:int}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]

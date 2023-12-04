@@ -52,6 +52,16 @@ public class OrderItemRepository : IOrderItemRepository
         return orderItem;
     }
 
+    public async Task<ICollection<OrderItem>> GetOrderItemsFromOrder(int orderId)
+    {
+        var orderItem = await _dbContext.OrderItems
+            .Include(p => p.Product)
+            .Where(oi => oi.OrderId == orderId)
+            .ToListAsync();
+
+        return orderItem;
+    }
+
     public Task<bool> OrderItemExist(int orderItemId)
     {
         var orderItemExist = _dbContext.OrderItems.AnyAsync(oi => oi.Id == orderItemId);
