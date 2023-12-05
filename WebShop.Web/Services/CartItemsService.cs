@@ -104,7 +104,7 @@ public class CartItemsService : ICartItemsService
     {
         try
         {
-            var response = await _httpClient.GetAsync($"api/CartItems/GetUsersCartItems/{userId}");
+            var response = await _httpClient.GetAsync($"api/CartItems/Get-Users-CartItems/{userId}");
 
             if (response.IsSuccessStatusCode)
             {

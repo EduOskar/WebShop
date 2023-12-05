@@ -44,15 +44,21 @@ public class OrderRepository : IOrderRepository
         throw new Exception("Order was not found");
     }
 
-    public async Task<ICollection<Order>> GetOrderFromUser(int userId)
+    public async Task<Order> GetLastOrderFromUser(int userId)
     {
         var orders = await _dbContext.Orders
             .Include(oi => oi.OrderItems)
             .Include(u => u.User)
             .Where(o => o.UserId == userId)
-            .ToListAsync();
+            .OrderBy(o => o.Id)
+            .LastOrDefaultAsync();
 
-        return orders;
+        if (orders != null)
+        {
+            return orders;
+        }
+
+        throw new Exception("Last Order was not found");
     }
 
 

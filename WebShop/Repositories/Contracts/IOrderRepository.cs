@@ -6,7 +6,7 @@ public interface IOrderRepository
 {
     Task<ICollection<Order>> GetOrders();
     Task<Order> GetOrder(int orderId);
-    Task<ICollection<Order>> GetOrderFromUser(int userId);
+    Task<Order> GetLastOrderFromUser(int userId);
     Task<bool> OrderExist(int orderID);
     Task<bool> CreateOrder(Order order);
     Task<bool> UpdateOrder(Order order);

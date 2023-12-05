@@ -37,6 +37,9 @@ public class CartOrderTransfersController : ControllerBase
     }
 
     [HttpGet("{userId:int}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(500)]
     public async Task<ActionResult<bool>> CartOrderTransfer(int userId)
     {
         decimal priceCheck = 0;
@@ -128,7 +131,7 @@ public class CartOrderTransfersController : ControllerBase
             await _cartItemRepository.DeleteCartItem(cartItem);
         }
 
-        return Ok(true);
+        return Ok();
        
     }
 }

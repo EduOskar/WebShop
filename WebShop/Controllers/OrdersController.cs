@@ -39,12 +39,12 @@ public class OrdersController : ControllerBase
         return Ok(orders);
     }
 
-    [HttpGet("Get-Orders-By-User/{userId}")]
+    [HttpGet("Last-Orders-By-User/{userId:int}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
-    public async Task<ActionResult<ICollection<OrderDto>>> GetOrdersFromUser(int userId)
+    public async Task<ActionResult<OrderDto>> GetOrdersFromUser(int userId)
     {
-        var orders = _mapper.Map<List<OrderDto>>(await _orderRepository.GetOrderFromUser(userId));
+        var orders = _mapper.Map<OrderDto>(await _orderRepository.GetLastOrderFromUser(userId));
 
         if (!ModelState.IsValid)
         {

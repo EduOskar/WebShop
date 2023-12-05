@@ -42,7 +42,7 @@ public class OrderItemsController : ControllerBase
         return Ok(orderItems);
     }
 
-    [HttpGet("Order-Items-From-User/{orderId}")]
+    [HttpGet("Order-Items-From-User/{orderId:int}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     public async Task<ActionResult<IEnumerable<OrderItem>>> GetOrderItemsFromUser(int orderId)

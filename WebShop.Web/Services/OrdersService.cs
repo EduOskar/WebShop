@@ -94,6 +94,34 @@ public class OrdersService : IOrdersService
             throw;
         }
     }
+    public async Task<OrderDto> GetLastOrderFromUser(int userId) 
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"api/Orders/Last-Orders-By-User/{userId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                {
+                    return null!;
+                }
+
+                var order = await response.Content.ReadFromJsonAsync<OrderDto>();
+                return order!;
+            }
+            else
+            {
+                var message = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Http status:{response.StatusCode} Message -{message}");
+            }
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
 
     public async Task<ICollection<OrderDto>> GetOrders()
     {

@@ -55,7 +55,8 @@ public class OrderItemRepository : IOrderItemRepository
     public async Task<ICollection<OrderItem>> GetOrderItemsFromOrder(int orderId)
     {
         var orderItem = await _dbContext.OrderItems
-            .Include(p => p.Product)
+            .Include(p => p.Product) 
+            .Include(oi => oi.Order)
             .Where(oi => oi.OrderId == orderId)
             .ToListAsync();
 

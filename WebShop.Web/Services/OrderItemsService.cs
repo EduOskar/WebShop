@@ -98,6 +98,37 @@ public class OrderItemsService : IOrderItemsService
         }
     }
 
+    public async Task<List<OrderItemDto>> GetOrderItemsFromOrder(int orderId)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"api/OrderItems/Order-Items-From-User/{orderId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                {
+                    return null!;
+                }
+
+                var orderItems = await response.Content.ReadFromJsonAsync<List<OrderItemDto>>();
+
+                return orderItems!;
+            }
+            else
+            {
+                var message = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Http status:{response.StatusCode} Message -{message}");
+            }
+
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
     public async Task<List<OrderItemDto>> GetOrderItems()
     {
         try

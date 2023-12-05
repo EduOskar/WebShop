@@ -27,7 +27,7 @@ public class CartItemsController : ControllerBase
         _mapper = mapper;
     }
 
-    [HttpGet("GetUsersCartItems/{userId}")]
+    [HttpGet("Get-Users-CartItems/{userId}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     public async Task<ActionResult<List<CartItem>>> GetCartItems(int userId)

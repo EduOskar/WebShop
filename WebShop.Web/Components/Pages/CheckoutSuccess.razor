@@ -4,7 +4,7 @@
 {
     <DisplaySpinner />
 }
-else if(ShoppingCartItems.Count > 0)
+else if (ShoppingCartItems.Count > 0)
 {
     <h5>Your Order is being proccesed</h5>
     <br />
@@ -12,22 +12,68 @@ else if(ShoppingCartItems.Count > 0)
 }
 else
 {
-    <h5>Your order has been sent to you</h5>
+ 
+
+    @if(OrderItems == null)
+    {
+        <DisplaySpinner />
+    }
+    else if(OrderItems.Count > 0)
+    {
+
+        <div class="col-md-6 offset-md-3">
+            <h4 class="mb-2">Order Summary</h4>
+            @if (OrderItems.Count() > 0)
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Order serial number</th>
+                            <th>Product</th>
+                            <th>Product Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in OrderItems)
+                        {
+                            <tr>
+                                <td>@item.Id</td>
+                                <td>@item.Qty x @item.ProductName</td>
+                                <td>@item.ProductDescription</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+        </div>
+    }
+    else
+    {
+        <h5>There was no orders to be retrieved</h5>
+    }
+
 }
 
 @code {
-    private bool cartOrderTransferred = false;
 
     protected List<CartItemDto> ShoppingCartItems { get; set; } = default!;
 
-    protected int TotalQuantity { get; set; } = default!;
+    protected List<OrderItemDto> OrderItems { get; set; } = default!;
 
+    protected OrderDto Order { get; set; } = default!;
 
     [Inject]
     ICartOrderTransferService CartOrderTransferService { get; set; } = default!;
 
     [Inject]
     ICartItemsService CartItemService { get; set; } = default!;
+
+    [Inject]
+    IOrderItemsService OrderItemService { get; set; } = default!;
+
+    [Inject]
+    IOrdersService OrderService { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -38,7 +84,13 @@ else
             if (ShoppingCartItems?.Count != 0)
             {
                 await CartOrderTransfer(HardCoded.UserId);
+
+                
             }
+
+            Order = await OrderService.GetLastOrderFromUser(HardCoded.UserId);
+
+            OrderItems = await OrderItemService.GetOrderItemsFromOrder(Order.Id);
         }
         catch (Exception)
         {
@@ -47,6 +99,7 @@ else
         }
 
     }
+
     protected async Task CartOrderTransfer(int userId)
     {
         await CartOrderTransferService.CartOrderTransfer(HardCoded.UserId);
