@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebShop.Api.Entity;
@@ -68,7 +69,7 @@ public class UsersController : ControllerBase
 
         var user = await _userRepository.GetUsers(); 
         var userCheck = user
-            .Where(u => u.Email.Trim().Equals(userCreate.Email.TrimEnd(), StringComparison.CurrentCultureIgnoreCase))
+            .Where(u => u.Email!.Trim().Equals(userCreate.Email.TrimEnd(), StringComparison.CurrentCultureIgnoreCase))
             .Any();
 
         if (userCheck)

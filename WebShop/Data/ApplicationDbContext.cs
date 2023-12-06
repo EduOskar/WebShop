@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using WebShop.Api.Entity;
 
 namespace WebShop.Api.Data;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, int>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     { 
@@ -315,7 +317,7 @@ public class ApplicationDbContext : DbContext
             Credit = 100000,
             Adress = "Fakestreet 101",
             Email = "Bob@Mail.com",
-            Phonenumber = "070-1231212",
+            //Phonenumber = "070-1231212",
             Role = 1
         });
         modelBuilder.Entity<User>().HasData(new User
@@ -327,7 +329,7 @@ public class ApplicationDbContext : DbContext
             Credit = 100000,
             Adress = "Fakestreet 102",
             Email = "Sarah@Mail.com",
-            Phonenumber = "070-3213232",
+            //Phonenumber = "070-3213232",
             Role = 1
         });
 
@@ -373,7 +375,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<OrderItem> OrderItems { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<ProductCategory> ProductCategories { get; set; }
-    public DbSet<User> Users { get; set; }
+    new public DbSet<User> Users { get; set; }
     public DbSet<Review> Reviews { get; set; }
 
 }
