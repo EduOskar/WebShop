@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 namespace WebShop.Api.Entity;
 
@@ -14,7 +15,7 @@ public class Order
 
     //ForeignKey for Customer
     public int UserId { get; set; }
-    public virtual User? User { get; set; }
+    public User? User { get; set; }
 
     public ICollection<OrderItem>? OrderItems { get; set; } = default!;
 }

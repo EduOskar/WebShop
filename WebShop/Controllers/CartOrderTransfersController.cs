@@ -52,14 +52,14 @@ public class CartOrderTransfersController : ControllerBase
             return NotFound(false);
         }
 
-        var usersCart = await _cartRepository.GetCartByUser(user.Id);
+        var usersCart = await _cartRepository.GetCartByUser(userId);
 
         if (! await _cartRepository.CartExist(usersCart.Id))
         {
             return NotFound(false);
         }
 
-        if (user.Id != usersCart.UserId)
+        if (!user.Id.Equals(usersCart.UserId))
         {
             return BadRequest(false);
         }

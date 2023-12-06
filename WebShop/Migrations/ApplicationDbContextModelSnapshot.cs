@@ -103,12 +103,10 @@ namespace WebShop.Api.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -144,12 +142,10 @@ namespace WebShop.Api.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -637,10 +633,15 @@ namespace WebShop.Api.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ConfirmPassword")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal?>("Credit")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -669,10 +670,15 @@ namespace WebShop.Api.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("PhoneNumberConfirmed")
@@ -688,6 +694,7 @@ namespace WebShop.Api.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("UserName")
+                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -709,13 +716,16 @@ namespace WebShop.Api.Migrations
                             Id = 1,
                             AccessFailedCount = 0,
                             Adress = "Fakestreet 101",
-                            ConcurrencyStamp = "14c95592-086c-4b7c-89e6-3d350316b12c",
+                            ConcurrencyStamp = "44f8a3ee-9f32-4842-a270-360203454c23",
+                            ConfirmPassword = "Loggin",
                             Credit = 100000m,
                             Email = "Bob@Mail.com",
                             EmailConfirmed = false,
                             FirstName = "Bob",
                             LastName = "Bobinsson",
                             LockoutEnabled = false,
+                            Password = "Loggin",
+                            PhoneNumber = "070-1231212",
                             PhoneNumberConfirmed = false,
                             Role = 1,
                             TwoFactorEnabled = false,
@@ -726,13 +736,16 @@ namespace WebShop.Api.Migrations
                             Id = 2,
                             AccessFailedCount = 0,
                             Adress = "Fakestreet 102",
-                            ConcurrencyStamp = "4131bde7-a3bf-498a-a5c1-2398cfc1efe2",
+                            ConcurrencyStamp = "f338f0be-8b79-4463-9455-6da88ec0205f",
+                            ConfirmPassword = "Loggin",
                             Credit = 100000m,
                             Email = "Sarah@Mail.com",
                             EmailConfirmed = false,
                             FirstName = "Sarah",
                             LastName = "SarahsDaughter",
                             LockoutEnabled = false,
+                            Password = "Loggin",
+                            PhoneNumber = "070-3213232",
                             PhoneNumberConfirmed = false,
                             Role = 1,
                             TwoFactorEnabled = false,

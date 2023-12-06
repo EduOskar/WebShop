@@ -99,7 +99,7 @@ public class OrdersController : ControllerBase
         }
 
         var orderMap = _mapper.Map<Order>(orderCreate);
-        orderMap.User = await _userRepository.GetUser(orderCreate.UserId);
+        //orderMap.User = await _userRepository.GetUser(orderCreate.UserId);
 
         if (!await _orderRepository.CreateOrder(orderMap))
         {
@@ -144,7 +144,7 @@ public class OrdersController : ControllerBase
         }
 
         var orderMap = _mapper.Map<Order>(updateOrder);
-        orderMap.User = await _userRepository.GetUser(updateOrder.UserId);
+        //orderMap.User = await _userRepository.GetUser(updateOrder.UserId);
 
         if (!await _orderRepository.UpdateOrder(orderMap))
         {

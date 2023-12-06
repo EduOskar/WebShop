@@ -21,9 +21,10 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
                 .HasMany(c => c.Orders)
                 .WithOne(o => o.User)
                 .HasForeignKey(o => o.UserId);
+
             customer
                 .HasMany(c => c.Reviews)
-                .WithOne(r => r.User)                              
+                .WithOne(r => r.User)
                 .HasForeignKey(r => r.UserId);
         });
 
@@ -317,7 +318,9 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             Credit = 100000,
             Adress = "Fakestreet 101",
             Email = "Bob@Mail.com",
-            //Phonenumber = "070-1231212",
+            Password = "Loggin",
+            ConfirmPassword = "Loggin",
+            PhoneNumber = "070-1231212",
             Role = 1
         });
         modelBuilder.Entity<User>().HasData(new User
@@ -329,7 +332,9 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             Credit = 100000,
             Adress = "Fakestreet 102",
             Email = "Sarah@Mail.com",
-            //Phonenumber = "070-3213232",
+            Password = "Loggin",
+            ConfirmPassword = "Loggin",
+            PhoneNumber = "070-3213232",
             Role = 1
         });
 

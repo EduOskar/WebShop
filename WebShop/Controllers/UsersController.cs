@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WebShop.Api.Entity;
 using WebShop.Api.Repositories.Contracts;
@@ -40,7 +41,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
-    public async Task<ActionResult<UserDto>> GetUser(int userId)
+    public async Task<ActionResult<User>> GetUser(int userId)
     {
         if (!await _userRepository.UserExist(userId))
         {
@@ -60,7 +61,7 @@ public class UsersController : ControllerBase
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(400)]
-    public async Task<ActionResult> CreateUser([FromBody] UserDto userCreate)
+    public async Task<ActionResult<User>> CreateUser([FromBody] UserDto userCreate)
     {
         if (userCreate == null)
         {
@@ -80,11 +81,7 @@ public class UsersController : ControllerBase
 
         var userMap = _mapper.Map<User>(userCreate);
 
-        if (! await _userRepository.CreateUser(userMap)) 
-        {
-            ModelState.AddModelError("", "Something went wrong while saving");
-            return BadRequest(ModelState);
-        }
+        await _userRepository.CreateUser(userMap);
 
         return CreatedAtAction("GetUser", new {userId = userMap.Id}, userMap);
 
@@ -118,10 +115,7 @@ public class UsersController : ControllerBase
 
         var userMap = _mapper.Map<User>(updatedUser);
 
-        if (!await _userRepository.UpdateUser(userMap))
-        {
-            ModelState.AddModelError("", "Something went wrong while updating");
-        }
+        await _userRepository.UpdateUser(userMap);
 
         return NoContent();
     }
@@ -138,10 +132,7 @@ public class UsersController : ControllerBase
 
         var userDelete = await _userRepository.GetUser(userId);
 
-        if (!await _userRepository.DeleteUser(userDelete))
-        {
-            return BadRequest();
-        }
+        await _userRepository.DeleteUser(userDelete);
 
         return NoContent();
     }

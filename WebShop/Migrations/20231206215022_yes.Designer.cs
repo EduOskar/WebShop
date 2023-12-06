@@ -12,8 +12,8 @@ using WebShop.Api.Data;
 namespace WebShop.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231206143035_CreateIdentitySchema")]
-    partial class CreateIdentitySchema
+    [Migration("20231206215022_yes")]
+    partial class Yes
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -640,10 +640,15 @@ namespace WebShop.Api.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ConfirmPassword")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal?>("Credit")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -672,10 +677,15 @@ namespace WebShop.Api.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("PhoneNumberConfirmed")
@@ -691,6 +701,7 @@ namespace WebShop.Api.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("UserName")
+                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -712,13 +723,16 @@ namespace WebShop.Api.Migrations
                             Id = 1,
                             AccessFailedCount = 0,
                             Adress = "Fakestreet 101",
-                            ConcurrencyStamp = "14c95592-086c-4b7c-89e6-3d350316b12c",
+                            ConcurrencyStamp = "d404a0be-4930-4502-a5f0-40764c32b8be",
+                            ConfirmPassword = "Loggin",
                             Credit = 100000m,
                             Email = "Bob@Mail.com",
                             EmailConfirmed = false,
                             FirstName = "Bob",
                             LastName = "Bobinsson",
                             LockoutEnabled = false,
+                            Password = "Loggin",
+                            PhoneNumber = "070-1231212",
                             PhoneNumberConfirmed = false,
                             Role = 1,
                             TwoFactorEnabled = false,
@@ -729,13 +743,16 @@ namespace WebShop.Api.Migrations
                             Id = 2,
                             AccessFailedCount = 0,
                             Adress = "Fakestreet 102",
-                            ConcurrencyStamp = "4131bde7-a3bf-498a-a5c1-2398cfc1efe2",
+                            ConcurrencyStamp = "bbb5c4a4-033d-4937-92ff-21e8d2e0d3b7",
+                            ConfirmPassword = "Loggin",
                             Credit = 100000m,
                             Email = "Sarah@Mail.com",
                             EmailConfirmed = false,
                             FirstName = "Sarah",
                             LastName = "SarahsDaughter",
                             LockoutEnabled = false,
+                            Password = "Loggin",
+                            PhoneNumber = "070-3213232",
                             PhoneNumberConfirmed = false,
                             Role = 1,
                             TwoFactorEnabled = false,

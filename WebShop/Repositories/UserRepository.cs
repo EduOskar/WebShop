@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using WebShop.Api.Data;
 using WebShop.Api.Entity;
@@ -8,65 +9,56 @@ namespace WebShop.Api.Repositories;
 
 public class UserRepository : IUserRepository
 {
-    private readonly ApplicationDbContext _dbContext;
+    private readonly UserManager<User> userManager;
 
-    public UserRepository(ApplicationDbContext dbContext)
+    public UserRepository(UserManager<User> userManager)
     {
-        _dbContext = dbContext;
+        this.userManager = userManager;
     }
-    public async Task<bool> CreateUser(User user)
+    public async Task<IdentityResult> CreateUser(User user)
     {
-        await _dbContext.AddAsync(user);
+        return await userManager.CreateAsync(user);
 
-        return await Save();
     }
 
-    public async Task<bool> DeleteUser(User user)
+    public async Task<IdentityResult> DeleteUser(User user)
     {
-        _dbContext.Remove(user);
-        
-        return await Save();
+        return await userManager.DeleteAsync(user);
+
     }
 
     public async Task<User> GetUser(int userId)
     {
-        var user = await _dbContext.Users.Where(u => u.Id == userId)
-            .Include(r => r.Reviews)
-            .SingleOrDefaultAsync();
+        string userIdString = userId.ToString();
+
+        var user = await userManager.FindByIdAsync(userIdString);
 
         if (user != null)
         {
             return user;
         }
 
-        throw new Exception("No user by that Id");
+        throw new Exception("User could not be found by that id");
     }
 
     public async Task<ICollection<User>> GetUsers()
     {
-        var users = await _dbContext.Users.ToListAsync();
+        var users = await userManager.Users.ToListAsync();
 
         return users;
     }
-
-    public async Task<bool> Save()
+    public async Task<IdentityResult> UpdateUser(User user)
     {
-        var saved = await _dbContext.SaveChangesAsync();
+        return await userManager.UpdateAsync(user);
 
-        return saved > 0; ;
-    }
-
-    public async Task<bool> UpdateUser(User user)
-    {
-        _dbContext.Update(user);
-
-        return await Save();
     }
 
     public async Task<bool> UserExist(int userId)
     {
-       var userExist = await _dbContext.Users.AnyAsync(u => u.Id == userId);
+        string userIdString = userId.ToString();
 
-        return userExist;
+        var userExist = await userManager.FindByIdAsync(userIdString);
+
+        return userExist != null;
     }
 }
