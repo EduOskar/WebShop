@@ -86,7 +86,7 @@ public class UsersController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        return CreatedAtAction("GetUser", new {userId = userCreate.Id}, userCreate);
+        return CreatedAtAction("GetUser", new {userId = userMap.Id}, userMap);
 
     }
 

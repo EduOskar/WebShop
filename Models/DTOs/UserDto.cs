@@ -16,5 +16,6 @@ public class UserDto
     public string Adress { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string Phonenumber { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
     public int Role { get; set; }
 }
