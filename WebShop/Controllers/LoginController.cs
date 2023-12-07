@@ -12,12 +12,12 @@ namespace WebShop.Api.Controllers;
 [ApiController]
 public class LoginController : ControllerBase
 {
-    //private readonly IConfiguration configuration;
+    private readonly IConfiguration configuration;
     private readonly SignInManager<User> signInManager;
 
     public LoginController(IConfiguration configuration, SignInManager<User> signInManager)
     {
-        //this.configuration = configuration;
+        this.configuration = configuration;
         this.signInManager = signInManager;
     }
 
@@ -36,13 +36,13 @@ public class LoginController : ControllerBase
             new Claim(ClaimTypes.Name, login.Email)
         };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("JwtSecurityKey"));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSecurityKey"]!));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        var expiry = DateTime.Now.AddDays(Convert.ToInt32("JwtExpiryInDays"));
+        var expiry = DateTime.Now.AddDays(Convert.ToInt32(configuration["JwtExpiryInDays"]));
 
         var token = new JwtSecurityToken(
-            "JwtIssuer",
-            "JwtAudience",
+            configuration["JwtIssuer"],
+            configuration["JwtAudience"],
             claims,
             expires: expiry,
             signingCredentials: creds

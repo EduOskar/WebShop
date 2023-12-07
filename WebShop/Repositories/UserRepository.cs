@@ -10,15 +10,20 @@ namespace WebShop.Api.Repositories;
 public class UserRepository : IUserRepository
 {
     private readonly UserManager<User> userManager;
+    private readonly ApplicationDbContext _dbContext;
 
-    public UserRepository(UserManager<User> userManager)
+    public UserRepository(UserManager<User> userManager, ApplicationDbContext dbContext)
     {
         this.userManager = userManager;
+        _dbContext = dbContext;
     }
     public async Task<IdentityResult> CreateUser(User user)
     {
-        return await userManager.CreateAsync(user);
+        var userCreated = await userManager.CreateAsync(user);
 
+        await _dbContext.SaveChangesAsync();
+
+        return userCreated;
     }
 
     public async Task<IdentityResult> DeleteUser(User user)

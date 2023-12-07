@@ -13,19 +13,22 @@ namespace WebShop.Api.Controllers;
 [ApiController]
 public class UsersController : ControllerBase
 {
+
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
+    private readonly UserManager<User> _userManager;
 
-    public UsersController(IUserRepository userRepository, IMapper mapper)
+    public UsersController(IUserRepository userRepository, IMapper mapper, UserManager<User> userManager)
     {
         _userRepository = userRepository;
         _mapper = mapper;
+        _userManager = userManager;
     }
 
     [HttpGet]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
-    public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+    public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
     {
         var users = _mapper.Map<List<UserDto>>(await _userRepository.GetUsers());
 
@@ -41,7 +44,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
-    public async Task<ActionResult<User>> GetUser(int userId)
+    public async Task<ActionResult<UserDto>> GetUser(int userId)
     {
         if (!await _userRepository.UserExist(userId))
         {
@@ -61,31 +64,53 @@ public class UsersController : ControllerBase
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(400)]
-    public async Task<ActionResult<User>> CreateUser([FromBody] UserDto userCreate)
+    public async Task<ActionResult> CreateUser([FromBody] UserDto userCreate)
     {
-        if (userCreate == null)
-        {
-            return BadRequest(ModelState);
-        }
-
-        var user = await _userRepository.GetUsers(); 
-        var userCheck = user
-            .Where(u => u.Email!.Trim().Equals(userCreate.Email.TrimEnd(), StringComparison.CurrentCultureIgnoreCase))
-            .Any();
-
-        if (userCheck)
-        {
-            ModelState.AddModelError("", "User Already Exist");
-            return BadRequest(ModelState);
-        }
 
         var userMap = _mapper.Map<User>(userCreate);
+        userMap.UserName = userCreate.Email;
 
-        await _userRepository.CreateUser(userMap);
+        var result = await _userManager.CreateAsync(userMap, userCreate.Password);
 
-        return CreatedAtAction("GetUser", new {userId = userMap.Id}, userMap);
+        if (!result.Succeeded)
+        {
+            var errors = result.Errors.Select(x => x.Description);
+
+            return Ok(new RegisterResult { Successfull = false, Errors = errors });
+        }
+
+        return Ok(new RegisterResult { Successfull = true });
 
     }
+
+    //[HttpPost]
+    //[ProducesResponseType(201)]
+    //[ProducesResponseType(400)]
+    //public async Task<ActionResult> CreateUser([FromBody] UserDto userCreate)
+    //{
+    //    if (userCreate == null)
+    //    {
+    //        return BadRequest(ModelState);
+    //    }
+
+    //    var user = await _userRepository.GetUsers();
+    //    var userCheck = user
+    //        .Where(u => u.Email!.Trim().Equals(userCreate.Email.TrimEnd(), StringComparison.CurrentCultureIgnoreCase))
+    //        .Any();
+
+    //    if (userCheck)
+    //    {
+    //        ModelState.AddModelError("", "User Already Exist");
+    //        return BadRequest(ModelState);
+    //    }
+
+    //    var userMap = _mapper.Map<User>(userCreate);
+
+    //    await _userRepository.CreateUser(userMap);
+
+    //    return CreatedAtAction("GetUser", new { userId = userMap.Id }, userMap);
+
+    //}
 
     [HttpPut("{userId:int}")]
     [ProducesResponseType(204)]

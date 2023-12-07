@@ -694,7 +694,6 @@ namespace WebShop.Api.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("UserName")
-                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -716,7 +715,7 @@ namespace WebShop.Api.Migrations
                             Id = 1,
                             AccessFailedCount = 0,
                             Adress = "Fakestreet 101",
-                            ConcurrencyStamp = "44f8a3ee-9f32-4842-a270-360203454c23",
+                            ConcurrencyStamp = "e2c72f22-0ce7-4384-9064-36517af81465",
                             ConfirmPassword = "Loggin",
                             Credit = 100000m,
                             Email = "Bob@Mail.com",
@@ -736,7 +735,7 @@ namespace WebShop.Api.Migrations
                             Id = 2,
                             AccessFailedCount = 0,
                             Adress = "Fakestreet 102",
-                            ConcurrencyStamp = "f338f0be-8b79-4463-9455-6da88ec0205f",
+                            ConcurrencyStamp = "8a534feb-616e-4dc8-80e7-2ad53fdae442",
                             ConfirmPassword = "Loggin",
                             Credit = 100000m,
                             Email = "Sarah@Mail.com",

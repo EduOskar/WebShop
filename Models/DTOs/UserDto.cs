@@ -9,13 +9,14 @@ namespace WebShop.Models.DTOs;
 public class UserDto
 {
     public int Id { get; set; }
-    public string FirstName { get; set; } = string.Empty;
-    public string LastName { get; set; } = string.Empty;
+    public string FirstName { get; set; } = default!;
+    public string LastName { get; set; } = default!;
     public decimal Credit { get; set; }
-    public string Adress { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
-    public string Phonenumber { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty;
-    public string ConfirmPassword { get; set; } = string.Empty;
+    public string Adress { get; set; } = default!;
+    public string Username { get; set; } = default!;
+    public string Email { get; set; } = default!;
+    public string Phonenumber { get; set; } = default!;
+    public string Password { get; set; } = default!;
+    public string ConfirmPassword { get; set; } = default!;
     public int Role { get; set; }
 }

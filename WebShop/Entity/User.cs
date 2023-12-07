@@ -8,7 +8,7 @@ public class User :  IdentityUser<int>
 {
     new public string Email { get; set; } = default!;
 
-    new public string UserName { get; set; } = default!;
+    public override string? UserName { get; set; } = default!;
 
     public string FirstName { get; set; } = default!;
 
