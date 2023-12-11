@@ -4,9 +4,8 @@ namespace WebShop.Web.Services.Contracts;
 
 public interface IAuthService
 {
-    Task<UserDto> Register(UserDto registerUser);
-
-    Task<LoginResult> Login(LoginModels loginModel);
-
+    Task Login(LoginRequest loginRequest);
+    Task Register(UserDto registerRequest);
     Task Logout();
+    Task<CurrentUser> CurrentUserInformation();
 }

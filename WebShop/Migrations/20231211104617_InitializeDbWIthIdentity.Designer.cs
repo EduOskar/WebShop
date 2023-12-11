@@ -12,8 +12,8 @@ using WebShop.Api.Data;
 namespace WebShop.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231207112126_yes")]
-    partial class Yes
+    [Migration("20231211104617_InitializeDbWIthIdentity")]
+    partial class InitializeDbWIthIdentity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -697,7 +697,6 @@ namespace WebShop.Api.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("UserName")
-                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -719,7 +718,7 @@ namespace WebShop.Api.Migrations
                             Id = 1,
                             AccessFailedCount = 0,
                             Adress = "Fakestreet 101",
-                            ConcurrencyStamp = "5e4febf1-0f01-4d6d-bff9-f7567a935332",
+                            ConcurrencyStamp = "98411210-ee33-42fb-a51f-1e35fcfd2887",
                             ConfirmPassword = "Loggin",
                             Credit = 100000m,
                             Email = "Bob@Mail.com",
@@ -739,7 +738,7 @@ namespace WebShop.Api.Migrations
                             Id = 2,
                             AccessFailedCount = 0,
                             Adress = "Fakestreet 102",
-                            ConcurrencyStamp = "2f851d8a-7d22-4fc6-953b-d7c20a663433",
+                            ConcurrencyStamp = "0dd203f5-6e83-4559-bfbd-88ef2749e94c",
                             ConfirmPassword = "Loggin",
                             Credit = 100000m,
                             Email = "Sarah@Mail.com",

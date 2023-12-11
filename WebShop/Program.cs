@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using System.Text;
@@ -29,27 +30,22 @@ builder.Services.AddIdentity<User, IdentityRole<int>>()
     .AddRoles<IdentityRole<int>>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-       .AddJwtBearer(options =>
-       {
-           options.TokenValidationParameters = new TokenValidationParameters
-           {
-               ValidateIssuer = true,
-               ValidateAudience = true,
-               ValidateLifetime = true,
-               ValidateIssuerSigningKey = true,
-               ValidIssuer = "JwtIssuer",
-               ValidAudience = "JwtAudience",
-               IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("JwtSecurityKey"))
-           };
-       });
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.HttpOnly = false;
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.StatusCode = 401;
+        return Task.CompletedTask;
+    };
+});
 
 builder.Services.AddControllers()
    .AddJsonOptions(options =>
    {
        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
    });
+
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();

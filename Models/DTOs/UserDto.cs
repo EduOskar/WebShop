@@ -13,7 +13,7 @@ public class UserDto
     public string LastName { get; set; } = default!;
     public decimal Credit { get; set; }
     public string Adress { get; set; } = default!;
-    public string Username { get; set; } = default!;
+    public string UserName { get; set; } = default!;
     public string Email { get; set; } = default!;
     public string Phonenumber { get; set; } = default!;
     public string Password { get; set; } = default!;

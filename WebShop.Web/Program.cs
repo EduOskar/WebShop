@@ -1,20 +1,26 @@
-using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.Net.Http.Headers;
 using WebShop.Web.Components;
 using WebShop.Web.Services;
 using WebShop.Web.Services.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+builder.Services.AddServerSideBlazor();
+
+builder.Services.AddOptions();
+builder.Services.AddAuthenticationCore();
+builder.Services.AddAuthorizationCore();
+
 
 builder.Services.AddHttpClient();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7066/") });
-builder.Services.AddHttpClient<AuthenticationStateProvider, ApiAuthenticationStateProvider>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
 builder.Services.AddHttpClient<IProductsService, ProductsService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
 builder.Services.AddHttpClient<ICartsService, CartsService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
 builder.Services.AddHttpClient<ICartItemsService, CartItemsService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
@@ -22,8 +28,14 @@ builder.Services.AddHttpClient<IUsersService, UsersServices>().ConfigureHttpClie
 builder.Services.AddHttpClient<IOrdersService, OrdersService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
 builder.Services.AddHttpClient<IOrderItemsService, OrderItemsService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
 builder.Services.AddHttpClient<ICartOrderTransferService, CartOrderTransferService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
+//builder.Services.AddHttpClient<IAuthService, AuthService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
 
-builder.Services.AddBlazoredLocalStorage();
+
+builder.Services.AddScoped<CustomStateProvider>();
+builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<CustomStateProvider>());
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+//builder.Services.AddCascadingAuthenticationState();
 
 var app = builder.Build();
 
@@ -37,10 +49,13 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseStaticFiles();
 app.UseAntiforgery();
 
-app.MapRazorComponents<App>()   
+app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.Run();

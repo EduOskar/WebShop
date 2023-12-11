@@ -1,55 +1,24 @@
-﻿using System.Net.Http.Headers;
-using System.Security.Claims;
-using System.Text.Json;
-using System.Text;
-using Blazored.LocalStorage;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Authorization;
-using WebShop.Models.DTOs;
+﻿using WebShop.Models.DTOs;
 using WebShop.Web.Services.Contracts;
-using System.Net.Http;
-using System.Net.Http.Json;
 
 namespace WebShop.Web.Services;
 
 public class AuthService : IAuthService
 {
     private readonly HttpClient _httpClient;
-    private readonly AuthenticationStateProvider _authenticationStateProvider;
-    private readonly ILocalStorageService _localStorage;
 
-    public AuthService(HttpClient httpClient,
-                       AuthenticationStateProvider authenticationStateProvider,
-                       ILocalStorageService localStorage)
+    public AuthService(HttpClient httpClient)
     {
         _httpClient = httpClient;
-        _authenticationStateProvider = authenticationStateProvider;
-        _localStorage = localStorage;
     }
 
-    public async Task<UserDto> Register(UserDto registerUser)
+    public async Task<CurrentUser> CurrentUserInformation()
     {
         try
         {
-            var response = await _httpClient.PostAsJsonAsync<UserDto>("api/Users", registerUser);
+            var result = await _httpClient.GetFromJsonAsync<CurrentUser>("/api/Auth");
 
-            if (response.IsSuccessStatusCode)
-            {
-                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
-                {
-                    return null!;
-                }
-
-                var user = await response.Content.ReadFromJsonAsync<UserDto>();
-
-                return user!;
-            }
-            else
-            {
-                var message = await response.Content.ReadAsStringAsync();
-                throw new Exception($"Http status:{response.StatusCode} Message -{message}");
-            }
-
+            return result!;
         }
         catch (Exception)
         {
@@ -58,28 +27,34 @@ public class AuthService : IAuthService
         }
     }
 
-    public async Task<LoginResult> Login(LoginModels loginModel)
+    public async Task Login(LoginRequest loginRequest)
     {
-        var loginAsJson = JsonSerializer.Serialize(loginModel);
-        var response = await _httpClient.PostAsync("api/Login", new StringContent(loginAsJson, Encoding.UTF8, "application/json"));
-        var loginResult = JsonSerializer.Deserialize<LoginResult>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        var result = await _httpClient.PostAsJsonAsync("/api/Auth/login", loginRequest);
 
-        if (!response.IsSuccessStatusCode)
+        if (result.StatusCode == System.Net.HttpStatusCode.BadRequest)
         {
-            return loginResult!;
+            throw new Exception(await result.Content.ReadAsStringAsync());
         }
 
-        await _localStorage.SetItemAsync("authToken", loginResult!.Token);
-        ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(loginModel.Email);
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", loginResult.Token);
-
-        return loginResult;
+        result.EnsureSuccessStatusCode();
     }
 
     public async Task Logout()
     {
-        await _localStorage.RemoveItemAsync("authToken");
-        ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsLoggedOut();
-        _httpClient.DefaultRequestHeaders.Authorization = null;
+        var result = await _httpClient.PostAsync("/api/Auth/logout", null);
+
+        result.EnsureSuccessStatusCode();
+    }
+
+    public async Task Register(UserDto registerRequest)
+    {
+        var result = await _httpClient.PostAsJsonAsync("/api/Auth/register", registerRequest);
+
+        if (result.StatusCode == System.Net.HttpStatusCode.BadRequest)
+        {
+            throw new Exception(await result.Content.ReadAsStringAsync());
+        }
+
+        result.EnsureSuccessStatusCode();
     }
 }

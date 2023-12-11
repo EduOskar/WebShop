@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebShop.Api.Migrations;
 
 /// <inheritdoc />
-public partial class Yes : Migration
+public partial class InitializeDbWIthIdentity : Migration
 {
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)
@@ -35,7 +35,7 @@ public partial class Yes : Migration
                 Id = table.Column<int>(type: "int", nullable: false)
                     .Annotation("SqlServer:Identity", "1, 1"),
                 Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                 FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                 LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                 Credit = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
@@ -330,8 +330,8 @@ public partial class Yes : Migration
             columns: new[] { "Id", "AccessFailedCount", "Adress", "ConcurrencyStamp", "ConfirmPassword", "Credit", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "Password", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "Role", "SecurityStamp", "TwoFactorEnabled", "UserName" },
             values: new object[,]
             {
-                { 1, 0, "Fakestreet 101", "5e4febf1-0f01-4d6d-bff9-f7567a935332", "Loggin", 100000m, "Bob@Mail.com", false, "Bob", "Bobinsson", false, null, null, null, "Loggin", null, "070-1231212", false, 1, null, false, "Bob" },
-                { 2, 0, "Fakestreet 102", "2f851d8a-7d22-4fc6-953b-d7c20a663433", "Loggin", 100000m, "Sarah@Mail.com", false, "Sarah", "SarahsDaughter", false, null, null, null, "Loggin", null, "070-3213232", false, 1, null, false, "Sarah" }
+                { 1, 0, "Fakestreet 101", "98411210-ee33-42fb-a51f-1e35fcfd2887", "Loggin", 100000m, "Bob@Mail.com", false, "Bob", "Bobinsson", false, null, null, null, "Loggin", null, "070-1231212", false, 1, null, false, "Bob" },
+                { 2, 0, "Fakestreet 102", "0dd203f5-6e83-4559-bfbd-88ef2749e94c", "Loggin", 100000m, "Sarah@Mail.com", false, "Sarah", "SarahsDaughter", false, null, null, null, "Loggin", null, "070-3213232", false, 1, null, false, "Sarah" }
             });
 
         migrationBuilder.InsertData(

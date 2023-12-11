@@ -12,8 +12,8 @@ using WebShop.Api.Data;
 namespace WebShop.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231207122214_yorp")]
-    partial class Yorp
+    [Migration("20231211135419_yes")]
+    partial class Yes
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -718,7 +718,7 @@ namespace WebShop.Api.Migrations
                             Id = 1,
                             AccessFailedCount = 0,
                             Adress = "Fakestreet 101",
-                            ConcurrencyStamp = "e2c72f22-0ce7-4384-9064-36517af81465",
+                            ConcurrencyStamp = "68823cae-1150-421c-9e8d-e38929952364",
                             ConfirmPassword = "Loggin",
                             Credit = 100000m,
                             Email = "Bob@Mail.com",
@@ -738,7 +738,7 @@ namespace WebShop.Api.Migrations
                             Id = 2,
                             AccessFailedCount = 0,
                             Adress = "Fakestreet 102",
-                            ConcurrencyStamp = "8a534feb-616e-4dc8-80e7-2ad53fdae442",
+                            ConcurrencyStamp = "08d9a0c0-0b7a-4846-b353-a5e172e7f965",
                             ConfirmPassword = "Loggin",
                             Credit = 100000m,
                             Email = "Sarah@Mail.com",

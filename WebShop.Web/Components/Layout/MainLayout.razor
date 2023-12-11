@@ -1,4 +1,6 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager navigationManager
+@inject CustomStateProvider authStateProvider
 
 <div class="page">
     <div class="sidebar">
@@ -8,6 +10,7 @@
     <main>
         <div class="top-row px-4">
             <CartMenu/>
+            <button type="button" class="btn btn-link" @onclick="@HandleLogin">@Message</button>
         </div>
 
         <article class="content px-4">
@@ -21,3 +24,38 @@
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
+
+@functions {
+    [CascadingParameter]
+    Task<AuthenticationState> AuthenticationState { get; set; } = default!;
+
+    String Message = "Login";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!(await AuthenticationState).User.Identity!.IsAuthenticated)
+        {
+            Message = "Login";
+            StateHasChanged();
+        }
+        else
+        {
+            Message = "Logout";
+            StateHasChanged();
+        }
+    }
+
+    async Task HandleLogin()
+    {
+        if ((await AuthenticationState).User.Identity!.IsAuthenticated)
+        {
+            await authStateProvider.Logout();
+            navigationManager.NavigateTo("/");
+        }
+        else
+        {
+            navigationManager.NavigateTo("/Login");
+        }
+
+    }
+}
