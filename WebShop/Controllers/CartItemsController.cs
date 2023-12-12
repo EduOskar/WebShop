@@ -34,16 +34,16 @@ public class CartItemsController : ControllerBase
     {
         var cartItems = _mapper.Map<List<CartItemDto>>(await _cartItemRepository.GetCartItems(userId));
 
-        foreach (var item in cartItems)
-        {
-            var product = await _productRepository.GetProduct(item.ProductId);
+        //foreach (var item in cartItems)
+        //{
+        //    var product = await _productRepository.GetProduct(item.ProductId);
 
-            if (product != null)
-            {
-                item.Price = product.Price;
-                item.TotalPrice = product.Price * item.Qty;
-            }
-        }
+        //    if (product != null)
+        //    {
+        //        item.Price = product.Price;
+        //        item.TotalPrice = product.Price * item.Qty;
+        //    }
+        //}
 
         if (!ModelState.IsValid)
         {
@@ -213,7 +213,6 @@ public class CartItemsController : ControllerBase
 
         var cartItemMap = _mapper.Map<CartItem>(cartItem);
         cartItemMap.Qty = cartItemUpdateQty.Qty;
-        cartItemMap.Price = cartItem.Price;
 
         if (!await _cartItemRepository.UpdateCartItem(cartItemMap))
         {

@@ -10,13 +10,14 @@ public class CartItem
     public int Id { get; set; }
 
     public int CartId { get; set; }
-    public virtual Cart? Cart { get; set; }
+    public virtual Cart? Cart { get; set; } 
 
     public int ProductId { get; set; }
-    public virtual Product? Product { get; set; }
-    public virtual decimal Price { get; set; }
 
-    [MaxLength(200)]
+    public virtual Product Product { get; set; } = default!;
+
+    public decimal TotalPrice => Product.Price * Qty;
+
     public int Qty { get; set; }
 
 }
