@@ -70,7 +70,6 @@ public class UsersServices : IUsersService
     {
         try
         {
-            //Förändra när jag implementerar inloggning
             var response = await _httpClient.GetAsync($"api/Users/{userId}");
 
             if (response.IsSuccessStatusCode)

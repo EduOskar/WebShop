@@ -320,8 +320,9 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             Email = "Bob@Mail.com",
             Password = "Loggin",
             ConfirmPassword = "Loggin",
+            PasswordHash = new PasswordHasher<User>().HashPassword(null!, "Loggin"),
             PhoneNumber = "070-1231212",
-            Role = 1
+
         });
         modelBuilder.Entity<User>().HasData(new User
         {
@@ -334,8 +335,20 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             Email = "Sarah@Mail.com",
             Password = "Loggin",
             ConfirmPassword = "Loggin",
-            PhoneNumber = "070-3213232",
-            Role = 1
+            PasswordHash = new PasswordHasher<User>().HashPassword(null!, "Loggin"),
+            PhoneNumber = "070-3213232"
+        });
+
+        modelBuilder.Entity<IdentityUserRole<int>>().HasData(new IdentityUserRole<int>
+        {
+            UserId = 1,
+            RoleId = 2,
+        });
+
+        modelBuilder.Entity<IdentityUserRole<int>>().HasData(new IdentityUserRole<int>
+        {
+            UserId = 2,
+            RoleId = 2,
         });
 
         //Create Shopping Cart for Users

@@ -26,8 +26,6 @@ public class User :  IdentityUser<int>
     [DataType(DataType.Password)]
     public string ConfirmPassword { get; set; } = default!;
 
-    public int Role { get; set; } = default!;
-
     public ICollection<Order>? Orders { get; set; }
 
     public ICollection<Review>? Reviews { get; set; }

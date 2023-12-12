@@ -12,8 +12,8 @@ using WebShop.Api.Data;
 namespace WebShop.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231211135419_yes")]
-    partial class Yes
+    [Migration("20231212143002_UpdatedEntityBuilderInData")]
+    partial class UpdatedEntityBuilderInData
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -137,6 +137,18 @@ namespace WebShop.Api.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 1,
+                            RoleId = 2
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            RoleId = 2
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
@@ -200,14 +212,10 @@ namespace WebShop.Api.Migrations
                     b.Property<int>("CartId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("Qty")
-                        .HasMaxLength(200)
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -687,9 +695,6 @@ namespace WebShop.Api.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Role")
-                        .HasColumnType("int");
-
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -718,7 +723,7 @@ namespace WebShop.Api.Migrations
                             Id = 1,
                             AccessFailedCount = 0,
                             Adress = "Fakestreet 101",
-                            ConcurrencyStamp = "68823cae-1150-421c-9e8d-e38929952364",
+                            ConcurrencyStamp = "ff93c01e-ff73-48f7-bb47-5c69116084d8",
                             ConfirmPassword = "Loggin",
                             Credit = 100000m,
                             Email = "Bob@Mail.com",
@@ -727,9 +732,9 @@ namespace WebShop.Api.Migrations
                             LastName = "Bobinsson",
                             LockoutEnabled = false,
                             Password = "Loggin",
+                            PasswordHash = "AQAAAAIAAYagAAAAEEJohn/3VV3pSRCGcWSy+R1xBaIIwYyx4ox+X07VXLnHNxd7xHwo0iQBOWdHziMp3g==",
                             PhoneNumber = "070-1231212",
                             PhoneNumberConfirmed = false,
-                            Role = 1,
                             TwoFactorEnabled = false,
                             UserName = "Bob"
                         },
@@ -738,7 +743,7 @@ namespace WebShop.Api.Migrations
                             Id = 2,
                             AccessFailedCount = 0,
                             Adress = "Fakestreet 102",
-                            ConcurrencyStamp = "08d9a0c0-0b7a-4846-b353-a5e172e7f965",
+                            ConcurrencyStamp = "2d40a8a8-a36b-4994-be17-f7829791ab68",
                             ConfirmPassword = "Loggin",
                             Credit = 100000m,
                             Email = "Sarah@Mail.com",
@@ -747,9 +752,9 @@ namespace WebShop.Api.Migrations
                             LastName = "SarahsDaughter",
                             LockoutEnabled = false,
                             Password = "Loggin",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKuOMJLjiHWdChQaG3Spr+AZiRV1MkvQBBwNjdPbbNYXoDEVL6RqIqVyQT0NeR0b4A==",
                             PhoneNumber = "070-3213232",
                             PhoneNumberConfirmed = false,
-                            Role = 1,
                             TwoFactorEnabled = false,
                             UserName = "Sarah"
                         });

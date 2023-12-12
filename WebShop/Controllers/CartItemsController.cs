@@ -66,8 +66,8 @@ public class CartItemsController : ControllerBase
        
         var cartItem = _mapper.Map<CartItemDto>(await _cartItemRepository.GetCartItem(cartItemId));
         var product = await _productRepository.GetProduct(cartItem.ProductId);
-        cartItem.Price = product.Price;
-        cartItem.TotalPrice = product.Price * cartItem.Qty;
+        //cartItem.Price = product.Price;
+        //cartItem.TotalPrice = product.Price * cartItem.Qty;
 
         if (!ModelState.IsValid)
         {

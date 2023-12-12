@@ -1,10 +1,7 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.Identity.Client;
 using Microsoft.Net.Http.Headers;
-using System.Text;
 using System.Text.Json.Serialization;
 using WebShop.Api.Data;
 using WebShop.Api.Entity;
@@ -79,4 +76,45 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
+
+    var roles = new[] { "Admin", "User" };
+
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole<int>(role));
+        }
+    }
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+
+    string email = "admin@admin.com";
+    string userName = "Admin";
+    string password = "Admin123!";
+
+    if (await userManager.FindByNameAsync(userName) == null)
+    {
+        var user = new User();
+        user.Email = email;
+        user.UserName = userName;
+        user.Password = password;
+        user.ConfirmPassword = password;
+        user.FirstName = "Adi";
+        user.LastName = "Administratum";
+        user.Adress = "Adminstreet";
+        user.PhoneNumber = "0709998877";
+
+        await userManager.CreateAsync(user, password);
+
+        await userManager.AddToRoleAsync(user, "Admin");
+    }
+}
+
+    app.Run();

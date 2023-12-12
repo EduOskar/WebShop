@@ -50,7 +50,14 @@ public class AuthController : ControllerBase
 
         var userMap = _mapper.Map<User>(parameters);
 
+        if (await _userManager.FindByEmailAsync(userMap.Email) != null || await _userManager.FindByNameAsync(userMap.UserName!) != null)
+        {
+            return BadRequest($"{userMap.Email} or {userMap.UserName} already exist");
+        }
+          
         var result = await _userManager.CreateAsync(userMap, parameters.Password);
+
+        await _userManager.AddToRoleAsync(userMap, "User");
 
         if (!result.Succeeded)
         {

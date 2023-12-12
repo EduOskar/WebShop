@@ -12,8 +12,8 @@ using WebShop.Api.Data;
 namespace WebShop.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231211104617_InitializeDbWIthIdentity")]
-    partial class InitializeDbWIthIdentity
+    [Migration("20231212141200_InitializeDb")]
+    partial class InitializeDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -200,14 +200,10 @@ namespace WebShop.Api.Migrations
                     b.Property<int>("CartId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("Qty")
-                        .HasMaxLength(200)
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -687,9 +683,6 @@ namespace WebShop.Api.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Role")
-                        .HasColumnType("int");
-
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -718,7 +711,7 @@ namespace WebShop.Api.Migrations
                             Id = 1,
                             AccessFailedCount = 0,
                             Adress = "Fakestreet 101",
-                            ConcurrencyStamp = "98411210-ee33-42fb-a51f-1e35fcfd2887",
+                            ConcurrencyStamp = "d3273e7c-4541-4e20-a593-8194c8743b65",
                             ConfirmPassword = "Loggin",
                             Credit = 100000m,
                             Email = "Bob@Mail.com",
@@ -727,9 +720,9 @@ namespace WebShop.Api.Migrations
                             LastName = "Bobinsson",
                             LockoutEnabled = false,
                             Password = "Loggin",
+                            PasswordHash = "AQAAAAIAAYagAAAAEN3FTuZECnAurA0FQYZHu6ruuD9Qe3Z79jBauaKOE5yDr0Vw3Te7kuPhEWyf95+PDw==",
                             PhoneNumber = "070-1231212",
                             PhoneNumberConfirmed = false,
-                            Role = 1,
                             TwoFactorEnabled = false,
                             UserName = "Bob"
                         },
@@ -738,7 +731,7 @@ namespace WebShop.Api.Migrations
                             Id = 2,
                             AccessFailedCount = 0,
                             Adress = "Fakestreet 102",
-                            ConcurrencyStamp = "0dd203f5-6e83-4559-bfbd-88ef2749e94c",
+                            ConcurrencyStamp = "29ecf68a-e806-4473-b34a-ff6e7a29e986",
                             ConfirmPassword = "Loggin",
                             Credit = 100000m,
                             Email = "Sarah@Mail.com",
@@ -747,9 +740,9 @@ namespace WebShop.Api.Migrations
                             LastName = "SarahsDaughter",
                             LockoutEnabled = false,
                             Password = "Loggin",
+                            PasswordHash = "AQAAAAIAAYagAAAAEGwPMGh1FHxJ0+bhgdQXj7pq18NUkmlw7FwzHk4oWNSSczDN3ukjLYrkfSySAG4hvg==",
                             PhoneNumber = "070-3213232",
                             PhoneNumberConfirmed = false,
-                            Role = 1,
                             TwoFactorEnabled = false,
                             UserName = "Sarah"
                         });

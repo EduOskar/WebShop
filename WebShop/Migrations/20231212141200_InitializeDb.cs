@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebShop.Api.Migrations;
 
 /// <inheritdoc />
-public partial class InitializeDbWIthIdentity : Migration
+public partial class InitializeDb : Migration
 {
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)
@@ -43,7 +43,6 @@ public partial class InitializeDbWIthIdentity : Migration
                 PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                 Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                 ConfirmPassword = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                Role = table.Column<int>(type: "int", nullable: false),
                 NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                 NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                 EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
@@ -251,8 +250,7 @@ public partial class InitializeDbWIthIdentity : Migration
                     .Annotation("SqlServer:Identity", "1, 1"),
                 CartId = table.Column<int>(type: "int", nullable: false),
                 ProductId = table.Column<int>(type: "int", nullable: false),
-                Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                Qty = table.Column<int>(type: "int", maxLength: 200, nullable: false)
+                Qty = table.Column<int>(type: "int", nullable: false)
             },
             constraints: table =>
             {
@@ -327,11 +325,11 @@ public partial class InitializeDbWIthIdentity : Migration
 
         migrationBuilder.InsertData(
             table: "AspNetUsers",
-            columns: new[] { "Id", "AccessFailedCount", "Adress", "ConcurrencyStamp", "ConfirmPassword", "Credit", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "Password", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "Role", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+            columns: new[] { "Id", "AccessFailedCount", "Adress", "ConcurrencyStamp", "ConfirmPassword", "Credit", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "Password", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
             values: new object[,]
             {
-                { 1, 0, "Fakestreet 101", "98411210-ee33-42fb-a51f-1e35fcfd2887", "Loggin", 100000m, "Bob@Mail.com", false, "Bob", "Bobinsson", false, null, null, null, "Loggin", null, "070-1231212", false, 1, null, false, "Bob" },
-                { 2, 0, "Fakestreet 102", "0dd203f5-6e83-4559-bfbd-88ef2749e94c", "Loggin", 100000m, "Sarah@Mail.com", false, "Sarah", "SarahsDaughter", false, null, null, null, "Loggin", null, "070-3213232", false, 1, null, false, "Sarah" }
+                { 1, 0, "Fakestreet 101", "d3273e7c-4541-4e20-a593-8194c8743b65", "Loggin", 100000m, "Bob@Mail.com", false, "Bob", "Bobinsson", false, null, null, null, "Loggin", "AQAAAAIAAYagAAAAEN3FTuZECnAurA0FQYZHu6ruuD9Qe3Z79jBauaKOE5yDr0Vw3Te7kuPhEWyf95+PDw==", "070-1231212", false, null, false, "Bob" },
+                { 2, 0, "Fakestreet 102", "29ecf68a-e806-4473-b34a-ff6e7a29e986", "Loggin", 100000m, "Sarah@Mail.com", false, "Sarah", "SarahsDaughter", false, null, null, null, "Loggin", "AQAAAAIAAYagAAAAEGwPMGh1FHxJ0+bhgdQXj7pq18NUkmlw7FwzHk4oWNSSczDN3ukjLYrkfSySAG4hvg==", "070-3213232", false, null, false, "Sarah" }
             });
 
         migrationBuilder.InsertData(

@@ -18,5 +18,4 @@ public class UserDto
     public string Phonenumber { get; set; } = default!;
     public string Password { get; set; } = default!;
     public string ConfirmPassword { get; set; } = default!;
-    public int Role { get; set; }
 }

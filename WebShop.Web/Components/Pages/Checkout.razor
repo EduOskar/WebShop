@@ -95,8 +95,6 @@ else
 
             ShoppingCartItems = await CartItemService.GetCartItems(HardCoded.UserId);
 
-            // await CartOrderTransfer(HardCoded.UserId);
-
             if (ShoppingCartItems != null)
             {
                 Guid orderGuid = Guid.NewGuid();
@@ -142,11 +140,6 @@ else
         .ToList();
 
         return cartItems!;
-    }
-
-    protected async Task CartOrderTransfer(int userId)
-    {
-        await CartOrderTransferService.CartOrderTransfer(HardCoded.UserId);
     }
 
     private void CartChanged()
