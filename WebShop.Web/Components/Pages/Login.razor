@@ -1,5 +1,4 @@
 ﻿@page "/login"
-@* @layout AuthLayout *@
 @inject NavigationManager navigationManager
 @inject CustomStateProvider authStateProvider
 
@@ -24,6 +23,8 @@
         <h6 class="font-weight-normal text-center">Create account</h6>
     </NavLink>
 </EditForm>
+
+
 @code {
     
     LoginRequest loginRequest { get; set; } = new LoginRequest();

@@ -8,7 +8,7 @@ namespace WebShop.Web.Services;
 public class CustomStateProvider : AuthenticationStateProvider
 {
     private readonly IAuthService _api;
-    private CurrentUser? _currentUser;
+    private UserDto? _currentUser;
 
     public CustomStateProvider(IAuthService api)
     {
@@ -42,7 +42,7 @@ public class CustomStateProvider : AuthenticationStateProvider
         return new AuthenticationState(new ClaimsPrincipal(identity));
     }
 
-    private async Task<CurrentUser> GetCurrentUser()
+    private async Task<UserDto> GetCurrentUser()
     {
         if (_currentUser != null && _currentUser.IsAuthenticated)
         {

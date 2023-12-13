@@ -21,7 +21,7 @@ else
     else if(OrderItems.Count > 0)
     {
 
-        <div class="col-md-6 offset-md-3"> 
+        <div class="col-md-6"> 
             <h4 class="mb-2">Order Summary</h4>
             <h8 class="mb-2">Order Serialnumber: @Order.Id</h8>
             @if (OrderItems.Count() > 0)
@@ -29,8 +29,8 @@ else
                 <table class="table">
                     <thead>
                         <tr>
-               
                             <th>Product</th>
+                            <th>Quantity</th>
                             <th>Product Description</th>
                         </tr>
                     </thead>
@@ -38,7 +38,8 @@ else
                         @foreach (var item in OrderItems)
                         {
                             <tr>
-                                <td>@item.Qty x @item.ProductName</td>
+                                <td>@item.ProductName</td>
+                                <th>@item.Qty</th>
                                 <td>@item.ProductDescription</td>
                             </tr>
                         }

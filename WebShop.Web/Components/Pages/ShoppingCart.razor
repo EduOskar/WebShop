@@ -1,6 +1,9 @@
 ﻿@page "/ShoppingCart"
+@* @using Microsoft.AspNetCore.Identity *@
 @using Microsoft.JSInterop
 @inject IJSRuntime Js
+@inject NavigationManager navigationManager
+@* @inject CustomStateProvider authStateProvider *@
 
 @if (ShoppingCartItems == null && ErrorMessage == null)
 {
@@ -35,7 +38,6 @@ else
                                     Update Qty
                                 </button>
                             </span>
-
 
                             <div>
                                 <button @onclick="(() => DeleteCartItem_click(item.Id))"
@@ -93,6 +95,8 @@ else
             ErrorMessage = ex.Message;
         }
     }
+
+
 
     protected async Task DeleteCartItem_click(int cartItemid)
     {
@@ -186,3 +190,4 @@ else
         CartItemsService.RaiseEventOnShoppingCartChanged(TotalQuantity);
     }
 }
+

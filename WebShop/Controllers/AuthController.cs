@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WebShop.Api.Entity;
+using WebShop.Api.Repositories.Contracts;
 using WebShop.Models.DTOs;
 
 namespace WebShop.Api.Controllers;
@@ -14,12 +15,14 @@ public class AuthController : ControllerBase
     private readonly UserManager<User> _userManager;
     private readonly SignInManager<User> _signInManager;
     private readonly IMapper _mapper;
+    private readonly ICartRepository _cartRepository;
 
-    public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IMapper mapper)
+    public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IMapper mapper, ICartRepository cartRepository)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _mapper = mapper;
+        _cartRepository = cartRepository;
     }
 
     [HttpPost("login")]
@@ -33,7 +36,7 @@ public class AuthController : ControllerBase
         }
 
         var signInResult = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
-        
+
         if (!signInResult.Succeeded)
         {
             return BadRequest("Invalid password or username");
@@ -54,8 +57,17 @@ public class AuthController : ControllerBase
         {
             return BadRequest($"{userMap.Email} or {userMap.UserName} already exist");
         }
-          
+
         var result = await _userManager.CreateAsync(userMap, parameters.Password);
+
+        Cart newCart = new Cart
+        {
+            UserId = userMap.Id
+        };
+
+        var cartMap = _mapper.Map<Cart>(newCart);
+
+        await _cartRepository.CreateCart(cartMap);
 
         await _userManager.AddToRoleAsync(userMap, "User");
 
@@ -63,6 +75,8 @@ public class AuthController : ControllerBase
         {
             return BadRequest(result.Errors.FirstOrDefault()?.Description);
         }
+
+     
 
         return await Login(new LoginRequest
         {
@@ -80,14 +94,14 @@ public class AuthController : ControllerBase
     }
 
     [HttpGet]
-    public CurrentUser CurrentUserInformation()
+    public UserDto CurrentUserInformation()
     {
-        return new CurrentUser
+        return new UserDto
         {
             IsAuthenticated = User.Identity!.IsAuthenticated,
-            UserName = User.Identity.Name!,  
+            UserName = User.Identity.Name!,
             Claims = User.Claims
-            .ToDictionary(c => c.Type, c=>c.Value)
+            .ToDictionary(c => c.Type, c => c.Value)
         };
     }
 }

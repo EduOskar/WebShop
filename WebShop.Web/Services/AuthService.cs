@@ -12,11 +12,11 @@ public class AuthService : IAuthService
         _httpClient = httpClient;
     }
 
-    public async Task<CurrentUser> CurrentUserInformation()
+    public async Task<UserDto> CurrentUserInformation()
     {
         try
         {
-            var result = await _httpClient.GetFromJsonAsync<CurrentUser>("/api/Auth");
+            var result = await _httpClient.GetFromJsonAsync<UserDto>("/api/Auth");
 
             return result!;
         }

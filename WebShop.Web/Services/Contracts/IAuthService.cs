@@ -7,5 +7,5 @@ public interface IAuthService
     Task Login(LoginRequest loginRequest);
     Task Register(UserDto registerRequest);
     Task Logout();
-    Task<CurrentUser> CurrentUserInformation();
+    Task<UserDto> CurrentUserInformation();
 }
