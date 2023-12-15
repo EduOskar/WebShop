@@ -8,7 +8,6 @@ namespace WebShop.Models.DTOs;
 public class CurrentUser
 {
     public bool IsAuthenticated { get; set; }
-    public int UserId { get; set; } = default!;
     public string UserName { get; set; } = default!;
     public Dictionary<string, string> Claims { get; set; } = default!;
 }

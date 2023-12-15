@@ -63,4 +63,33 @@ public class AuthService : IAuthService
 
         result.EnsureSuccessStatusCode();
     }
+
+    //public async Task<UserDto> GetUserInformation(int userId)
+    //{
+    //    try
+    //    {
+    //        var response = await _httpClient.GetAsync($"api/Auth/GetUser");
+
+    //        if (response.IsSuccessStatusCode)
+    //        {
+    //            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+    //            {
+    //                return null!;
+    //            }
+
+    //            var user = await response.Content.ReadFromJsonAsync<UserDto>();
+    //            return user!;
+    //        }
+    //        else
+    //        {
+    //            var message = await response.Content.ReadAsStringAsync();
+    //            throw new Exception(message);
+    //        }
+    //    }
+    //    catch (Exception)
+    //    {
+
+    //        throw;
+    //    }
+    //}
 }

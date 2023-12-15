@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -93,7 +94,7 @@ public class AuthController : ControllerBase
         return Ok();
     }
 
-    [HttpGet]
+    [HttpGet("CurrentUserInformation")]
     public CurrentUser CurrentUserInformation()
     {
         return new CurrentUser

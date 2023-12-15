@@ -1,11 +1,70 @@
-﻿@page "/CurrentUserCheck"
+﻿@page "/userCheck"
+@using System.Security.Claims
+
+@inject CustomStateProvider authenticationStateProvider
+
+@attribute [Authorize(Roles = "User")]
+
 <AuthorizeView>
     <Authorized>
         <h1>Hello @context.User.Identity.Name !!</h1>
+        <br />
+        <h5>Hello, @User.Identity.Name</h5>
+        <br />
+        <h5>UserId : @UserId</h5>
+        <br />
+        @if (cart == null)
+        {
+            <DisplaySpinner />
+        }
+        else
+        {
+            <h5>@cart.Id</h5>
+            <h5>@cart.UserId</h5>
+        }
+ 
+        @foreach (var item in context.User.Claims)
+        {
+            <h5>@item.Value</h5>
+            <h5>@item.ValueType</h5>
+            <h5>@item.Properties</h5>
+            <h5>@item.Issuer</h5>
+            <h5>@item.Subject</h5>
+        }
         <p>Welcome to Blazor Learner.</p>
-        <SurveyPrompt Title="How is Blazor working for you?" />
     </Authorized>
     <Authorizing>
         <h1>Loading ...</h1>
     </Authorizing>
 </AuthorizeView>
+
+
+@code{
+    private ClaimsPrincipal User = default!;
+    private int UserId;
+
+    private CartDto cart = default!;
+
+    [Inject]
+    private ICartsService cartsService { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+
+        User = authState.User;
+
+        if (User != null && User.Identity.IsAuthenticated)
+        {
+            string userIdClaimValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+            if (int.TryParse(userIdClaimValue, out int userId))
+            {
+                UserId = userId;
+            }
+
+            cart = await cartsService.GetCartByUser(UserId);
+        }
+    }
+    
+}
+

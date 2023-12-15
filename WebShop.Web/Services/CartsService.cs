@@ -32,7 +32,7 @@ public class CartsService : ICartsService
     {
         try
         {
-            var response = await _httpClient.GetAsync($"api/Carts{userId}");
+            var response = await _httpClient.GetAsync($"api/Carts/Get-Cart-By-User/{userId}");
 
             if (response.IsSuccessStatusCode)
             {

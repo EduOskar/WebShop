@@ -8,7 +8,7 @@ namespace WebShop.Web.Services;
 public class CustomStateProvider : AuthenticationStateProvider
 {
     private readonly IAuthService api;
-    private CurrentUser _currentUser;
+    private CurrentUser _currentUser = default!;
     public CustomStateProvider(IAuthService api)
     {
         this.api = api;
@@ -21,7 +21,7 @@ public class CustomStateProvider : AuthenticationStateProvider
             var userInfo = await GetCurrentUser();
             if (userInfo.IsAuthenticated)
             {
-                var claims = new[] { new Claim(ClaimTypes.Name, _currentUser.UserName) }.Concat(_currentUser.Claims.Select(c => new Claim(c.Key, c.Value)));
+                var claims = new[] { new Claim(ClaimTypes.Name, _currentUser.UserName)}.Concat(_currentUser.Claims.Select(c => new Claim(c.Key, c.Value)));
                 identity = new ClaimsIdentity(claims, "Server authentication");
             }
         }
@@ -40,7 +40,7 @@ public class CustomStateProvider : AuthenticationStateProvider
     public async Task Logout()
     {
         await api.Logout();
-        _currentUser = null;
+        _currentUser = null!;
         NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
     }
     public async Task Login(LoginRequest loginParameters)

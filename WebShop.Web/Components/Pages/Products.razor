@@ -1,4 +1,5 @@
-﻿@page "/"
+﻿@page "/products"
+@inject CustomStateProvider authenticationStateProvider
 
 @if (ProductList == null)
 {
@@ -34,26 +35,52 @@ else
     [Inject]
     public ICartItemsService CartitemService { get; set; } = default!;
 
+    [Inject]
+    private IUsersService UserService { get; set; } = default!;
+
+    private ClaimsPrincipal User = default!;
+
+    private CartDto cart = default!;
+
+    private int UserId;
+
     public IEnumerable<ProductDto> ProductList { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
+            var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+
+            User = authState.User;
+
+            if (User != null && User.Identity!.IsAuthenticated)
+            {
+                string userIdClaimValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+                if (int.TryParse(userIdClaimValue, out int userId))
+                {
+                    UserId = userId;
+                }
+
+                var UserCartItems = await UserService.GetUser(UserId);
+
+                var shoppingCartItems = await CartitemService.GetCartItems(UserCartItems.Id);
+
+                var totalQty = shoppingCartItems.Sum(ci => ci.Qty);
+
+                CartitemService.RaiseEventOnShoppingCartChanged(totalQty);
+            }
+
             ProductList = await ProductService.GetProducts();
 
-            var shoppingCartItems = await CartitemService.GetCartItems(HardCoded.UserId);
-
-            var totalQty = shoppingCartItems.Sum(ci => ci.Qty);
-
-            CartitemService.RaiseEventOnShoppingCartChanged(totalQty);
+           
         }
         catch (Exception)
         {
-            
+
             throw;
         }
-       
+
     }
 
     protected IOrderedEnumerable<IGrouping<int, ProductDto>> GetGroupedProductsByCategory()

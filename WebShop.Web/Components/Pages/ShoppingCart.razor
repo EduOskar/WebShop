@@ -1,9 +1,8 @@
 ﻿@page "/ShoppingCart"
-@* @using Microsoft.AspNetCore.Identity *@
 @using Microsoft.JSInterop
 @inject IJSRuntime Js
 @inject NavigationManager navigationManager
-@* @inject CustomStateProvider authStateProvider *@
+@inject CustomStateProvider authenticationStateProvider
 
 @if (ShoppingCartItems == null && ErrorMessage == null)
 {
@@ -74,7 +73,13 @@ else
     [Inject]
     public ICartItemsService CartItemsService { get; set; } = default!;
 
+    [Inject]
+    public IUsersService UserService { get; set; } = default!;
+
     public List<CartItemDto> ShoppingCartItems { get; set; } = default!;
+
+    private ClaimsPrincipal User = default!;
+    private int UserId;
 
     public string? ErrorMessage { get; set; }
 
@@ -85,9 +90,26 @@ else
     {
         try
         {
-            ShoppingCartItems = await CartItemsService.GetCartItems(HardCoded.UserId);
+            var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+
+            User = authState.User;
+
+            if (User != null && User.Identity!.IsAuthenticated)
+            {
+                string userIdClaimValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+                if (int.TryParse(userIdClaimValue, out int userId))
+                {
+                    UserId = userId;
+                }
+
+            }
+
+            var UserCartItems = await UserService.GetUser(UserId);
+
+            ShoppingCartItems = await CartItemsService.GetCartItems(UserCartItems.Id);
 
             CartChanged();
+
         }
         catch (Exception ex)
         {
@@ -121,7 +143,6 @@ else
                 var returnedUpdatedItemDto = await CartItemsService.UpdateCartItemQty(updateItemDto);
 
                 UpdateItemTotalPrice(returnedUpdatedItemDto);
-                CartChanged();
 
             }
             else
@@ -171,7 +192,7 @@ else
 
     private CartItemDto GetCartItem(int userId)
     {
-        var cartItems = ShoppingCartItems.FirstOrDefault(ci => ci.Id == userId);
+        var cartItems = ShoppingCartItems.FirstOrDefault(ci => ci.Id == UserId);
 
         return cartItems!;
 
@@ -182,6 +203,7 @@ else
         var cartItem = GetCartItem(cartItemId);
 
         ShoppingCartItems.Remove(cartItem);
+
     }
 
     private void CartChanged()

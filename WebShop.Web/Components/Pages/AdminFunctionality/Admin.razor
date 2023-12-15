@@ -3,9 +3,17 @@
 
 @attribute [Authorize(Roles = "Admin")]
 
-<h3>Admin</h3>
+<AuthorizeView>
+    <Authorized>
+        <h1>Hello @context.User.Identity.Name !!</h1>
+        <p>Welcome to Blazor Learner.</p>
+    </Authorized>
+    <Authorizing>
+        <h1>Loading ...</h1>
+    </Authorizing>
+</AuthorizeView>
 
-<h5>Hello mr.Admin, pleasure to see you</h5>
+<h5>Hello mr.Admin, </h5>
 
 @code {
 

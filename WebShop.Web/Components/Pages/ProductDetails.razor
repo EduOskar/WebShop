@@ -1,4 +1,5 @@
 ﻿@page "/ProductDetails/{productId:int}"
+@inject CustomStateProvider authenticationStateProvider
 
 @if (Product == null && ErrorMessage == null)
 {
@@ -25,7 +26,7 @@ else
             </p>
             <div class="btn btn-success"
                  @onclick="() => (AddToCart_Click( new CartItemDto{
-                CartId = HardCoded.CartId,
+                CartId = cart.Id,
                 ProductId = Product!.Id, 
                 Qty = 1
             }))">
@@ -47,9 +48,13 @@ else
     public ICartItemsService CartItemsService { get; set; } = default!;
 
     [Inject]
-    public NavigationManager NavigationManager { get; set; } = default!;
+    private ICartsService CartsService { get; set; } = default!;
 
-    public UserDto User { get; set; } = default!;
+    [Inject]
+    private IUsersService UserService { get; set; } = default!;
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; } = default!;
 
     public ProductDto Product { get; set; } = default!;
 
@@ -57,12 +62,35 @@ else
 
     private List<CartItemDto>? ShoppingCartItems { get; set; }
 
+    private ClaimsPrincipal User = default!;
+
+    private int UserId;
+
+    private CartDto cart = default!;
+
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            ShoppingCartItems = await CartItemsService.GetCartItems(HardCoded.UserId);
+            var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
 
+            User = authState.User;
+
+            if (User != null && User.Identity!.IsAuthenticated)
+            {
+                string userIdClaimValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+                if (int.TryParse(userIdClaimValue, out int userId))
+                {
+                    UserId = userId;
+                }
+
+                cart = await CartsService.GetCartByUser(UserId);
+            }
+
+            var UserCartItems = await UserService.GetUser(UserId);
+
+            ShoppingCartItems = await CartItemsService.GetCartItems(UserCartItems.Id);
+            
             Product = await ProductsService.GetProduct(productId)!;
         }
         catch (Exception)

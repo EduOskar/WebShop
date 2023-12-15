@@ -1,5 +1,4 @@
-﻿@page "/login"
-@layout AuthLayout
+﻿@page "/"
 @inject NavigationManager navigationManager
 @inject CustomStateProvider authStateProvider
 
@@ -39,7 +38,7 @@
         {
 
             await authStateProvider.Login(loginRequest);
-            navigationManager.NavigateTo("/");
+            navigationManager.NavigateTo("/products");
 
 
         }
