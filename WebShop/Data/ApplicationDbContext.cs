@@ -334,19 +334,19 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
         });
 
         //Create Shopping Cart for Users
-        modelBuilder.Entity<Cart>().HasData(new Cart
-        {
-            Id = 1,
-            UserId = 1,
+        //modelBuilder.Entity<Cart>().HasData(new Cart
+        //{
+        //    Id = 1,
+        //    UserId = 1,
 
 
-        });
-        modelBuilder.Entity<Cart>().HasData(new Cart
-        {
-            Id = 2,
-            UserId = 2
+        //});
+        //modelBuilder.Entity<Cart>().HasData(new Cart
+        //{
+        //    Id = 2,
+        //    UserId = 2
 
-        });
+        //});
         //Add Product Categories
         modelBuilder.Entity<ProductCategory>().HasData(new ProductCategory
         {

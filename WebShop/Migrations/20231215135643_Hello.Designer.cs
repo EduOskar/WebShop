@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebShop.Api.Data;
 
@@ -11,9 +12,11 @@ using WebShop.Api.Data;
 namespace WebShop.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231215135643_Hello")]
+    partial class Hello
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -176,18 +179,6 @@ namespace WebShop.Api.Migrations
                         .IsUnique();
 
                     b.ToTable("Carts");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            UserId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            UserId = 2
-                        });
                 });
 
             modelBuilder.Entity("WebShop.Api.Entity.CartItem", b =>
@@ -709,7 +700,7 @@ namespace WebShop.Api.Migrations
                             Id = 1,
                             AccessFailedCount = 0,
                             Adress = "Fakestreet 101",
-                            ConcurrencyStamp = "14c95592-086c-4b7c-89e6-3d350316b12c",
+                            ConcurrencyStamp = "bdb61342-52e1-423f-96ec-712967947016",
                             Credit = 100000m,
                             Email = "Bob@Mail.com",
                             EmailConfirmed = false,
@@ -726,7 +717,7 @@ namespace WebShop.Api.Migrations
                             Id = 2,
                             AccessFailedCount = 0,
                             Adress = "Fakestreet 102",
-                            ConcurrencyStamp = "4131bde7-a3bf-498a-a5c1-2398cfc1efe2",
+                            ConcurrencyStamp = "591b8ebd-c148-47f0-a3dd-ab0f1a1296ec",
                             Credit = 100000m,
                             Email = "Sarah@Mail.com",
                             EmailConfirmed = false,
