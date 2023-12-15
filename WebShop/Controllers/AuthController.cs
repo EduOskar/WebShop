@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using WebShop.Api.Entity;
 using WebShop.Api.Repositories.Contracts;
 using WebShop.Models.DTOs;
@@ -76,7 +77,6 @@ public class AuthController : ControllerBase
             return BadRequest(result.Errors.FirstOrDefault()?.Description);
         }
 
-     
 
         return await Login(new LoginRequest
         {
@@ -94,9 +94,9 @@ public class AuthController : ControllerBase
     }
 
     [HttpGet]
-    public UserDto CurrentUserInformation()
+    public CurrentUser CurrentUserInformation()
     {
-        return new UserDto
+        return new CurrentUser
         {
             IsAuthenticated = User.Identity!.IsAuthenticated,
             UserName = User.Identity.Name!,

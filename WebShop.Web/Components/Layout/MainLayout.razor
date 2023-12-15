@@ -115,7 +115,7 @@
         if ((await AuthenticationState).User.Identity!.IsAuthenticated)
         {
             await authStateProvider.Logout();
-            // navigationManager.NavigateTo("");
+            navigationManager.NavigateTo("");
         }
         else
         {

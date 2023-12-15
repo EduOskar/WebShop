@@ -28,7 +28,4 @@ public class UserDto
 
     public string ConfirmPassword { get; set; } = default!;
 
-    public bool IsAuthenticated { get; set; }
-
-    public Dictionary<string, string> Claims { get; set; } = default!;
 }
