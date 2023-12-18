@@ -8,23 +8,23 @@ using System.Threading.Tasks;
 namespace WebShop.Models.DTOs;
 public record PlaceOrderCommand
 {
+    [Required(ErrorMessage ="Billingadress is required")]
     public Adress BillingAdress { get; set; } = new();
+
+    [Required(ErrorMessage = "Shippingadress is required")]
     public Adress ShippingAdress { get; set; } = new();
 
     public List<OrderItemDto> OrderItems { get; set; } = default!;
 
     public class Adress
     {
-        [Required]
-        public string Name { get; set; } = default!;
+        [Required(ErrorMessage = "Address is required")]
+        public string AddressLine { get; set; } = default!;
 
-        [Required]
-        public string AdressLine { get; set; } = default!;
-
-        [Required]
+        [Required(ErrorMessage = "City is required")]
         public string City { get; set; } = default!;
 
-        [Required]
+        [Required(ErrorMessage = "Post Code is required")]
         public string PostCode { get; set; } = default!;
     }
 }

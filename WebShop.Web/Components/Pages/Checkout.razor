@@ -8,13 +8,8 @@
     <h4>Ship to:</h4>
 
     <div>
-        <label>Name</label>
-        <InputText @bind-Value="Command!.BillingAdress.Name" />
-    </div>
-
-    <div>
         <label>Adress</label>
-        <InputText @bind-Value="Command.BillingAdress.AdressLine" />
+        <InputText @bind-Value="Command!.BillingAdress.AddressLine" />
     </div>
 
     <div>
@@ -27,7 +22,7 @@
         <InputText @bind-Value="Command.BillingAdress.PostCode" />
     </div>
     <br />
-    <a href="CheckoutSuccess" class="btn btn-success">
+    <a href="CheckoutSuccess" type="submit" class="btn btn-success">
         <span></span>&nbsp; Purchase products
     </a>
     <ValidationSummary />
@@ -102,7 +97,7 @@ else
 
     private CartDto cart = default!;
 
-    // [SupplyParameterFromForm]
+    [SupplyParameterFromForm]
     private PlaceOrderCommand? Command { get; set; } = new();
 
     private int UserId;
@@ -144,6 +139,7 @@ else
     private void SubmitOrder()
     {
         Submitted = true;
+        navigationManager.NavigateTo("CheckoutSuccess");
     }
 
     protected async Task GetAuthenticatedUserCart()
