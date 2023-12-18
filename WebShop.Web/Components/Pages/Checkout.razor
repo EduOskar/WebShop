@@ -2,10 +2,37 @@
 @inject NavigationManager navigationManager
 @inject CustomStateProvider authenticationStateProvider
 
-@if (User.Identity!.IsAuthenticated)
-{
-    <EditForm Model="Command" method="post" OnValidSubmit=""></EditForm>
-}
+<EditForm Model="Command" class="form-text" method="post" OnValidSubmit="SubmitOrder" FormName="checkout">
+    <DataAnnotationsValidator />
+
+    <h4>Ship to:</h4>
+
+    <div>
+        <label>Name</label>
+        <InputText @bind-Value="Command!.BillingAdress.Name" />
+    </div>
+
+    <div>
+        <label>Adress</label>
+        <InputText @bind-Value="Command.BillingAdress.AdressLine" />
+    </div>
+
+    <div>
+        <label>City</label>
+        <InputText @bind-Value="Command.BillingAdress.City" />
+    </div>
+
+    <div>
+        <label>Post Code</label>
+        <InputText @bind-Value="Command.BillingAdress.PostCode" />
+    </div>
+    <br />
+    <a href="CheckoutSuccess" class="btn btn-success">
+        <span></span>&nbsp; Purchase products
+    </a>
+    <ValidationSummary />
+</EditForm>
+
 
 @if (ShoppingCartItems == null)
 {
@@ -75,8 +102,8 @@ else
 
     private CartDto cart = default!;
 
-    [SupplyParameterFromForm]
-    private PlaceOrderCommand? Command { get; set; }
+    // [SupplyParameterFromForm]
+    private PlaceOrderCommand? Command { get; set; } = new();
 
     private int UserId;
 
@@ -87,6 +114,8 @@ else
     protected decimal PaymentAmount { get; set; }
 
     protected bool PaymentSuccessfull { get; set; }
+
+    protected bool Submitted = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -112,6 +141,10 @@ else
         }
     }
 
+    private void SubmitOrder()
+    {
+        Submitted = true;
+    }
 
     protected async Task GetAuthenticatedUserCart()
     {

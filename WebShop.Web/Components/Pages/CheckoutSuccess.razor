@@ -5,16 +5,14 @@
 {
     <DisplaySpinner />
 }
-else if (ShoppingCartItems.Count > 0)
+@* else if (ShoppingCartItems.Count > 0)
 {
     <h5>Your Order is being proccesed</h5>
     <br />
     <DisplaySpinner />
-}
+} *@
 else
 {
- 
-
     @if(OrderItems == null)
     {
         <DisplaySpinner />
@@ -92,11 +90,11 @@ else
             if (ShoppingCartItems?.Count != 0)
             {
                 await CartOrderTransfer(UserId);
-
-                Order = await OrderService.GetLastOrderFromUser(UserId);
-
-                OrderItems = await OrderItemService.GetOrderItemsFromOrder(Order.Id);
             }
+
+            Order = await OrderService.GetLastOrderFromUser(UserId);
+
+            OrderItems = await OrderItemService.GetOrderItemsFromOrder(Order.Id);
            
         }
         catch (Exception)
@@ -122,6 +120,6 @@ else
 
     protected async Task CartOrderTransfer(int userId)
     {
-        await CartOrderTransferService.CartOrderTransfer(UserId);
+        await CartOrderTransferService.CartOrderTransfer(userId);
     }
 }

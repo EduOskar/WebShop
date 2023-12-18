@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using WebShop.Api.Entity;
@@ -13,6 +14,7 @@ namespace WebShop.Api.Controllers;
 public class CartOrderTransfersController : ControllerBase
 {
     private readonly IProductRepository _productRepository;
+    private readonly UserManager<User> _userManager;
     private readonly IUserRepository _userRepository;
     private readonly ICartRepository _cartRepository;
     private readonly ICartItemRepository _cartItemRepository;
@@ -21,6 +23,7 @@ public class CartOrderTransfersController : ControllerBase
     private readonly IMapper _mapper;
 
     public CartOrderTransfersController(IProductRepository productRepository,
+        UserManager<User> userManager,
         IUserRepository userRepository,
         ICartRepository cartRepository,
         ICartItemRepository cartItemRepository,
@@ -29,6 +32,7 @@ public class CartOrderTransfersController : ControllerBase
         IMapper mapper)
     {
         _productRepository = productRepository;
+        _userManager = userManager;
         _userRepository = userRepository;
         _cartRepository = cartRepository;
         _cartItemRepository = cartItemRepository;
@@ -45,14 +49,18 @@ public class CartOrderTransfersController : ControllerBase
     {
         decimal priceCheck = 0;
 
-        var user = await _userRepository.GetUser(userId);
+        string userIdentity = userId.ToString();
+
+        var userManager = await _userManager.FindByIdAsync(userIdentity);
+
+        var user = await _userRepository.GetUser(userManager!.Id);
 
         if (! await _userRepository.UserExist(userId))
         {
             return NotFound(false);
         }
 
-        var usersCart = await _cartRepository.GetCartByUser(userId);
+        var usersCart = await _cartRepository.GetCartByUser(user.Id);
 
         if (! await _cartRepository.CartExist(usersCart.Id))
         {
@@ -64,7 +72,7 @@ public class CartOrderTransfersController : ControllerBase
             return BadRequest(false);
         }
 
-        var cartItems = await _cartItemRepository.GetCartItems(usersCart.Id);
+        var cartItems = await _cartItemRepository.GetCartItems(userId);
 
         var cartItemsCheck = cartItems.Where(ci => ci.CartId == usersCart.Id);
 
@@ -94,9 +102,6 @@ public class CartOrderTransfersController : ControllerBase
         {
             return BadRequest(false);
         }
-
-      
-
 
         user.Credit -= priceCheck;
 
