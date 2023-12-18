@@ -1,5 +1,4 @@
 ﻿@page "/ShoppingCart"
-@using Microsoft.JSInterop
 @inject IJSRuntime Js
 @inject NavigationManager navigationManager
 @inject CustomStateProvider authenticationStateProvider
@@ -34,7 +33,7 @@ else
                                 <input type="number" @bind="@item.Qty" />
                                 <button data-itemId="@item.Id" class="btn btn-info btn-sm update-qty"
                                         @onclick="(() => UpdateQtyCartItem_Click(item.Id, item.Qty))">
-                                    Update Qty
+                                    Update quantity
                                 </button>
                             </span>
 
@@ -62,7 +61,18 @@ else
     }
     else
     {
-        <h4>There are currently no items in your shopping Cart</h4>
+        @if (!User.Identity!.IsAuthenticated)
+        {
+            <h5>You need to be logged in to have a shoppingcart</h5>
+            <a href="" class="btn btn-success">
+                <span></span>&nbsp; Proceed to login
+            </a>
+        }
+        else
+        {
+            <h4>There are currently no items in your shopping Cart</h4>
+        }
+       
     }
 }
 

@@ -1,15 +1,15 @@
 ﻿@page "/userCheck"
-@using System.Security.Claims
+
 
 @inject CustomStateProvider authenticationStateProvider
 
-@attribute [Authorize(Roles = "User")]
+@attribute [Authorize(Roles = "User, Admin")]
 
 <AuthorizeView>
     <Authorized>
-        <h1>Hello @context.User.Identity.Name !!</h1>
+        <h1>Hello @context.User.Identity!.Name !!</h1>
         <br />
-        <h5>Hello, @User.Identity.Name</h5>
+        <h5>Hello, @User.Identity!.Name</h5>
         <br />
         <h5>UserId : @UserId</h5>
         <br />
@@ -54,7 +54,7 @@
 
         User = authState.User;
 
-        if (User != null && User.Identity.IsAuthenticated)
+        if (User != null && User.Identity!.IsAuthenticated)
         {
             string userIdClaimValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
             if (int.TryParse(userIdClaimValue, out int userId))

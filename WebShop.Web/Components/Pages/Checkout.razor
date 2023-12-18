@@ -1,25 +1,11 @@
 ﻿@page "/Checkout"
-@using Microsoft.JSInterop 
-@inject IJSRuntime js
 @inject NavigationManager navigationManager
+@inject CustomStateProvider authenticationStateProvider
 
-
-<div class="container" style="margin-bottom: 50px">
-    <div class="row">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="col-md-6">
-                    <h4 class="mb-2">Payment Method</h4>
-                    <div id="smart-button-container">
-                        <input type="hidden" name="descriptionInput" id="description" @bind="PaymentDescription" />
-                        <input name="amountInput" type="hidden" id="amount" @bind="PaymentAmount">
-                        <div style="text-align: center; margin-top: 0.625rem;" id="paypal-button-container"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+@if (User.Identity!.IsAuthenticated)
+{
+    <EditForm Model="Command" method="post" OnValidSubmit="SubmitOrder"></EditForm>
+}
 
 @if (ShoppingCartItems == null)
 {
@@ -65,25 +51,14 @@ else
 
 
 @code {
-
-    protected List<CartItemDto> ShoppingCartItems { get; set; } = default!;
-
-    protected int TotalQuantity { get; set; } = default!;
-
-    protected string PaymentDescription { get; set; } = default!;
-
-    protected decimal PaymentAmount { get; set; }
-
-    protected bool PaymentSuccessfull { get; set; }
-
-    [CascadingParameter]
-    Task<AuthenticationState> AuthenticationState { get; set; } = default!;
-
     [Inject]
     ICartOrderTransferService CartOrderTransferService { get; set; } = default!;
 
     [Inject]
     ICartItemsService CartItemService { get; set; } = default!;
+
+    [Inject]
+    private ICartsService CartsService { get; set; } = default!;
 
     [Inject]
     IOrdersService OrderService { get; set; } = default!;
@@ -94,22 +69,42 @@ else
     [Inject]
     IProductsService ProductsService { get; set; } = default!;
 
+    protected List<CartItemDto> ShoppingCartItems { get; set; } = default!;
+
+    private ClaimsPrincipal User = default!;
+
+    private CartDto cart = default!;
+
+    [SupplyParameterFromForm]
+    private PlaceOrderCommand? Command { get; set; }
+
+    private int UserId;
+
+    protected int TotalQuantity { get; set; } = default!;
+
+    protected string PaymentDescription { get; set; } = default!;
+
+    protected decimal PaymentAmount { get; set; }
+
+    protected bool PaymentSuccessfull { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            //Kom ihåg att fixa auth och det här också för att få in user istället för HardCoded
-            ShoppingCartItems = await CartItemService.GetCartItems(HardCoded.UserId);
+            await GetAuthenticatedUserCart();
+
+            ShoppingCartItems = await CartItemService.GetCartItems(UserId);
 
             if (ShoppingCartItems != null)
             {
                 Guid orderGuid = Guid.NewGuid();
                 PaymentAmount = ShoppingCartItems.Sum(p => p.TotalPrice);
                 TotalQuantity = ShoppingCartItems.Sum(p => p.Qty);
-                PaymentDescription = $"O_{HardCoded.UserId}_{orderGuid}";
+                PaymentDescription = $"O_{UserId}_{orderGuid}";
             }
 
-        } 
+        }
         catch (Exception)
         {
 
@@ -118,32 +113,34 @@ else
     }
 
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected async Task GetAuthenticatedUserCart()
     {
-        try
-        {
-            if (firstRender)
-            {
-                await initiatePaypalButton();
-            }
-        }
-        catch (Exception)
-        {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
 
-            throw;
+        User = authState.User;
+
+        if (!User.Identity!.IsAuthenticated)
+        {
+            navigationManager.NavigateTo("");
+        }
+
+        string userIdClaimValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+        if (int.TryParse(userIdClaimValue, out int userId))
+        {
+            UserId = userId;
+        }
+
+        if (User.Identity!.IsAuthenticated)
+        {
+            cart = await CartsService.GetCartByUser(UserId);
         }
     }
-
-    private async Task initiatePaypalButton()
-    {
-        await js.InvokeVoidAsync("initiatePayPalButton");
-    }
-
 
     private List<CartItemDto> GetCartItems(int userId)
     {
+
         var cartItems = ShoppingCartItems
-        .Where(ci => ci.Id == HardCoded.CartId)
+        .Where(ci => ci.Id == cart.UserId)
         .ToList();
 
         return cartItems!;

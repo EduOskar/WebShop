@@ -1,4 +1,5 @@
 ﻿@page "/CheckoutSuccess"
+@inject CustomStateProvider authenticationStateProvider
 
 @if (ShoppingCartItems == null)
 {
@@ -57,13 +58,6 @@ else
 }
 
 @code {
-
-    protected List<CartItemDto> ShoppingCartItems { get; set; } = default!;
-
-    protected List<OrderItemDto> OrderItems { get; set; } = default!;
-
-    protected OrderDto Order { get; set; } = default!;
-
     [Inject]
     ICartOrderTransferService CartOrderTransferService { get; set; } = default!;
 
@@ -76,22 +70,34 @@ else
     [Inject]
     IOrdersService OrderService { get; set; } = default!;
 
+    protected List<CartItemDto> ShoppingCartItems { get; set; } = default!;
+
+    private ClaimsPrincipal User = default!;
+
+    protected List<OrderItemDto> OrderItems { get; set; } = default!;
+
+    protected OrderDto Order { get; set; } = default!;
+
+    private int UserId;
+
+
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            ShoppingCartItems = await CartItemService.GetCartItems(HardCoded.UserId);
+            await GetAuthenticatedUserCart();
+
+            ShoppingCartItems = await CartItemService.GetCartItems(UserId);
 
             if (ShoppingCartItems?.Count != 0)
             {
-                await CartOrderTransfer(HardCoded.UserId);
+                await CartOrderTransfer(UserId);
 
-                
+                Order = await OrderService.GetLastOrderFromUser(UserId);
+
+                OrderItems = await OrderItemService.GetOrderItemsFromOrder(Order.Id);
             }
-
-            Order = await OrderService.GetLastOrderFromUser(HardCoded.UserId);
-
-            OrderItems = await OrderItemService.GetOrderItemsFromOrder(Order.Id);
+           
         }
         catch (Exception)
         {
@@ -99,6 +105,19 @@ else
             throw;
         }
 
+    }
+
+    protected async Task GetAuthenticatedUserCart()
+    {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+
+        User = authState.User;
+
+        string userIdClaimValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+        if (int.TryParse(userIdClaimValue, out int userId))
+        {
+            UserId = userId;
+        }
     }
 
     protected async Task CartOrderTransfer(int userId)

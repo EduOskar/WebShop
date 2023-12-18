@@ -50,17 +50,10 @@ else
     {
         try
         {
-            var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
-
-            User = authState.User;
+            await GetAuthenticatedUserCart();
 
             if (User != null && User.Identity!.IsAuthenticated)
             {
-                string userIdClaimValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
-                if (int.TryParse(userIdClaimValue, out int userId))
-                {
-                    UserId = userId;
-                }
 
                 var UserCartItems = await UserService.GetUser(UserId);
 
@@ -72,7 +65,6 @@ else
             }
 
             ProductList = await ProductService.GetProducts();
-
            
         }
         catch (Exception)
@@ -81,6 +73,19 @@ else
             throw;
         }
 
+    }
+
+    protected async Task GetAuthenticatedUserCart()
+    {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+
+        User = authState.User;
+
+        string userIdClaimValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+        if (int.TryParse(userIdClaimValue, out int userId))
+        {
+            UserId = userId;
+        }
     }
 
     protected IOrderedEnumerable<IGrouping<int, ProductDto>> GetGroupedProductsByCategory()

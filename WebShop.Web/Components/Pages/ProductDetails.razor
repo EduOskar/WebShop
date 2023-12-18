@@ -24,14 +24,25 @@ else
                     @Product?.Price.ToString("C")&nbsp;(@Product?.Qty items in stock);
                 </b>
             </p>
-            <div class="btn btn-success"
-                 @onclick="() => (AddToCart_Click( new CartItemDto{
+            @if (!User.Identity!.IsAuthenticated)
+            {
+                <h5>You need to be logged in to have a shoppingcart</h5>
+                <a href="" class="btn btn-success">
+                    <span></span>&nbsp; Proceed to login
+                </a>
+            }
+            else
+            {
+                <div class="btn btn-success"
+                     @onclick="() => (AddToCart_Click( new CartItemDto{
                 CartId = cart.Id,
-                ProductId = Product!.Id, 
+                ProductId = Product!.Id,
                 Qty = 1
             }))">
-                <b>Add to Cart</b>
-            </div>
+                    <b>Add to Cart</b>
+                </div>
+            }
+
         </div>
     </div>
 }
@@ -72,30 +83,35 @@ else
     {
         try
         {
-            var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
-
-            User = authState.User;
+            await GetAuthenticatedUserCart();
 
             if (User != null && User.Identity!.IsAuthenticated)
             {
-                string userIdClaimValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
-                if (int.TryParse(userIdClaimValue, out int userId))
-                {
-                    UserId = userId;
-                }
-
                 cart = await CartsService.GetCartByUser(UserId);
+
+                var UserCartItems = await UserService.GetUser(UserId);
+
+                ShoppingCartItems = await CartItemsService.GetCartItems(UserCartItems.Id);
             }
 
-            var UserCartItems = await UserService.GetUser(UserId);
-
-            ShoppingCartItems = await CartItemsService.GetCartItems(UserCartItems.Id);
-            
             Product = await ProductsService.GetProduct(productId)!;
         }
         catch (Exception)
         {
             throw;
+        }
+    }
+
+    protected async Task GetAuthenticatedUserCart()
+    {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+
+        User = authState.User;
+
+        string userIdClaimValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+        if (int.TryParse(userIdClaimValue, out int userId))
+        {
+            UserId = userId;
         }
     }
 
