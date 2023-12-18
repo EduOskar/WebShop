@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebShop.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class Yorp : Migration
+    public partial class InitializeDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -328,8 +328,8 @@ namespace WebShop.Api.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "Adress", "ConcurrencyStamp", "ConfirmPassword", "Credit", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "Password", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { 1, 0, "Fakestreet 101", "26f8fe26-db5b-4470-a91c-968d43e27c0e", "Loggin", 100000m, "Bob@Mail.com", false, "Bob", "Bobinsson", false, null, null, null, "Loggin", "AQAAAAIAAYagAAAAEFzoP7Ga1/hThhEReTSf2btTFGpBjMCC5V8EVc3yj0GczqCgwcfgRywdsu/C+yb6wA==", "070-1231212", false, null, false, "Bob" },
-                    { 2, 0, "Fakestreet 102", "71bb2056-bd28-40a5-91ef-db8438e0807e", "Loggin", 100000m, "Sarah@Mail.com", false, "Sarah", "SarahsDaughter", false, null, null, null, "Loggin", "AQAAAAIAAYagAAAAEJdbSREATYnywSYtm4h+8CmzKAZyPNn6ZxYt7WjOmK4A02N+msQeCzh0JSZWJymoyg==", "070-3213232", false, null, false, "Sarah" }
+                    { 1, 0, "Fakestreet 101", "da59b8f2-05b2-40db-8c3c-37d5431e3de2", "Loggin", 100000m, "Bob@Mail.com", false, "Bob", "Bobinsson", false, null, null, null, "Loggin", "AQAAAAIAAYagAAAAEE8UreoCo/HexcC1OZ2WyFR6ZD0fgoJ6fDdAPmVvKpngacOqcFptQ5hE78E9e6fLlg==", "070-1231212", false, null, false, "Bob" },
+                    { 2, 0, "Fakestreet 102", "b9ccc3ba-38fe-4b0a-81cd-82aabf4d39f5", "Loggin", 100000m, "Sarah@Mail.com", false, "Sarah", "SarahsDaughter", false, null, null, null, "Loggin", "AQAAAAIAAYagAAAAELtb4g33FlA9tIM1ECrGHxOc7x6XtTxKw0ISofDMxv+1fs4aPBaXEtX7+Ajjyab9BA==", "070-3213232", false, null, false, "Sarah" }
                 });
 
             migrationBuilder.InsertData(

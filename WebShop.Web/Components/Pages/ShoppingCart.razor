@@ -90,23 +90,9 @@ else
     {
         try
         {
-            var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+            await GetAuthenticatedUserCart();
 
-            User = authState.User;
-
-            if (User != null && User.Identity!.IsAuthenticated)
-            {
-                string userIdClaimValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
-                if (int.TryParse(userIdClaimValue, out int userId))
-                {
-                    UserId = userId;
-                }
-
-            }
-
-            var UserCartItems = await UserService.GetUser(UserId);
-
-            ShoppingCartItems = await CartItemsService.GetCartItems(UserCartItems.Id);
+            ShoppingCartItems = await CartItemsService.GetCartItems(UserId);
 
             CartChanged();
 
@@ -118,13 +104,25 @@ else
         }
     }
 
+    protected async Task GetAuthenticatedUserCart()
+    {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
 
+        User = authState.User;
+
+        string userIdClaimValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+        if (int.TryParse(userIdClaimValue, out int userId))
+        {
+            UserId = userId;
+        }
+    }
 
     protected async Task DeleteCartItem_click(int cartItemid)
     {
         var cartItemDelete = await CartItemsService.DeleteCartItem(cartItemid);
 
         RemoveCartItem(cartItemid);
+
         CartChanged();
     }
 
@@ -143,6 +141,8 @@ else
                 var returnedUpdatedItemDto = await CartItemsService.UpdateCartItemQty(updateItemDto);
 
                 UpdateItemTotalPrice(returnedUpdatedItemDto);
+
+                CartChanged();
 
             }
             else
@@ -188,11 +188,12 @@ else
     private void SetTotalQuantity()
     {
         TotalQuantity = ShoppingCartItems.Sum(p => p.Qty);
+
     }
 
     private CartItemDto GetCartItem(int userId)
     {
-        var cartItems = ShoppingCartItems.FirstOrDefault(ci => ci.Id == UserId);
+        var cartItems = ShoppingCartItems.FirstOrDefault(ci => ci.Id == userId);
 
         return cartItems!;
 

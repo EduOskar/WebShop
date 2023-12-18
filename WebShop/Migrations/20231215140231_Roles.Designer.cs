@@ -12,8 +12,8 @@ using WebShop.Api.Data;
 namespace WebShop.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231213205331_Yorp")]
-    partial class Yorp
+    [Migration("20231215140231_Roles")]
+    partial class Roles
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -137,6 +137,18 @@ namespace WebShop.Api.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 1,
+                            RoleId = 2
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            RoleId = 2
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
@@ -711,7 +723,7 @@ namespace WebShop.Api.Migrations
                             Id = 1,
                             AccessFailedCount = 0,
                             Adress = "Fakestreet 101",
-                            ConcurrencyStamp = "26f8fe26-db5b-4470-a91c-968d43e27c0e",
+                            ConcurrencyStamp = "b291f094-febb-44a0-b5c6-ca50ef4b94d6",
                             ConfirmPassword = "Loggin",
                             Credit = 100000m,
                             Email = "Bob@Mail.com",
@@ -720,7 +732,7 @@ namespace WebShop.Api.Migrations
                             LastName = "Bobinsson",
                             LockoutEnabled = false,
                             Password = "Loggin",
-                            PasswordHash = "AQAAAAIAAYagAAAAEFzoP7Ga1/hThhEReTSf2btTFGpBjMCC5V8EVc3yj0GczqCgwcfgRywdsu/C+yb6wA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKlYTaj/AAmeklBcd1YLelAEwvQiA1ybU8fbUCpvJGQjMgjUlriTsnUqwaQlMZqsDw==",
                             PhoneNumber = "070-1231212",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
@@ -731,7 +743,7 @@ namespace WebShop.Api.Migrations
                             Id = 2,
                             AccessFailedCount = 0,
                             Adress = "Fakestreet 102",
-                            ConcurrencyStamp = "71bb2056-bd28-40a5-91ef-db8438e0807e",
+                            ConcurrencyStamp = "82a190d3-703c-4d00-bdb7-81bbcf5abb18",
                             ConfirmPassword = "Loggin",
                             Credit = 100000m,
                             Email = "Sarah@Mail.com",
@@ -740,7 +752,7 @@ namespace WebShop.Api.Migrations
                             LastName = "SarahsDaughter",
                             LockoutEnabled = false,
                             Password = "Loggin",
-                            PasswordHash = "AQAAAAIAAYagAAAAEJdbSREATYnywSYtm4h+8CmzKAZyPNn6ZxYt7WjOmK4A02N+msQeCzh0JSZWJymoyg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEP7RJ3DrhiLq3vSILQjA+/ov2ucSAoFTTPcW9iQ3CR3nrOFpTPTQEuXVDAUwNXg5+w==",
                             PhoneNumber = "070-3213232",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,

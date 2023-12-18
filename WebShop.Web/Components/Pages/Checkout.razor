@@ -98,7 +98,7 @@ else
     {
         try
         {
-            await AuthenticatedUserCheck();
+            //Kom ihåg att fixa auth och det här också för att få in user istället för HardCoded
             ShoppingCartItems = await CartItemService.GetCartItems(HardCoded.UserId);
 
             if (ShoppingCartItems != null)
@@ -139,14 +139,6 @@ else
         await js.InvokeVoidAsync("initiatePayPalButton");
     }
 
-
-    protected async Task AuthenticatedUserCheck()
-    {
-        if (!(await AuthenticationState).User.Identity!.IsAuthenticated)
-        {
-            navigationManager.NavigateTo("/Login");
-        }
-    }
 
     private List<CartItemDto> GetCartItems(int userId)
     {
