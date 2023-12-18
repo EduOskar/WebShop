@@ -1,5 +1,6 @@
 ﻿@page "/CheckoutSuccess"
 @inject CustomStateProvider authenticationStateProvider
+@inject NavigationManager navigationManager
 
 @if (ShoppingCartItems == null)
 {
@@ -85,17 +86,24 @@ else
         {
             await GetAuthenticatedUserCart();
 
-            ShoppingCartItems = await CartItemService.GetCartItems(UserId);
-
-            if (ShoppingCartItems?.Count != 0)
+            if (User != null && User.Identity!.IsAuthenticated)
             {
-                await CartOrderTransfer(UserId);
+                ShoppingCartItems = await CartItemService.GetCartItems(UserId);
+
+                if (ShoppingCartItems?.Count != 0)
+                {
+                    await CartOrderTransfer(UserId);
+                }
+
+                Order = await OrderService.GetLastOrderFromUser(UserId);
+
+                OrderItems = await OrderItemService.GetOrderItemsFromOrder(Order.Id);
+            }
+            else
+            {
+                navigationManager.NavigateTo("");
             }
 
-            Order = await OrderService.GetLastOrderFromUser(UserId);
-
-            OrderItems = await OrderItemService.GetOrderItemsFromOrder(Order.Id);
-           
         }
         catch (Exception)
         {
