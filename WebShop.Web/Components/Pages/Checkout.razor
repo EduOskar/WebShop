@@ -4,7 +4,7 @@
 
 @if (User.Identity!.IsAuthenticated)
 {
-    <EditForm Model="Command" method="post" OnValidSubmit="SubmitOrder"></EditForm>
+    <EditForm Model="Command" method="post" OnValidSubmit=""></EditForm>
 }
 
 @if (ShoppingCartItems == null)
