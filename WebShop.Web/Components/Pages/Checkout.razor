@@ -2,30 +2,25 @@
 @inject NavigationManager navigationManager
 @inject CustomStateProvider authenticationStateProvider
 
-<EditForm Model="Command" class="form-text" method="post" OnValidSubmit="SubmitOrder" FormName="checkout">
-    <DataAnnotationsValidator />
 
-    <h4>Ship to:</h4>
 
-    <div>
-        <label>Adress</label>
-        <InputText @bind-Value="Command!.BillingAdress.AddressLine" />
-    </div>
+<EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="Command">
+    <DataAnnotationsValidator/>
+    <label for="inputAdressLine" class="sr-only">Adressline</label>
+    <InputText id="inputAdressLine" class="form-control" aria-required="true" @bind-Value="Command!.BillingAdress.AddressLine" autofocus placeholder="Adressline"/>
+    <ValidationMessage For="@(() => Command.BillingAdress.AddressLine)" />
 
-    <div>
-        <label>City</label>
-        <InputText @bind-Value="Command.BillingAdress.City" />
-    </div>
+    <label for="inputCity" class="sr-only">City</label>
+    <InputText id="inputCity" class="form-control" aria-required="true" @bind-Value="Command.BillingAdress.City" autofocus placeholder="City" />
+    <ValidationMessage For="@(() => Command.BillingAdress.City)" />
 
-    <div>
-        <label>Post Code</label>
-        <InputText @bind-Value="Command.BillingAdress.PostCode" />
-    </div>
-    <br />
-    <a href="CheckoutSuccess" type="submit" class="btn btn-success">
-        <span></span>&nbsp; Purchase products
-    </a>
-    <ValidationSummary />
+    <label for="inputPostCode" class="sr-only">PostCode</label>
+    <InputText id="inputPostCode" class="form-control" aria-required="true" @bind-Value="Command.BillingAdress.PostCode" autofocus placeholder="PostCode" />
+    <ValidationMessage For="@(() => Command.BillingAdress.PostCode)" />
+
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Purchase</button>
+    <label class="text-danger">@error</label>
+
 </EditForm>
 
 
@@ -70,8 +65,6 @@ else
     </section>
 }
 
-
-
 @code {
     [Inject]
     ICartOrderTransferService CartOrderTransferService { get; set; } = default!;
@@ -82,35 +75,21 @@ else
     [Inject]
     private ICartsService CartsService { get; set; } = default!;
 
-    [Inject]
-    IOrdersService OrderService { get; set; } = default!;
-
-    [Inject]
-    IOrderItemsService OrderItemsService { get; set; } = default!;
-
-    [Inject]
-    IProductsService ProductsService { get; set; } = default!;
-
     protected List<CartItemDto> ShoppingCartItems { get; set; } = default!;
 
     private ClaimsPrincipal User = default!;
 
     private CartDto cart = default!;
 
-    [SupplyParameterFromForm]
-    private PlaceOrderCommand? Command { get; set; } = new();
+    PlaceOrderCommand? Command { get; set; } = new();
+
+    string? error { get; set; }
 
     private int UserId;
 
     protected int TotalQuantity { get; set; } = default!;
 
-    protected string PaymentDescription { get; set; } = default!;
-
     protected decimal PaymentAmount { get; set; }
-
-    protected bool PaymentSuccessfull { get; set; }
-
-    protected bool Submitted = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -120,13 +99,8 @@ else
 
             ShoppingCartItems = await CartItemService.GetCartItems(UserId);
 
-            if (ShoppingCartItems != null)
-            {
-                Guid orderGuid = Guid.NewGuid();
-                PaymentAmount = ShoppingCartItems.Sum(p => p.TotalPrice);
-                TotalQuantity = ShoppingCartItems.Sum(p => p.Qty);
-                PaymentDescription = $"O_{UserId}_{orderGuid}";
-            }
+            PaymentAmount = ShoppingCartItems.Sum(p => p.TotalPrice);
+            TotalQuantity = ShoppingCartItems.Sum(p => p.Qty);
 
         }
         catch (Exception)
@@ -136,9 +110,8 @@ else
         }
     }
 
-    private void SubmitOrder()
+    protected void OnSubmit()
     {
-        Submitted = true;
         navigationManager.NavigateTo("CheckoutSuccess");
     }
 

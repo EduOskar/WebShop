@@ -1,22 +1,31 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager navigationManager
-@inject CustomStateProvider authStateProvider
+@inject CustomStateProvider authenticationStateProvider
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
 
-    <main>
-        <div class="top-row px-4">
-            <CartMenu />
-            <button type="button" class="btn btn-link" @onclick="@HandleLogin">@Message</button>
+<div class="container-fluid">
+    <div class="row">
+        <div class="sidebar">
+            <NavMenu />
         </div>
+        <main>
+            <div class="top-row px-4">
+                <CartMenu />
+                <AuthorizeView>
+                    <Authorized>
+                        <a>
+                            <span>@User.Identity!.Name</span>
+                        </a>
+                    </Authorized>
+                </AuthorizeView>
+                <button type="button" class="btn btn-link" @onclick="@HandleLogin">@Message</button>
+            </div>
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
+            <article class="content px-4">
+                @Body
+            </article>
+        </main>
+    </div>
 </div>
 
 
@@ -26,7 +35,7 @@
         style="background-color: rebeccapurple">
     <!-- Section: Social media -->
     <section class="d-flex justify-content-between p-4"> </section>
-    
+
     <!-- Section: Social media -->
     <!-- Section: Links  -->
     <section class="">
@@ -37,13 +46,12 @@
                 <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
                     <!-- Content -->
                     <h6 class="text-uppercase fw-bold">Consid</h6>
-                    <hr class="mb-4 mt-0 d-inline-block mx-auto"/>
+                    <hr class="mb-4 mt-0 d-inline-block mx-auto" />
                     <p>
                         Practice project in my LIA with consid
                     </p>
                 </div>
                 <!-- Grid column -->
-
                 <!-- Grid column -->
                 <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
                     <!-- Links -->
@@ -67,7 +75,7 @@
                 <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
                     <!-- Links -->
                     <h6 class="text-uppercase fw-bold">Contact</h6>
-                    <hr class="mb-4 mt-0 d-inline-block mx-auto"/>
+                    <hr class="mb-4 mt-0 d-inline-block mx-auto" />
                     <p><i class="fas fa-home mr-3"></i> New York, NY 10012, US</p>
                     <p><i class="fas fa-envelope mr-3"></i> Oskarahling_95@hotmail.com</p>
                     <p><i class="fas fa-phone mr-3"></i> + 070-213 81 49</p>
@@ -94,6 +102,8 @@
     [CascadingParameter]
     Task<AuthenticationState> AuthenticationState { get; set; } = default!;
 
+    private ClaimsPrincipal User = default!;
+
     String Message = "Login";
 
     protected override async Task OnParametersSetAsync()
@@ -105,6 +115,7 @@
         }
         else
         {
+            await GetAuthenticatedUser();
             Message = "Logout";
             StateHasChanged();
         }
@@ -114,7 +125,7 @@
     {
         if ((await AuthenticationState).User.Identity!.IsAuthenticated)
         {
-            await authStateProvider.Logout();
+            await authenticationStateProvider.Logout();
             navigationManager.NavigateTo("/");
             StateHasChanged();
         }
@@ -124,5 +135,11 @@
             StateHasChanged();
         }
 
+    }
+    protected async Task GetAuthenticatedUser()
+    {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+
+        User = authState.User;
     }
 }
