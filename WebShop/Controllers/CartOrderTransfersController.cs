@@ -95,7 +95,7 @@ public class CartOrderTransfersController : ControllerBase
 
         foreach (var cartItem in cartItems)
         {
-            priceCheck += cartItem.Product!.Price * cartItem.Qty;
+            priceCheck += cartItem.Product!.Price * cartItem.Quantity;
         }
 
         if (user.Credit <= priceCheck)
@@ -125,7 +125,7 @@ public class CartOrderTransfersController : ControllerBase
             var orderItemMap = _mapper.Map<OrderItem>(orderItems);
             orderItemMap.Order = await _orderRepository.GetOrder(orderMap.Id);
             orderItemMap.Product = await _productRepository.GetProduct(cartItem.ProductId);
-            orderItemMap.Qty = cartItem.Qty;
+            orderItemMap.Qty = cartItem.Quantity;
 
             await _orderItemRepository.CreateOrderItem(orderItemMap);
 
@@ -133,7 +133,7 @@ public class CartOrderTransfersController : ControllerBase
 
             foreach (var item in productCondition)
             {
-                item.Qty -= cartItem.Qty;
+                item.Quantity -= cartItem.Quantity;
 
             }
 

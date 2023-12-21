@@ -1,0 +1,57 @@
+﻿@page "/AdminProducts"
+@attribute [StreamRendering]
+
+<PageTitle>Admin Information</PageTitle>
+<h3>Product Information</h3>
+
+@if (ProductList == null)
+{
+   <DisplaySpinner/>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>CategoryId</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var products in ProductList)
+            {
+                <tr>
+                    <td>@products.Id</td>
+                    <td>@products.Name</td>
+                    <td>@products.Description</td>
+                    <td>@products.CategoryId</td>
+                    <td>@products.CategoryName</td>
+                    <td>@products.Price</td>
+                    <td>@products.Quantity</td>
+                    <td><a href="edit-product/@products.Id">Edit</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<a href="edit-product">Add a Product</a>
+
+@code {
+
+    [Inject]
+    IProductsService productsService { get; set; } = default!;
+
+    List<ProductDto> ProductList { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(500);
+        ProductList = await productsService.GetProducts();
+    }
+}

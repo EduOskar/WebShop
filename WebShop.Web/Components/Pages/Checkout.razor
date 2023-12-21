@@ -81,6 +81,7 @@ else
 
     private CartDto cart = default!;
 
+    [SupplyParameterFromForm]
     PlaceOrderCommand? Command { get; set; } = new();
 
     string? error { get; set; }

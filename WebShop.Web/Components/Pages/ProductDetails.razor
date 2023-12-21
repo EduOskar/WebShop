@@ -21,7 +21,7 @@ else
             <p class="mb-4">@Product?.Description</p>
             <p class="mb-4">
                 <b>
-                    @Product?.Price.ToString("C")&nbsp;(@Product?.Qty items in stock);
+                    @Product?.Price.ToString("C")&nbsp;(@Product?.Quantity items in stock);
                 </b>
             </p>
             @if (!User.Identity!.IsAuthenticated)

@@ -23,7 +23,6 @@ else
             </div>
             <hr class="mb-3" />
         }
-
     }
 }
 
@@ -42,7 +41,7 @@ else
 
     private int UserId;
 
-    public IEnumerable<ProductDto> ProductList { get; set; } = default!;
+    public List<ProductDto> ProductList { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {

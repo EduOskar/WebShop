@@ -136,16 +136,16 @@ else
         CartChanged();
     }
 
-    protected async Task UpdateQtyCartItem_Click(int cartItemid, int qty)
+    protected async Task UpdateQtyCartItem_Click(int cartItemid, int quantity)
     {
         try
         {
-            if (qty > 0)
+            if (quantity > 0)
             {
                 var updateItemDto = new CartItemQtyUpdateDto
                     {
                         CartItemId = cartItemid,
-                        Qty = qty
+                        Quantity = quantity
                     };
 
                 var returnedUpdatedItemDto = await CartItemsService.UpdateCartItemQty(updateItemDto);

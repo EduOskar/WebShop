@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Radzen;
 using WebShop.Models.DTOs;
 using WebShop.Web.Components;
 using WebShop.Web.Services;
@@ -37,6 +38,9 @@ builder.Services.AddScoped<CustomStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<CustomStateProvider>());
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+
+builder.Services.AddBlazorBootstrap();
+builder.Services.AddRadzenComponents();
 //builder.Services.AddCascadingAuthenticationState();
 
 var app = builder.Build();

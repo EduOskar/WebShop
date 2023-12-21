@@ -18,8 +18,8 @@ public class CartItem
 
     public decimal price => Product.Price;
 
-    public decimal TotalPrice => Product.Price * Qty;
+    public decimal TotalPrice => Product.Price * Quantity;
 
-    public int Qty { get; set; }
+    public int Quantity { get; set; }
 
 }

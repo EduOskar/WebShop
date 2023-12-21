@@ -12,8 +12,8 @@ using WebShop.Api.Data;
 namespace WebShop.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231215140051_InitializeDb")]
-    partial class InitializeDb
+    [Migration("20231221124442_ADdCartsForUser")]
+    partial class ADdCartsForUser
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -181,11 +181,6 @@ namespace WebShop.Api.Migrations
                         {
                             Id = 1,
                             UserId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            UserId = 2
                         });
                 });
 
@@ -203,7 +198,7 @@ namespace WebShop.Api.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Qty")
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -293,7 +288,7 @@ namespace WebShop.Api.Migrations
                         .HasMaxLength(100000)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("Qty")
+                    b.Property<int>("Quantity")
                         .HasMaxLength(500)
                         .HasColumnType("int");
 
@@ -312,7 +307,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Beauty/Beauty1.png",
                             Name = "Glossier - Beauty Kit",
                             Price = 1000m,
-                            Qty = 100
+                            Quantity = 100
                         },
                         new
                         {
@@ -322,7 +317,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Beauty/Beauty2.png",
                             Name = "Curology - Skin Care Kit",
                             Price = 500m,
-                            Qty = 45
+                            Quantity = 45
                         },
                         new
                         {
@@ -332,7 +327,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Beauty/Beauty3.png",
                             Name = "Cocooil - Organic Coconut Oil",
                             Price = 200m,
-                            Qty = 30
+                            Quantity = 30
                         },
                         new
                         {
@@ -342,7 +337,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Beauty/Beauty4.png",
                             Name = "Schwarzkopf - Hair Care and Skin Care Kit",
                             Price = 500m,
-                            Qty = 60
+                            Quantity = 60
                         },
                         new
                         {
@@ -352,7 +347,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Beauty/Beauty5.png",
                             Name = "Skin Care Kit",
                             Price = 300m,
-                            Qty = 85
+                            Quantity = 85
                         },
                         new
                         {
@@ -362,7 +357,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Electronic/Electronics1.png",
                             Name = "Air Pods",
                             Price = 1000m,
-                            Qty = 120
+                            Quantity = 120
                         },
                         new
                         {
@@ -372,7 +367,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Electronic/Electronics2.png",
                             Name = "On-ear Golden Headphones",
                             Price = 499m,
-                            Qty = 200
+                            Quantity = 200
                         },
                         new
                         {
@@ -382,7 +377,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Electronic/Electronics3.png",
                             Name = "On-ear Black Headphones",
                             Price = 499m,
-                            Qty = 300
+                            Quantity = 300
                         },
                         new
                         {
@@ -392,7 +387,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Electronic/Electronics4.png",
                             Name = "Sennheiser Digital Camera with Tripod",
                             Price = 5999m,
-                            Qty = 20
+                            Quantity = 20
                         },
                         new
                         {
@@ -402,7 +397,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Electronic/Electronics5.png",
                             Name = "Canon Digital Camera",
                             Price = 6999m,
-                            Qty = 15
+                            Quantity = 15
                         },
                         new
                         {
@@ -412,7 +407,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Electronic/Electronics6.png",
                             Name = "Nintendo Gameboy",
                             Price = 1050m,
-                            Qty = 60
+                            Quantity = 60
                         },
                         new
                         {
@@ -422,7 +417,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Furniture/Furniture1.png",
                             Name = "Black Leather Office Chair",
                             Price = 550m,
-                            Qty = 212
+                            Quantity = 212
                         },
                         new
                         {
@@ -432,7 +427,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Furniture/Furniture2.png",
                             Name = "Pink Leather Office Chair",
                             Price = 500m,
-                            Qty = 112
+                            Quantity = 112
                         },
                         new
                         {
@@ -442,7 +437,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Furniture/Furniture3.png",
                             Name = "Lounge Chair",
                             Price = 700m,
-                            Qty = 90
+                            Quantity = 90
                         },
                         new
                         {
@@ -452,7 +447,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Furniture/Furniture4.png",
                             Name = "Silver Lounge Chair",
                             Price = 1200m,
-                            Qty = 95
+                            Quantity = 95
                         },
                         new
                         {
@@ -462,7 +457,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Furniture/Furniture6.png",
                             Name = "Porcelain Table Lamp",
                             Price = 150m,
-                            Qty = 100
+                            Quantity = 100
                         },
                         new
                         {
@@ -472,7 +467,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Furniture/Furniture7.png",
                             Name = "Office Table Lamp",
                             Price = 200m,
-                            Qty = 73
+                            Quantity = 73
                         },
                         new
                         {
@@ -482,7 +477,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Shoes/Shoes1.png",
                             Name = "Puma Sneakers",
                             Price = 1000m,
-                            Qty = 50
+                            Quantity = 50
                         },
                         new
                         {
@@ -492,7 +487,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Shoes/Shoes2.png",
                             Name = "Colorful Trainers",
                             Price = 1500m,
-                            Qty = 60
+                            Quantity = 60
                         },
                         new
                         {
@@ -502,7 +497,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Shoes/Shoes3.png",
                             Name = "Blue Nike Trainers",
                             Price = 2000m,
-                            Qty = 70
+                            Quantity = 70
                         },
                         new
                         {
@@ -512,7 +507,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Shoes/Shoes4.png",
                             Name = "Colorful Hummel Trainers",
                             Price = 1200m,
-                            Qty = 120
+                            Quantity = 120
                         },
                         new
                         {
@@ -522,7 +517,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Shoes/Shoes5.png",
                             Name = "Red Nike Trainers",
                             Price = 2000m,
-                            Qty = 100
+                            Quantity = 100
                         },
                         new
                         {
@@ -532,7 +527,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Shoes/Shoes6.png",
                             Name = "Birkenstock Sandles",
                             Price = 500m,
-                            Qty = 150
+                            Quantity = 150
                         });
                 });
 
@@ -704,48 +699,6 @@ namespace WebShop.Api.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AccessFailedCount = 0,
-                            Adress = "Fakestreet 101",
-                            ConcurrencyStamp = "da59b8f2-05b2-40db-8c3c-37d5431e3de2",
-                            ConfirmPassword = "Loggin",
-                            Credit = 100000m,
-                            Email = "Bob@Mail.com",
-                            EmailConfirmed = false,
-                            FirstName = "Bob",
-                            LastName = "Bobinsson",
-                            LockoutEnabled = false,
-                            Password = "Loggin",
-                            PasswordHash = "AQAAAAIAAYagAAAAEE8UreoCo/HexcC1OZ2WyFR6ZD0fgoJ6fDdAPmVvKpngacOqcFptQ5hE78E9e6fLlg==",
-                            PhoneNumber = "070-1231212",
-                            PhoneNumberConfirmed = false,
-                            TwoFactorEnabled = false,
-                            UserName = "Bob"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AccessFailedCount = 0,
-                            Adress = "Fakestreet 102",
-                            ConcurrencyStamp = "b9ccc3ba-38fe-4b0a-81cd-82aabf4d39f5",
-                            ConfirmPassword = "Loggin",
-                            Credit = 100000m,
-                            Email = "Sarah@Mail.com",
-                            EmailConfirmed = false,
-                            FirstName = "Sarah",
-                            LastName = "SarahsDaughter",
-                            LockoutEnabled = false,
-                            Password = "Loggin",
-                            PasswordHash = "AQAAAAIAAYagAAAAELtb4g33FlA9tIM1ECrGHxOc7x6XtTxKw0ISofDMxv+1fs4aPBaXEtX7+Ajjyab9BA==",
-                            PhoneNumber = "070-3213232",
-                            PhoneNumberConfirmed = false,
-                            TwoFactorEnabled = false,
-                            UserName = "Sarah"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

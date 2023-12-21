@@ -97,7 +97,7 @@ public class ProductsService : IProductsService
         }
     }
 
-    public async Task<ICollection<ProductDto>> GetProducts()
+    public async Task<List<ProductDto>> GetProducts()
     {
         try
         {
@@ -110,7 +110,7 @@ public class ProductsService : IProductsService
                     return null!;
                 }
 
-                var products = await response.Content.ReadFromJsonAsync<ICollection<ProductDto>>();
+                var products = await response.Content.ReadFromJsonAsync<List<ProductDto>>();
                 return products!;
             }
             else

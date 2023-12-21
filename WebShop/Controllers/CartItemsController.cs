@@ -212,7 +212,7 @@ public class CartItemsController : ControllerBase
         }
 
         var cartItemMap = _mapper.Map<CartItem>(cartItem);
-        cartItemMap.Qty = cartItemUpdateQty.Qty;
+        cartItemMap.Quantity = cartItemUpdateQty.Quantity;
 
         if (!await _cartItemRepository.UpdateCartItem(cartItemMap))
         {

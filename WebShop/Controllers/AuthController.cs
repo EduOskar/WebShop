@@ -94,7 +94,6 @@ public class AuthController : ControllerBase
         return Ok();
     }
 
-    [Authorize (Roles ="Admin")]
     [HttpGet("CurrentUserInformation")]
     public CurrentUser CurrentUserInformation()
     {

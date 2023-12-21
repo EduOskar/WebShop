@@ -228,7 +228,7 @@ namespace WebShop.Api.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", maxLength: 5000, nullable: false),
                     ImageURL = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", maxLength: 100000, nullable: false),
-                    Qty = table.Column<int>(type: "int", maxLength: 500, nullable: false),
+                    Quantity = table.Column<int>(type: "int", maxLength: 500, nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -250,7 +250,7 @@ namespace WebShop.Api.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CartId = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
-                    Qty = table.Column<int>(type: "int", nullable: false)
+                    Quantity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -324,15 +324,6 @@ namespace WebShop.Api.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "Adress", "ConcurrencyStamp", "ConfirmPassword", "Credit", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "Password", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[,]
-                {
-                    { 1, 0, "Fakestreet 101", "da59b8f2-05b2-40db-8c3c-37d5431e3de2", "Loggin", 100000m, "Bob@Mail.com", false, "Bob", "Bobinsson", false, null, null, null, "Loggin", "AQAAAAIAAYagAAAAEE8UreoCo/HexcC1OZ2WyFR6ZD0fgoJ6fDdAPmVvKpngacOqcFptQ5hE78E9e6fLlg==", "070-1231212", false, null, false, "Bob" },
-                    { 2, 0, "Fakestreet 102", "b9ccc3ba-38fe-4b0a-81cd-82aabf4d39f5", "Loggin", 100000m, "Sarah@Mail.com", false, "Sarah", "SarahsDaughter", false, null, null, null, "Loggin", "AQAAAAIAAYagAAAAELtb4g33FlA9tIM1ECrGHxOc7x6XtTxKw0ISofDMxv+1fs4aPBaXEtX7+Ajjyab9BA==", "070-3213232", false, null, false, "Sarah" }
-                });
-
-            migrationBuilder.InsertData(
                 table: "ProductCategories",
                 columns: new[] { "Id", "Name" },
                 values: new object[,]
@@ -344,17 +335,8 @@ namespace WebShop.Api.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Carts",
-                columns: new[] { "Id", "UserId" },
-                values: new object[,]
-                {
-                    { 1, 1 },
-                    { 2, 2 }
-                });
-
-            migrationBuilder.InsertData(
                 table: "Products",
-                columns: new[] { "Id", "CategoryId", "Description", "ImageURL", "Name", "Price", "Qty" },
+                columns: new[] { "Id", "CategoryId", "Description", "ImageURL", "Name", "Price", "Quantity" },
                 values: new object[,]
                 {
                     { 1, 1, "A kit provided by Glossier, containing skin care, hair care and makeup products", "/Images/Beauty/Beauty1.png", "Glossier - Beauty Kit", 1000m, 100 },

@@ -3,22 +3,32 @@
 @inject CustomStateProvider authenticationStateProvider
 
 
+
+
 <div class="container-fluid">
     <div class="row">
         <div class="sidebar">
             <NavMenu />
         </div>
+
         <main>
             <div class="top-row px-4">
                 <CartMenu />
                 <AuthorizeView>
                     <Authorized>
                         <a>
-                            <span>@User.Identity!.Name</span>
+                            <span>@context.User.Identity!.Name</span>
                         </a>
                     </Authorized>
                 </AuthorizeView>
                 <button type="button" class="btn btn-link" @onclick="@HandleLogin">@Message</button>
+            </div>
+            <div class="container-fluid">
+                <AuthorizeView roles="Admin">
+                    <Authorized>
+                        <AdminLayout />
+                    </Authorized>
+                </AuthorizeView>
             </div>
 
             <article class="content px-4">
@@ -29,65 +39,6 @@
 </div>
 
 
-
-<!-- Footer -->
-<footer class="text-center text-lg-start text-white"
-        style="background-color: rebeccapurple">
-    <!-- Section: Social media -->
-    <section class="d-flex justify-content-between p-4"> </section>
-
-    <!-- Section: Social media -->
-    <!-- Section: Links  -->
-    <section class="">
-        <div class="container text-center text-md-start mt-5">
-            <!-- Grid row -->
-            <div class="row mt-3">
-                <!-- Grid column -->
-                <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
-                    <!-- Content -->
-                    <h6 class="text-uppercase fw-bold">Consid</h6>
-                    <hr class="mb-4 mt-0 d-inline-block mx-auto" />
-                    <p>
-                        Practice project in my LIA with consid
-                    </p>
-                </div>
-                <!-- Grid column -->
-                <!-- Grid column -->
-                <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
-                    <!-- Links -->
-                    <h6 class="text-uppercase fw-bold">Useful links</h6>
-                    <hr class="mb-4 mt-0 d-inline-block mx-auto" />
-                    <p>
-                        <a href="#!" class="text-white">Your Account</a>
-                    </p>
-                    <p>
-                        <a href="#!" class="text-white">Become an Affiliate</a>
-                    </p>
-                    <p>
-                        <a href="#!" class="text-white">Shipping Rates</a>
-                    </p>
-                    <p>
-                        <a href="#!" class="text-white">Help</a>
-                    </p>
-                </div>
-                <!-- Grid column -->
-                <!-- Grid column -->
-                <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
-                    <!-- Links -->
-                    <h6 class="text-uppercase fw-bold">Contact</h6>
-                    <hr class="mb-4 mt-0 d-inline-block mx-auto" />
-                    <p><i class="fas fa-home mr-3"></i> New York, NY 10012, US</p>
-                    <p><i class="fas fa-envelope mr-3"></i> Oskarahling_95@hotmail.com</p>
-                    <p><i class="fas fa-phone mr-3"></i> + 070-213 81 49</p>
-                </div>
-                <!-- Grid column -->
-            </div>
-            <!-- Grid row -->
-        </div>
-    </section>
-    <!-- Section: Links  -->
-</footer>
-<!-- Footer -->
 
 
 
@@ -102,7 +53,7 @@
     [CascadingParameter]
     Task<AuthenticationState> AuthenticationState { get; set; } = default!;
 
-    private ClaimsPrincipal User = default!;
+    // private ClaimsPrincipal User = default!;
 
     String Message = "Login";
 
@@ -115,7 +66,6 @@
         }
         else
         {
-            await GetAuthenticatedUser();
             Message = "Logout";
             StateHasChanged();
         }
@@ -127,19 +77,11 @@
         {
             await authenticationStateProvider.Logout();
             navigationManager.NavigateTo("/");
-            StateHasChanged();
         }
         else
         {
             navigationManager.NavigateTo("/");
-            StateHasChanged();
         }
 
-    }
-    protected async Task GetAuthenticatedUser()
-    {
-        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
-
-        User = authState.User;
     }
 }
