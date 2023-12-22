@@ -125,7 +125,7 @@ public class CartOrderTransfersController : ControllerBase
             var orderItemMap = _mapper.Map<OrderItem>(orderItems);
             orderItemMap.Order = await _orderRepository.GetOrder(orderMap.Id);
             orderItemMap.Product = await _productRepository.GetProduct(cartItem.ProductId);
-            orderItemMap.Qty = cartItem.Quantity;
+            orderItemMap.Quantity = cartItem.Quantity;
 
             await _orderItemRepository.CreateOrderItem(orderItemMap);
 

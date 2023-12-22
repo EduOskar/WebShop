@@ -46,7 +46,7 @@ else
                         @foreach (var item in ShoppingCartItems)
                         {
                             <tr>
-                                <td>@item.Qty x @item.ProductName</td>
+                                <td>@item.Quantity x @item.ProductName</td>
                                 <td>@item.TotalPrice.ToString("C")</td>
                             </tr>
                         }
@@ -101,7 +101,7 @@ else
             ShoppingCartItems = await CartItemService.GetCartItems(UserId);
 
             PaymentAmount = ShoppingCartItems.Sum(p => p.TotalPrice);
-            TotalQuantity = ShoppingCartItems.Sum(p => p.Qty);
+            TotalQuantity = ShoppingCartItems.Sum(p => p.Quantity);
 
         }
         catch (Exception)

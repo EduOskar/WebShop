@@ -10,6 +10,11 @@
 }
 else
 {
+    <div class="form-group">
+        <input class="form-control" type="text" placeholder="filter" @bind="filterText" @bind:event="oninput" />
+    </div>
+    
+
     <table class="table">
         <thead>
             <tr>
@@ -25,6 +30,10 @@ else
         <tbody>
             @foreach (var products in ProductList)
             {
+                if (!ApplyFilter(products))
+                {
+                    continue;
+                }
                 <tr>
                     <td>@products.Id</td>
                     <td>@products.Name</td>
@@ -45,13 +54,38 @@ else
 @code {
 
     [Inject]
-    IProductsService productsService { get; set; } = default!;
+    IProductsService productService { get; set; } = default!;
+
+    // //Implementera Service här!!!
+    // [Inject]
+    // IProductsCategoryService categoryService { get; set; } = default!;
 
     List<ProductDto> ProductList { get; set; } = default!;
+
+    List<ProductDto> FilteredList = new List<ProductDto>();
+
+    List<ProductCategoryDto> CategoryList { get; set; } = default!;
+
+    string? filterText { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         await Task.Delay(500);
-        ProductList = await productsService.GetProducts();
+        ProductList = await productService.GetProducts();
+
+    }
+
+    private bool ApplyFilter(ProductDto products)
+    {
+        if (string.IsNullOrEmpty(filterText))
+            return true;
+
+        if (products.Name.Contains(filterText, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (products.Id.ToString().StartsWith(filterText) || products.Id.ToString().StartsWith(filterText))
+            return true;
+
+        return false;
     }
 }

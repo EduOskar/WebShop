@@ -15,5 +15,5 @@ public class OrderItem
     public int ProductId { get; set; }
     public virtual Product? Product { get; set; }
 
-    public int Qty { get; set; }
+    public int Quantity { get; set; }
 }

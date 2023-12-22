@@ -1,5 +1,6 @@
 ﻿@page "/edit-product"
 @page "/edit-product/{Id:int}"
+@inject NavigationManager navigationManager
 
 
 @if (Id is null)
@@ -23,8 +24,8 @@ else
         <InputText id="description" @bind-Value="@CurrentProduct.Description" class="form-control" />
     </div>
     <div>
-        <label for="image">image</label>
-        <InputFile id="image" @bind-Value="@CurrentProduct.ImageURL" class="form-control"/>
+        <label for="imageurl">ImageUrl</label>
+        <InputText id="imageurl" @bind-Value="@CurrentProduct.ImageURL" class="form-control"/>
     </div>
     <div>
         <label for="categoryid">categoryid</label>
@@ -96,6 +97,22 @@ else
         if (result != null)
         {
             Status = "Product added successfully!";
+            navigationManager.NavigateTo("AdminProducts");
+        }
+        else
+        {
+            Status = "Something went wrong";
+        }
+    }
+
+    async Task UpdateProduct()
+    {
+        var result = await ProductService.UpdateProduct(CurrentProduct);
+
+        if (result != null)
+        {
+            Status = "Product Updated Successfully!";
+            navigationManager.NavigateTo("AdminProducts");
         }
         else
         {

@@ -56,9 +56,9 @@ else
 
                 var shoppingCartItems = await CartitemService.GetCartItems(UserCartItems.Id);
 
-                var totalQty = shoppingCartItems.Sum(ci => ci.Qty);
+                var totalQuantity = shoppingCartItems.Sum(ci => ci.Quantity);
 
-                CartitemService.RaiseEventOnShoppingCartChanged(totalQty);
+                CartitemService.RaiseEventOnShoppingCartChanged(totalQuantity);
             }
 
             ProductList = await ProductService.GetProducts();

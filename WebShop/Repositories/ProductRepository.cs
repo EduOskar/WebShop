@@ -30,6 +30,7 @@ public class ProductRepository : IProductRepository
 
     public async Task<Product> GetProduct(int productId)
     {
+        
         var product = await _dbContext.Products
             .Include(p => p.Category)
             .SingleOrDefaultAsync(p => p.Id == productId);
@@ -51,7 +52,10 @@ public class ProductRepository : IProductRepository
 
     public async Task<ICollection<Product>> GetProducts()
     {
+        string searchByName = string.Empty;
+
         var products = await _dbContext.Products
+            .Where(p => p.Name.Contains(searchByName))
             .Include(p => p.Category)
             .ToListAsync();
 

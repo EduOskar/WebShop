@@ -30,9 +30,9 @@ else
                             <span>
                                 Price: <b>@item.Price.ToString("C")</b>
 
-                                <input type="number" @bind="@item.Qty" />
-                                <button data-itemId="@item.Id" class="btn btn-info btn-sm update-qty"
-                                        @onclick="(() => UpdateQtyCartItem_Click(item.Id, item.Qty))">
+                                <input type="number" @bind="@item.Quantity" />
+                                <button data-itemId="@item.Id" class="btn btn-info btn-sm update-Quantity"
+                                        @onclick="(() => UpdateQtyCartItem_Click(item.Id, item.Quantity))">
                                     Update quantity
                                 </button>
                             </span>
@@ -161,7 +161,7 @@ else
 
                 if (cartItem != null)
                 {
-                    cartItem.Qty = 1;
+                    cartItem.Quantity = 1;
                     cartItem.TotalPrice = cartItem.Price;
                 }
             }
@@ -180,7 +180,7 @@ else
 
         if (cartItem != null)
         {
-            cartItem.TotalPrice = cartItem.Price * cartItem.Qty;
+            cartItem.TotalPrice = cartItem.Price * cartItem.Quantity;
         }
     }
 
@@ -197,7 +197,7 @@ else
 
     private void SetTotalQuantity()
     {
-        TotalQuantity = ShoppingCartItems.Sum(p => p.Qty);
+        TotalQuantity = ShoppingCartItems.Sum(p => p.Quantity);
 
     }
 
