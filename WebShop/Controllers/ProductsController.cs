@@ -88,13 +88,9 @@ public class ProductsController : ControllerBase
     {
         if (productCreate == null)
         {
-            return BadRequest(ModelState);
+            return BadRequest();
         }
 
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
 
         var categoryExist = await _productCategoryRepository.CategoryExist(productCreate.CategoryId);
 
@@ -113,7 +109,7 @@ public class ProductsController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        return CreatedAtAction("GetProduct", new { productId = productCreate.Id }, productCreate);
+        return CreatedAtAction("GetProduct", new { productId = productMap.Id }, productMap);
     }
 
     [HttpPut("{productId:int}")]
@@ -143,6 +139,7 @@ public class ProductsController : ControllerBase
         }
 
         var productMap = _mapper.Map<Product>(updateProduct);
+        productMap.Category = await _productCategoryRepository.GetCategory(updateProduct.CategoryId);
 
         if (!await _productRepository.UpdateProduct(productMap))
         {

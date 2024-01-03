@@ -172,13 +172,6 @@ namespace WebShop.Api.Migrations
                         .IsUnique();
 
                     b.ToTable("Carts");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            UserId = 1
-                        });
                 });
 
             modelBuilder.Entity("WebShop.Api.Entity.CartItem", b =>

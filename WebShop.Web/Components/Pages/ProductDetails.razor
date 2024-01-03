@@ -48,32 +48,6 @@ else
 }
 
 
-@* @if (productId is not null)
-{
-    <PageTitle>Create a new Product</PageTitle>
-    <h3>Create a new Product</h3>
-}
-else
-{
-    <PageTitle>Edit @Product!.Name</PageTitle>
-} *@
-
-@* <EditForm>
-    <div>
-        <label for="name">Name</label>
-        <InputText id="name" @bind-Value="Product.Name" class="form-control" />
-    </div>
-    <div>
-        <label for="description">Description</label>
-        <InputText id="description" @bind-Value="Product.Description" class="form-control" />
-    </div>
-    <div>
-        <label for="price">Price</label>
-        <InputNumber id="price" @bind-Value="Product.Price" class="form-control" />
-    </div>
-    <button type="submit" class="btn btn-primary">Update</button>
-</EditForm> *@
-
 
 @code {
 

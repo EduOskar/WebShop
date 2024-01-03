@@ -46,20 +46,13 @@ public class ProductsService : IProductsService
         }
     }
 
-    public async Task<ProductDto> DeleteProduct(int productId)
+    public async Task<bool> DeleteProduct(int productId)
     {
         try
         {
             var response = await _httpClient.DeleteAsync($"api/Products/{productId}");
 
-            if (response.IsSuccessStatusCode)
-            {
-                var productDelete = await response.Content.ReadFromJsonAsync<ProductDto>();
-
-                return productDelete!;
-            }
-
-            return null!;
+            return response.IsSuccessStatusCode;
         }
         catch (Exception)
         {
@@ -84,7 +77,7 @@ public class ProductsService : IProductsService
                 var product = await response.Content.ReadFromJsonAsync<ProductDto>();
                 return product!;
             }
-            else
+            else  
             {
                 var message = await response.Content.ReadAsStringAsync();
                 throw new Exception($"Http status:{response.StatusCode} Message -{message}");
@@ -126,7 +119,7 @@ public class ProductsService : IProductsService
             throw;
         }
     }
-    public async Task<ProductDto> UpdateProduct(ProductDto productUpdate)
+    public async Task<bool> UpdateProduct(ProductDto productUpdate)
     {
         try
         {
@@ -136,14 +129,8 @@ public class ProductsService : IProductsService
 
             var response = await _httpClient.PutAsync($"api/Products/{productUpdate.Id}", content);
 
-            if (response.IsSuccessStatusCode)
-            {
-                var product = await response.Content.ReadFromJsonAsync<ProductDto>();
+            return response.IsSuccessStatusCode;
 
-                return product!;
-            }
-
-            return null!;
         }
         catch (Exception)
         {

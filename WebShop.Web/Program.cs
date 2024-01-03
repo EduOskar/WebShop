@@ -25,6 +25,7 @@ builder.Services.AddAuthorizationCore();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7066/") });
 builder.Services.AddHttpClient<IProductsService, ProductsService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
+builder.Services.AddHttpClient<IProductsCategoryService, ProductCategoryService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
 builder.Services.AddHttpClient<ICartsService, CartsService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
 builder.Services.AddHttpClient<ICartItemsService, CartItemsService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
 builder.Services.AddHttpClient<IUsersService, UsersServices>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
@@ -33,7 +34,7 @@ builder.Services.AddHttpClient<IOrderItemsService, OrderItemsService>().Configur
 builder.Services.AddHttpClient<ICartOrderTransferService, CartOrderTransferService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
 
 
-builder.Services.AddScoped<CustomStateProvider>();
+builder.Services.AddScoped<CustomStateProvider>(); 
 builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<CustomStateProvider>());
 builder.Services.AddScoped<IAuthService, AuthService>();
 

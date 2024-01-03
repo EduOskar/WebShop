@@ -7,6 +7,6 @@ public interface IProductsCategoryService
     Task<List<ProductCategoryDto>> GetCategories();
     Task<ProductCategoryDto> GetCategory(int categoryId);
     Task<ProductCategoryDto> CreateCategory(ProductCategoryDto categoryCreate);
-    Task<ProductCategoryDto> UpdateCategory(ProductCategoryDto categoryUpdate);
-    Task<ProductCategoryDto> DeleteCategory(int categoryId);
+    Task<bool> UpdateCategory(ProductCategoryDto categoryUpdate);
+    Task<bool> DeleteCategory(int categoryId);
 }

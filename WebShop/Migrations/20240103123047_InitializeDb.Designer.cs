@@ -12,8 +12,8 @@ using WebShop.Api.Data;
 namespace WebShop.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231222080257_InitializeCarts")]
-    partial class InitializeCarts
+    [Migration("20240103123047_InitializeDb")]
+    partial class InitializeDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -175,13 +175,6 @@ namespace WebShop.Api.Migrations
                         .IsUnique();
 
                     b.ToTable("Carts");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            UserId = 1
-                        });
                 });
 
             modelBuilder.Entity("WebShop.Api.Entity.CartItem", b =>
