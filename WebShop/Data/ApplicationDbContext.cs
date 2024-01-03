@@ -308,6 +308,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             CategoryId = 4
         });
 
+
         //Add Product Categories
         modelBuilder.Entity<ProductCategory>().HasData(new ProductCategory
         {
