@@ -16,5 +16,5 @@ public class ProductDto
     public decimal Price { get; set; } = default!;
     public int Quantity { get; set; } = default!;
     public int CategoryId { get; set; } = default!;
-    public string? CategoryName { get; set; } 
+    public string CategoryName { get; set; } = default!;
 }

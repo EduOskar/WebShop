@@ -111,11 +111,6 @@ public class ProductCategoriesController : ControllerBase
             return NotFound();
         }
 
-        if (!ModelState.IsValid)
-        {
-            return BadRequest();
-        }
-
         var categoryMap = _mapper.Map<ProductCategory>(updatedProductCategory);
 
         if (!await _productCategoryRepository.UpdateCategory(categoryMap))

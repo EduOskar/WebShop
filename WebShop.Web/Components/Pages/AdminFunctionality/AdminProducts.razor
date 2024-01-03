@@ -28,7 +28,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var products in ProductList)
+            @foreach (var products in SortderProductList)
             {
                 if (!ApplyFilter(products))
                 {
@@ -61,6 +61,7 @@ else
     // IProductsCategoryService categoryService { get; set; } = default!;
 
     List<ProductDto> ProductList { get; set; } = default!;
+    List<ProductDto> SortderProductList { get; set; } = default!;
 
     List<ProductCategoryDto> CategoryList { get; set; } = default!;
 
@@ -69,8 +70,14 @@ else
     protected override async Task OnInitializedAsync()
     {
         await Task.Delay(500);
-        ProductList = await productService.GetProducts();
+        await SortList();
 
+    }
+
+    private async Task SortList()
+    {
+        ProductList = await productService.GetProducts();
+        SortderProductList = ProductList.OrderBy(x => x.CategoryId).ToList();
     }
 
     private bool ApplyFilter(ProductDto products)
@@ -81,7 +88,13 @@ else
         if (products.Name.Contains(filterText, StringComparison.OrdinalIgnoreCase))
             return true;
 
+        if (products.CategoryName.Contains(filterText, StringComparison.OrdinalIgnoreCase))
+            return true;
+
         if (products.Id.ToString().StartsWith(filterText) || products.Id.ToString().StartsWith(filterText))
+            return true;
+
+        if (products.CategoryId.ToString().StartsWith(filterText) || products.CategoryId.ToString().StartsWith(filterText))
             return true;
 
         return false;
