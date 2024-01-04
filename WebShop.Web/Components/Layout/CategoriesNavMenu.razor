@@ -1,0 +1,44 @@
+﻿
+
+@if (ProductCategory == null && ErrorMessage == null)
+{
+    <DisplaySpinner />
+}
+else if (ErrorMessage != null)
+{
+    <DisplayError ErrorMessage="@ErrorMessage" />
+}
+else
+{
+    @foreach (var productCategory in ProductCategory!)
+    {
+        var link = "/ProductsByCategory/" + productCategory.Id;
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="@link">
+                <span class="@productCategory.IconCSS"></span>&nbsp;@productCategory.Name
+            </NavLink>
+        </div>
+    }
+}
+
+@code {
+    [Inject]
+    public IProductsCategoryService CategoryService { get; set; } = default!;
+
+    public IEnumerable<ProductCategoryDto> ProductCategory { get; set; } = default!;
+
+    public string? ErrorMessage { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            ProductCategory = await CategoryService.GetCategories();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+    }
+}

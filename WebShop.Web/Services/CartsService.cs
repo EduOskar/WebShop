@@ -28,11 +28,11 @@ public class CartsService : ICartsService
         throw new NotImplementedException();
     }
 
-    public async Task<CartDto> GetCartByUser(int userId)
+    public async Task<CartDto> GetCartByUser(int categoryId)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"api/Carts/Get-Cart-By-User/{userId}");
+            var response = await _httpClient.GetAsync($"api/Carts/Get-Cart-By-User/{categoryId}");
 
             if (response.IsSuccessStatusCode)
             {

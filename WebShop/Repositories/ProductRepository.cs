@@ -45,7 +45,9 @@ public class ProductRepository : IProductRepository
 
     public async Task<ICollection<Product>> GetProductByCategory(int categoryId)
     {
-        var productsByCategory = await _dbContext.Products.Where(pc => pc.CategoryId == categoryId).ToListAsync();
+        var productsByCategory = await _dbContext.Products
+            .Include(p => p.Category)
+            .Where(pc => pc.CategoryId == categoryId).ToListAsync();
 
         return productsByCategory;
     }

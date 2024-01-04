@@ -119,6 +119,37 @@ public class ProductsService : IProductsService
             throw;
         }
     }
+
+    public async Task<List<ProductDto>> GetProductsByCategory(int CategoryId)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"api/Products/GetProducts-By-Category/{CategoryId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                {
+                    return null!;
+                }
+
+                var productByCategory = await response.Content.ReadFromJsonAsync<List<ProductDto>>();
+
+                return productByCategory!;
+            }
+            else
+            {
+                var message = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Http status:{response.StatusCode} Message -{message}");
+            }
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
     public async Task<bool> UpdateProduct(ProductDto productUpdate)
     {
         try

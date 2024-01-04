@@ -3,74 +3,96 @@
 
 <PageTitle>Admin Information</PageTitle>
 
+<AuthorizeView Roles="Admin">
+    <Authorized>
+        @if (ProductList == null || CategoryList == null)
+        {
+            <DisplaySpinner />
+        }
+        else
+        {
 
-@if (ProductList == null || CategoryList == null)
-{
-   <DisplaySpinner/>
-}
-else
-{
-    <h3>Categories</h3>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var categories in SortedCategoryList)
-            {
-                <tr>
-                    <td>@categories.Id</td>
-                    <td>@categories.Name</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+            <h3>Categories</h3>
 
-    <h3>Product Information</h3>
+            <div class="form-group">
+                <input class="form-control" type="text" placeholder="filter" @bind="filterCategory" @bind:event="oninput" />
+            </div>
 
-    <div class="form-group">
-        <input class="form-control" type="text" placeholder="filter" @bind="filterText" @bind:event="oninput" />
-    </div>
-    
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Icons</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var categories in SortedCategoryList)
+                    {
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>CategoryId</th>
-                <th>Category</th>
-                <th>Price</th>
-                <th>Quantity</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var products in SortedProductList)
-            {
-                if (!ApplyFilter(products))
-                {
-                    continue;
-                }
-                <tr>
-                    <td>@products.Id</td>
-                    <td>@products.Name</td>
-                    <td>@products.Description</td>
-                    <td>@products.CategoryId</td>
-                    <td>@products.CategoryName</td>
-                    <td>@products.Price</td>
-                    <td>@products.Quantity</td>
-                    <td><a href="edit-product/@products.Id">Edit</a></td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+                        if (!ApplyFilterCategory(categories))
+                        {
+                            continue;
+                        }
+                        <tr>
+                            <td>@categories.Id</td>
+                            <td>@categories.Name</td>
+                            <td>@categories.IconCSS</td>
+                            <td><a href="edit-category/@categories.Id">Edit</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <a href="edit-category">Add Category</a>
+            <br />
+            <br />
+            <br />
+            <br />
+            <h3>Product Information</h3>
 
-<a href="edit-product">Add a Product</a>
+            <div class="form-group">
+                <input class="form-control" type="text" placeholder="filter" @bind="filterProduct" @bind:event="oninput" />
+            </div>
+
+
+            <table class="table container-fluid">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>CategoryId</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var products in SortedProductList)
+                    {
+                        if (!ApplyFilterProduct(products))
+                        {
+                            continue;
+                        }
+                        <tr>
+                            <td>@products.Id</td>
+                            <td>@products.Name</td>
+                            <td>@products.Description</td>
+                            <td>@products.CategoryId</td>
+                            <td>@products.CategoryName</td>
+                            <td>@products.Price</td>
+                            <td>@products.Quantity</td>
+                            <td><a href="edit-product/@products.Id">Edit</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <a href="edit-product">Add Product</a>
+
+        }
+    </Authorized>
+</AuthorizeView>
+
 
 @code {
 
@@ -86,9 +108,8 @@ else
     List<ProductDto> ProductList { get; set; } = default!;
     List<ProductDto> SortedProductList { get; set; } = default!;
 
-    ProductDto productDelete { get; set; } = default!;
-
-    string? filterText { get; set; }
+    string? filterProduct { get; set; }
+    string? filterCategory { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -106,18 +127,32 @@ else
         SortedCategoryList = CategoryList.OrderBy(x => x.Id).ToList();
     }
 
-    private bool ApplyFilter(ProductDto products)
+    private bool ApplyFilterProduct(ProductDto products)
     {
-        if (string.IsNullOrEmpty(filterText))
+        if (string.IsNullOrEmpty(filterProduct))
             return true;
 
-        if (products.Name.Contains(filterText, StringComparison.OrdinalIgnoreCase))
+        if (products.Name.Contains(filterProduct, StringComparison.OrdinalIgnoreCase))
             return true;
 
-        if (products.CategoryName!.Contains(filterText, StringComparison.OrdinalIgnoreCase))
+        if (products.CategoryName!.Contains(filterProduct, StringComparison.OrdinalIgnoreCase))
             return true;
 
-        if (products.Id.ToString().StartsWith(filterText) || products.Id.ToString().StartsWith(filterText))
+        if (products.Id.ToString().StartsWith(filterProduct) || products.Id.ToString().StartsWith(filterProduct))
+            return true;
+
+        return false;
+    }
+
+    private bool ApplyFilterCategory(ProductCategoryDto category)
+    {
+        if (string.IsNullOrEmpty(filterCategory))
+            return true;
+
+        if (category.Name!.Contains(filterCategory, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (category.Id.ToString().StartsWith(filterCategory) || category.Id.ToString().StartsWith(filterCategory))
             return true;
 
         return false;

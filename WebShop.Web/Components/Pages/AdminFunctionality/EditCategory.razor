@@ -1,5 +1,112 @@
-﻿<h3>EditCategory</h3>
+﻿@page "/edit-category"
+@page "/edit-category/{Id:int}"
+@inject NavigationManager navigationManager
+
+@if (Id is null)
+{
+    <PageTitle>Add a new Category</PageTitle>
+    <h3>Add a new Category</h3>
+    Message = "Create Category";
+}
+else
+{
+    <PageTitle>Edit "@CurrentCategory.Name"</PageTitle>
+    <h3>Edit @CurrentCategory.Name</h3>
+    Message = "Update Product";
+}
+
+<EditForm Model="CurrentCategory" OnValidSubmit="HandleSubmit" FormName="ProductForm">
+    <div>
+        <label for="name">name</label>
+        <InputText id="name" @bind-Value="@CurrentCategory.Name" class="form-control" />
+    </div>
+    <div>
+        <label for="iconcss">Icons</label>
+        <InputText id="iconcss" @bind-Value="@CurrentCategory.IconCSS" class="form-control" />
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">@Message</button>
+    <button type="button" class="btn btn-danger fa fa-trash"
+            @onclick="DeleteCategory">
+    </button>
+</EditForm>
+
+<p>@Status</p>
+
 
 @code {
+    [Inject]
+    private IProductsCategoryService CategoryService { get; set; } = default!;
 
+    [Parameter]
+    public int? Id { get; set; } = null;
+
+    [SupplyParameterFromForm]
+    public ProductCategoryDto CurrentCategory { get; set; } = new();
+
+    private string Status = string.Empty;
+    private string Message = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id is not null)
+        {
+            var category = await CategoryService.GetCategory(Id.Value)!;
+            if (category is not null)
+            {
+                CurrentCategory.Id = category.Id;
+                CurrentCategory.Name ??= category.Name;
+                CurrentCategory.IconCSS ??= category.IconCSS;
+            }
+        }
+    }
+
+    async Task HandleSubmit()
+    {
+        if (Id is not null)
+        {
+            await UpdateCategory();
+        }
+        else
+        {
+            await CreateCategory();
+        }
+    }
+
+    async Task CreateCategory()
+    {
+        var result = await CategoryService.CreateCategory(CurrentCategory);
+
+        if (result != null)
+        {
+            Status = "Category added successfully!";
+            StateHasChanged();
+            navigationManager.NavigateTo("AdminProducts");
+        }
+        else
+        {
+            Status = "Something went wrong";
+        }
+    }
+
+    async Task UpdateCategory()
+    {
+        var result = await CategoryService.UpdateCategory(CurrentCategory);
+
+        if (result)
+        {
+            Status = "Category Updated Successfully!";
+            navigationManager.NavigateTo("AdminProducts");
+        }
+        else
+        {
+            Status = "Something went wrong";
+        }
+    }
+
+    async Task DeleteCategory()
+    {
+        await CategoryService.DeleteCategory(CurrentCategory.Id);
+        navigationManager.NavigateTo("AdminProducts");
+    }
 }

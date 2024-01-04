@@ -65,17 +65,17 @@ public class ProductsController : ControllerBase
         return Ok(product);
     }
 
-    [HttpGet("{categoryId:int}/GetProducts-By-Category")]
+    [HttpGet("GetProducts-By-Category/{categoryId:int}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     public async Task<ActionResult<Product>> GetProductsByCategory(int categoryId)
-    {
+     {
         var productsByCategory = _mapper.Map<List<ProductDto>>(
             await _productRepository.GetProductByCategory(categoryId));
 
-        if (!ModelState.IsValid)
+        if (productsByCategory == null)
         {
-            return BadRequest(ModelState);
+            return BadRequest();
         }
 
         return Ok(productsByCategory);
@@ -90,7 +90,6 @@ public class ProductsController : ControllerBase
         {
             return BadRequest();
         }
-
 
         var categoryExist = await _productCategoryRepository.CategoryExist(productCreate.CategoryId);
 
