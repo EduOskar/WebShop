@@ -95,8 +95,7 @@ public class ProductsController : ControllerBase
 
         if (!categoryExist)
         {
-            ModelState.AddModelError("", $"ProductCategory with Id {productCreate.CategoryId} does not exist");
-            return BadRequest(ModelState);
+            return BadRequest($"ProductCategory with Id {productCreate.CategoryId} does not exist");
         }
 
         var productMap = _mapper.Map<Product>(productCreate);
@@ -104,8 +103,7 @@ public class ProductsController : ControllerBase
 
         if (!await _productRepository.CreateProduct(productMap))
         {
-            ModelState.AddModelError("", "There was an error saving");
-            return BadRequest(ModelState);
+            return BadRequest("There was an error saving");
         }
 
         return CreatedAtAction("GetProduct", new { productId = productMap.Id }, productMap);
@@ -119,12 +117,19 @@ public class ProductsController : ControllerBase
     {
         if (updateProduct == null)
         {
-            return BadRequest(ModelState);
+            return BadRequest();
         }
 
         if (productId != updateProduct.Id)
         {
-            return BadRequest(ModelState);
+            return BadRequest();
+        }
+
+        var categoryExist = await _productCategoryRepository.CategoryExist(updateProduct.CategoryId);
+
+        if (!categoryExist)
+        {
+            return BadRequest($"ProductCategory with Id {updateProduct.CategoryId} does not exist");
         }
 
         if (!await _productRepository.ProductExist(productId))
@@ -132,18 +137,12 @@ public class ProductsController : ControllerBase
             return NotFound();
         }
 
-        if (!ModelState.IsValid)
-        {
-            return BadRequest();
-        }
-
         var productMap = _mapper.Map<Product>(updateProduct);
         productMap.Category = await _productCategoryRepository.GetCategory(updateProduct.CategoryId);
 
         if (!await _productRepository.UpdateProduct(productMap))
         {
-            ModelState.AddModelError("", "Something went wrong while updating");
-            return BadRequest(ModelState);
+            return BadRequest();
         }
 
         return NoContent();

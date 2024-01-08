@@ -1,0 +1,128 @@
+﻿@page "/edit-usersroles"
+@page "/edit-usersroles/{UserId:int}"
+@inject NavigationManager navigationManager
+
+
+@if (UserId is null)
+{
+    <PageTitle>Add a new UserRole</PageTitle>
+    <h3>Add a new UserRole</h3>
+    Message = "Create UserRole";
+}
+else
+{
+    <PageTitle>Edit "@CurrentUserRole.UserId @CurrentUserRole.RoleId"</PageTitle>
+    <h3>Edit @CurrentUserRole.UserId @CurrentUserRole.RoleId</h3>
+    Message = "Update userRole";
+}
+
+<EditForm Model="CurrentUserRole" OnValidSubmit="HandleSubmit" FormName="UserForm">
+    <div>
+        <label for="userid">UserId</label>
+        <InputNumber id="userid" @bind-Value="@CurrentUserRole.UserId" class="form-control" />
+    </div>
+    <div>
+        <label for="roleid">RoleId</label>
+        <InputNumber id="roleid" @bind-Value="@CurrentUserRole.RoleId" class="form-control" />
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">@Message</button>
+ @*    <button type="button" class="btn btn-danger"
+            @onclick="DeleteUsersRoles">
+        Delete User
+    </button> *@
+</EditForm>
+
+<p>@Status</p>
+
+
+<p>@ErrorMessage</p>
+
+
+
+@code {
+    [Inject]
+    private IRoleService RoleService { get; set; } = default!;
+
+    [Parameter]
+    public int? UserId { get; set; } = null;
+
+    [SupplyParameterFromForm]
+    public UserRoleDto CurrentUserRole { get; set; } = new();
+
+    private string Status = string.Empty;
+    private string Message = string.Empty;
+
+    private string ErrorMessage = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
+            if (UserId is not null)
+            {
+                var userRole = await RoleService.GetUserRole(UserId.Value)!;
+                if (userRole is not null)
+                {
+                    CurrentUserRole.UserId = userRole.UserId;
+                    CurrentUserRole.RoleId = userRole.RoleId;
+                }
+
+            }
+        }
+        catch (Exception ex)
+        {
+
+            ErrorMessage = ex.Message;
+        }
+
+    }
+
+    async Task HandleSubmit()
+    {
+        if (UserId is not null)
+        {
+            await UpdateUserRole();
+        }
+        else
+        {
+            await CreateUserRole();
+        }
+    }
+
+    async Task CreateUserRole()
+    {
+        var result = await RoleService.UpdateUserToRole(CurrentUserRole);
+
+        if (result)
+        {
+            Status = "User added successfully!";
+            navigationManager.NavigateTo("DisplayRoles");
+        }
+        else
+        {
+            Status = "Something went wrong";
+        }
+    }
+
+    async Task UpdateUserRole()
+    {
+        var result = await RoleService.UpdateUserToRole(CurrentUserRole);
+
+        if (result)
+        {
+            Status = "User Updated Successfully!";
+            navigationManager.NavigateTo("DisplayRoles");
+        }
+        else
+        {
+            Status = "Something went wrong";
+        }
+    }
+
+    // /* async  Task*/ DeleteUsersRoles()
+    // {
+    //     // await UserService.DeleteUser(CurrentUserRole);
+    //     navigationManager.NavigateTo("DisplayUsers");
+    // }
+}

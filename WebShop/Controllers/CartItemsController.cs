@@ -34,17 +34,6 @@ public class CartItemsController : ControllerBase
     {
         var cartItems = _mapper.Map<List<CartItemDto>>(await _cartItemRepository.GetCartItems(userId));
 
-        //foreach (var item in cartItems)
-        //{
-        //    var product = await _productRepository.GetProduct(item.ProductId);
-
-        //    if (product != null)
-        //    {
-        //        item.Price = product.Price;
-        //        item.TotalPrice = product.Price * item.Qty;
-        //    }
-        //}
-
         if (!ModelState.IsValid)
         {
             return BadRequest();
@@ -65,9 +54,6 @@ public class CartItemsController : ControllerBase
         }
        
         var cartItem = _mapper.Map<CartItemDto>(await _cartItemRepository.GetCartItem(cartItemId));
-        var product = await _productRepository.GetProduct(cartItem.ProductId);
-        //cartItem.Price = product.Price;
-        //cartItem.TotalPrice = product.Price * cartItem.Qty;
 
         if (!ModelState.IsValid)
         {
@@ -82,10 +68,6 @@ public class CartItemsController : ControllerBase
     [ProducesResponseType(400)]
     public async Task<ActionResult> CreateCartItem([FromBody] CartItemDto cartItemCreate)
     {
-        //if (cartItemCreate == null)
-        //{
-        //    return BadRequest();
-        //}
         if (!ModelState.IsValid)
         {
             return BadRequest();

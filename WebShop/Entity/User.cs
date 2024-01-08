@@ -6,8 +6,6 @@ namespace WebShop.Api.Entity;
 
 public class User :  IdentityUser<int>
 {
-    new public string Email { get; set; } = default!;
-
     public override string? UserName { get; set; } = default!;
 
     public string FirstName { get; set; } = default!;
@@ -17,8 +15,6 @@ public class User :  IdentityUser<int>
     public decimal? Credit { get; set; }
 
     public string Adress { get; set; } = default!;
-
-    new public string PhoneNumber { get; set; } = default!;
 
     [DataType(DataType.Password)]
     public string Password { get; set; } = default!;

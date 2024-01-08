@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using WebShop.Api.Data;
@@ -9,34 +10,49 @@ namespace WebShop.Api.Repositories;
 
 public class UserRepository : IUserRepository
 {
-    private readonly UserManager<User> userManager;
+    private readonly UserManager<User> _userManager;
     private readonly ApplicationDbContext _dbContext;
+    private readonly RoleManager<IdentityRole<int>> _roleManager;
 
-    public UserRepository(UserManager<User> userManager, ApplicationDbContext dbContext)
+    public UserRepository(UserManager<User> userManager, ApplicationDbContext dbContext, RoleManager<IdentityRole<int>> roleManager)
     {
-        this.userManager = userManager;
+        _userManager = userManager;
         _dbContext = dbContext;
+        _roleManager = roleManager;
     }
     public async Task<IdentityResult> CreateUser(User user)
     {
-        var userCreated = await userManager.CreateAsync(user);
+        var hashPassword = _userManager.PasswordHasher.HashPassword(user, user.Password);
+        user.PasswordHash = hashPassword;
 
-        await _dbContext.SaveChangesAsync();
+        var result = await _userManager.CreateAsync(user);
 
-        return userCreated;
+        if (result.Succeeded)
+        {
+            await _userManager.AddToRoleAsync(user, "User");
+
+            Cart newCart = new Cart()
+            {
+                UserId = user.Id,
+            };
+
+            await  _dbContext.Carts.AddAsync(newCart);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        return result;
     }
 
     public async Task<IdentityResult> DeleteUser(User user)
     {
-        return await userManager.DeleteAsync(user);
-
+        return await _userManager.DeleteAsync(user);
     }
 
     public async Task<User> GetUser(int userId)
     {
         string userIdString = userId.ToString();
 
-        var user = await userManager.FindByIdAsync(userIdString);
+        var user = await _userManager.FindByIdAsync(userIdString);
 
         if (user != null)
         {
@@ -48,22 +64,28 @@ public class UserRepository : IUserRepository
 
     public async Task<ICollection<User>> GetUsers()
     {
-        var users = await userManager.Users.ToListAsync();
+        var users = await _userManager.Users.ToListAsync();
 
         return users;
     }
     public async Task<IdentityResult> UpdateUser(User user)
     {
-        return await userManager.UpdateAsync(user);
+        return await _userManager.UpdateAsync(user);
 
+    }
+
+    public async Task<bool> Save()
+    {
+        var save = await _dbContext.SaveChangesAsync();
+
+        return save > 0;
     }
 
     public async Task<bool> UserExist(int userId)
     {
-        string userIdString = userId.ToString();
+        var userExist = await _userManager.Users.AnyAsync(u => u.Id == userId);
 
-        var userExist = await userManager.FindByIdAsync(userIdString);
-
-        return userExist != null;
+        return userExist;
     }
+
 }

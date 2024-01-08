@@ -1,0 +1,159 @@
+﻿@page "/edit-user"
+@page "/edit-user/{Id:int}"
+@inject NavigationManager navigationManager
+
+
+@if (Id is null)
+{
+    <PageTitle>Add a new User</PageTitle>
+    <h3>Add a new User</h3>
+    Message = "Create user";
+}
+else
+{
+    <PageTitle>Edit "@CurrentUser.FirstName @CurrentUser.LastName"</PageTitle>
+    <h3>Edit @CurrentUser.FirstName @CurrentUser.LastName</h3>
+    Message = "Update user";
+}
+
+<EditForm Model="CurrentUser" OnValidSubmit="HandleSubmit" FormName="UserForm">
+    <div>
+        <label for="firstname">Firstname</label>
+        <InputText id="firstname" @bind-Value="@CurrentUser.FirstName" class="form-control" />
+    </div>
+    <div>
+        <label for="lastname">Lastname</label>
+        <InputText id="lastname" @bind-Value="@CurrentUser.LastName" class="form-control" />
+    </div>
+    <div>
+        <label for="username">Username</label>
+        <InputText id="username" @bind-Value="@CurrentUser.UserName" class="form-control" />
+    </div>
+    <div>
+        <label for="email">Email</label>
+        <InputText id="email" @bind-Value="@CurrentUser.Email" class="form-control" />
+    </div>
+    <div>
+        <label for="phonenumber">Phonenumber</label>
+        <InputText id="phonenumber" @bind-Value="@CurrentUser.Phonenumber" class="form-control" />
+    </div>
+    <div>
+        <label for="adress">Adress</label>
+        <InputText id="adress" @bind-Value="@CurrentUser.Adress" class="form-control" />
+    </div>
+    <div>
+        <label for="password">Password</label>
+        <InputText id="password" @bind-Value="@CurrentUser.Password" class="form-control" />
+    </div>
+    <div>
+        <label for="confirmpassword">Confirm Password</label>
+        <InputText id="confirmpassword" @bind-Value="@CurrentUser.ConfirmPassword" class="form-control" />
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">@Message</button>
+    <button type="button" class="btn btn-danger"
+            @onclick="DeleteUser">
+        Delete User
+    </button>
+</EditForm>
+
+<p>@Status</p>
+
+
+<p>@ErrorMessage</p>
+
+
+
+@code {
+    [Inject]
+    private IUsersService UserService { get; set; } = default!;
+
+    [Parameter]
+    public int? Id { get; set; } = null;
+
+    [SupplyParameterFromForm]
+    public UserDto CurrentUser { get; set; } = new();
+
+    private string Status = string.Empty;
+    private string Message = string.Empty;
+
+    private string ErrorMessage = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
+            if (Id is not null)
+            {
+                var user = await UserService.GetUser(Id.Value)!;
+                if (user is not null)
+                {
+                    CurrentUser.Id = user.Id;
+                    CurrentUser.FirstName ??= user.FirstName;
+                    CurrentUser.LastName ??= user.LastName;
+                    CurrentUser.UserName ??= user.UserName;
+                    CurrentUser.Email ??= user.Email;
+                    CurrentUser.Phonenumber ??= user.Phonenumber;
+                    CurrentUser.Adress ??= user.Adress;
+                    CurrentUser.Password ??= user.Password;
+                    CurrentUser.ConfirmPassword ??= user.ConfirmPassword;
+                }
+
+            }
+        }
+        catch (Exception ex)
+        {
+
+            ErrorMessage = ex.Message;
+        }
+
+    }
+
+    async Task HandleSubmit()
+    {
+        if (Id is not null)
+        {
+            await UpdateUser();
+        }
+        else
+        {
+            await CreateUser();
+        }
+    }
+
+    async Task CreateUser()
+    {
+        var result = await UserService.CreateUser(CurrentUser);
+
+        if (result != null)
+        {
+            Status = "User added successfully!";
+            navigationManager.NavigateTo("DisplayUsers");
+        }
+        else
+        {
+            Status = "Something went wrong";
+        }
+    }
+
+    async Task UpdateUser()
+    {
+        var result = await UserService.UpdateUser(CurrentUser);
+
+        if (result)
+        {
+            Status = "User Updated Successfully!";
+            navigationManager.NavigateTo("DisplayUsers");
+        }
+        else
+        {
+            Status = "Something went wrong";
+        }
+    }
+
+    async Task DeleteUser()
+    {
+        await UserService.DeleteUser(CurrentUser.Id);
+        navigationManager.NavigateTo("DisplayUsers");
+    }
+}

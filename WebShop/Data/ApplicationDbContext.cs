@@ -9,7 +9,9 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     { 
+        
     }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

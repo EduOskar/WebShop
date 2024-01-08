@@ -54,10 +54,9 @@ public class ProductRepository : IProductRepository
 
     public async Task<ICollection<Product>> GetProducts()
     {
-        string searchByName = string.Empty;
 
         var products = await _dbContext.Products
-            .Where(p => p.Name.Contains(searchByName))
+            .OrderBy(p => p.CategoryId)
             .Include(p => p.Category)
             .ToListAsync();
 

@@ -35,6 +35,7 @@ else
         try
         {
             ProductCategory = await CategoryService.GetCategories();
+            StateHasChanged();
         }
         catch (Exception ex)
         {

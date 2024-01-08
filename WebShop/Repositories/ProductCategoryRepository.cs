@@ -37,7 +37,9 @@ public class ProductCategoryRepository : IProductCategoryRepository
 
     public async Task<ICollection<ProductCategory>> GetCategories()
     {
-        var categories = await _dbContext.ProductCategories.ToListAsync();
+        var categories = await _dbContext.ProductCategories
+            .OrderBy(c => c.Id)
+            .ToListAsync();
 
         return categories;
     }

@@ -19,7 +19,10 @@ public class AuthController : ControllerBase
     private readonly IMapper _mapper;
     private readonly ICartRepository _cartRepository;
 
-    public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IMapper mapper, ICartRepository cartRepository)
+    public AuthController(UserManager<User> userManager, 
+        SignInManager<User> signInManager, 
+        IMapper mapper, 
+        ICartRepository cartRepository)
     {
         _userManager = userManager;
         _signInManager = signInManager;
@@ -55,7 +58,7 @@ public class AuthController : ControllerBase
 
         var userMap = _mapper.Map<User>(parameters);
 
-        if (await _userManager.FindByEmailAsync(userMap.Email) != null || await _userManager.FindByNameAsync(userMap.UserName!) != null)
+        if (await _userManager.FindByEmailAsync(userMap.Email!) != null || await _userManager.FindByNameAsync(userMap.UserName!) != null)
         {
             return BadRequest($"{userMap.Email} or {userMap.UserName} already exist");
         }
@@ -72,9 +75,7 @@ public class AuthController : ControllerBase
             UserId = userMap.Id
         };
 
-        var cartMap = _mapper.Map<Cart>(newCart);
-
-        await _cartRepository.CreateCart(cartMap);
+        await _cartRepository.CreateCart(newCart);
 
         await _userManager.AddToRoleAsync(userMap, "User");
 

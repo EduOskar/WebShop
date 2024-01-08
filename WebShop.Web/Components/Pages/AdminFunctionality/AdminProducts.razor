@@ -1,7 +1,7 @@
 ﻿@page "/AdminProducts"
-@attribute [StreamRendering]
 
-<PageTitle>Admin Information</PageTitle>
+
+<PageTitle>Products information</PageTitle>
 
 <AuthorizeView Roles="Admin">
     <Authorized>
@@ -27,7 +27,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var categories in SortedCategoryList)
+                    @foreach (var categories in CategoryList)
                     {
 
                         if (!ApplyFilterCategory(categories))
@@ -68,7 +68,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var products in SortedProductList)
+                    @foreach (var products in ProductList)
                     {
                         if (!ApplyFilterProduct(products))
                         {
@@ -97,34 +97,31 @@
 @code {
 
     [Inject]
-    IProductsService productService { get; set; } = default!;
+    IProductsService ProductService { get; set; } = default!;
 
     [Inject]
-    IProductsCategoryService categoryService { get; set; } = default!;
+    IProductsCategoryService CategoryService { get; set; } = default!;
 
     List<ProductCategoryDto> CategoryList { get; set; } = default!;
-    List<ProductCategoryDto> SortedCategoryList { get; set; } = default!;
 
     List<ProductDto> ProductList { get; set; } = default!;
-    List<ProductDto> SortedProductList { get; set; } = default!;
 
     string? filterProduct { get; set; }
     string? filterCategory { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        await Task.Delay(500);
-        await SortList();
+        @* @attribute [StreamRendering] Enables Task.Delay for site.. add this ontop of page *@ 
+        // await Task.Delay(500);
+        await FetchProductsAndCategories();
 
     }
 
-    private async Task SortList()
+    private async Task FetchProductsAndCategories()
     {
-        ProductList = await productService.GetProducts();
-        SortedProductList = ProductList.OrderBy(x => x.CategoryId).ToList();
+        ProductList = await ProductService.GetProducts();
 
-        CategoryList = await categoryService.GetCategories();
-        SortedCategoryList = CategoryList.OrderBy(x => x.Id).ToList();
+        CategoryList = await CategoryService.GetCategories();
     }
 
     private bool ApplyFilterProduct(ProductDto products)
@@ -133,6 +130,9 @@
             return true;
 
         if (products.Name.Contains(filterProduct, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (products.Description.Contains(filterProduct, StringComparison.OrdinalIgnoreCase))
             return true;
 
         if (products.CategoryName!.Contains(filterProduct, StringComparison.OrdinalIgnoreCase))

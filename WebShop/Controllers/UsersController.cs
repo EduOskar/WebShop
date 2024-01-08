@@ -2,8 +2,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.WebSockets;
+using WebShop.Api.Data;
 using WebShop.Api.Entity;
+using WebShop.Api.Repositories;
 using WebShop.Api.Repositories.Contracts;
 using WebShop.Models.DTOs;
 
@@ -79,8 +83,8 @@ public class UsersController : ControllerBase
 
         if (userCheck)
         {
-            ModelState.AddModelError("", "User Already Exist");
-            return BadRequest(ModelState);
+
+            return BadRequest("User already exist");
         }
 
         var userMap = _mapper.Map<User>(userCreate);
@@ -91,37 +95,49 @@ public class UsersController : ControllerBase
 
     }
 
-    [HttpPut("{userId:int}")]
+
+
+    [HttpPut("{userId}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
-    public async Task<ActionResult> UpdateUser(int userId, [FromBody] UserDto updatedUser)
+    public async Task<ActionResult<IdentityResult>> UpdateUser(int userId, UserDto updatedUser)
     {
-        if (updatedUser == null)
+        try
         {
-            return BadRequest(ModelState);
+            if (userId != updatedUser.Id)
+            {
+                return BadRequest("Invalid Id");
+            }
+
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+
+            if (user == null)
+            {
+                return NotFound("User was not found");
+            }
+
+            _mapper.Map(updatedUser, user);
+
+            var hashedPasswod = _userManager.PasswordHasher.HashPassword(user, updatedUser.Password);
+
+            user.PasswordHash = hashedPasswod;
+
+            var result = await _userRepository.UpdateUser(user);
+
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+
+            return BadRequest(ex.Message);
         }
 
-        if (userId != updatedUser.Id)
-        {
-            return BadRequest(ModelState);
-        }
-
-        if (! await _userRepository.UserExist(userId))
-        {
-            return NotFound();
-        }
-
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
-        var userMap = _mapper.Map<User>(updatedUser);
-
-        await _userRepository.UpdateUser(userMap);
-
-        return NoContent();
     }
     [HttpDelete("{userId:int}")]
     [ProducesResponseType(204)]
@@ -140,5 +156,5 @@ public class UsersController : ControllerBase
 
         return NoContent();
     }
-    
+
 }

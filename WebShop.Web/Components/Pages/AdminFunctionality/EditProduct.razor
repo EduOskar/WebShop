@@ -1,6 +1,7 @@
 ﻿@page "/edit-product"
 @page "/edit-product/{Id:int}"
 @inject NavigationManager navigationManager
+@inject IConfiguration config
 
 
 @if (Id is null)
@@ -26,8 +27,8 @@ else
         <InputText id="description" @bind-Value="@CurrentProduct.Description" class="form-control" />
     </div>
     <div>
-        <label for="imageurl">ImageUrl</label>
-        <InputText id="imageurl" @bind-Value="@CurrentProduct.ImageURL" class="form-control"/>
+        <label for="imageFile">Upload Image</label>
+        <InputFile id="imageFile" OnChange="@Loadfiles" class="form-control"/>
     </div>
     <div>
         <label for="categoryid">categoryid</label>
@@ -50,10 +51,17 @@ else
 </EditForm>
 
 <p>@Status</p>
+<br />
+<p>@ErrorMessage</p>
 
 
 
 @code {
+    private long maxFileSize = 1280 * 720 * 3; // represents 3MB
+    private int maxAllowedFiles = 1;
+    private List<string> errors = new();
+    private readonly string _imageStoragePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Images", "Unsafe-uploads");
+
     [Inject]
     private IProductsService ProductService { get; set; } = default!;
 
@@ -65,6 +73,7 @@ else
 
     private string Status = string.Empty;
     private string Message = string.Empty;
+    private string ErrorMessage = string.Empty;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -99,37 +108,105 @@ else
 
     async Task CreateProduct()
     {
-        var result = await ProductService.CreateProduct(CurrentProduct);
+        try
+        {
+            var result = await ProductService.CreateProduct(CurrentProduct);
 
-        if (result != null)
-        {
-            Status = "Product added successfully!";
-            navigationManager.NavigateTo("AdminProducts");
+            if (result != null)
+            {
+                Status = "Product added successfully!";
+                navigationManager.NavigateTo("AdminProducts");
+            }
+            else
+            {
+                Status = "Something went wrong";
+            }
         }
-        else
+        catch (Exception ex)
         {
-            Status = "Something went wrong";
+
+            ErrorMessage = ex.Message;
         }
+
     }
 
     async Task UpdateProduct()
     {
-        var result = await ProductService.UpdateProduct(CurrentProduct);
+        try
+        {
+            var result = await ProductService.UpdateProduct(CurrentProduct);
 
-        if (result)
-        {
-            Status = "Product Updated Successfully!";
-            navigationManager.NavigateTo("AdminProducts");
+            if (result)
+            {
+                Status = "Product Updated Successfully!";
+                navigationManager.NavigateTo("AdminProducts");
+            }
+            else
+            {
+                Status = "Something went wrong";
+            }
         }
-        else
+        catch (Exception ex)
         {
-            Status = "Something went wrong";
+            ErrorMessage = ex.Message;
         }
+
     }
 
     async Task DeleteProduct()
     {
-        await ProductService.DeleteProduct(CurrentProduct.Id);
-        navigationManager.NavigateTo("AdminProducts");
+        try
+        {
+            await ProductService.DeleteProduct(CurrentProduct.Id);
+            navigationManager.NavigateTo("AdminProducts");
+        }
+        catch (Exception ex)
+        {
+
+            ErrorMessage = ex.Message;
+        }
+
+    }
+
+    private async Task Loadfiles(InputFileChangeEventArgs e)
+    {
+        errors.Clear();
+
+        if (e.FileCount > maxAllowedFiles)
+        {
+            errors.Add($"Error: Attempting to upload {e.FileCount} files, but only {maxAllowedFiles} files are allowed");
+            return;
+        }
+
+        var file = e.File;
+
+        try
+        {
+
+            await file.RequestImageFileAsync(file.ContentType, 720, 1280);
+
+            string newFileName = Path.ChangeExtension(
+            Path.GetRandomFileName(),
+            Path.GetExtension(file.Name));
+
+
+            string path = Path.Combine(_imageStoragePath, newFileName);
+
+            Directory.CreateDirectory(_imageStoragePath);
+
+            // Directory.CreateDirectory(Path.Combine(
+            // config.GetValue<string>("FileStorage")!));
+
+            await using FileStream fs = new(path, FileMode.Create);
+            await file.OpenReadStream(maxFileSize).CopyToAsync(fs);
+
+            CurrentProduct.ImageURL = $"/Images/Unsafe-uploads/{newFileName}";
+        }
+        catch (Exception ex)
+        {
+
+            errors.Add($"File:{file.Name} Error: {ex.Message}");
+        }
+
     }
 }

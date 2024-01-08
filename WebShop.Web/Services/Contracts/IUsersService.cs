@@ -4,9 +4,9 @@ namespace WebShop.Web.Services.Contracts;
 
 public interface IUsersService
 {
-    Task<ICollection<UserDto>> GetUsers();
+    Task<List<UserDto>> GetUsers();
     Task<UserDto> GetUser(int userId);
     Task<UserDto> CreateUser(UserDto user);
-    Task<UserDto> UpdateUser(UserDto user);
-    Task<UserDto> DeleteUser(int userId);
+    Task<bool> UpdateUser(UserDto user);
+    Task<bool> DeleteUser(int userId);
 }
