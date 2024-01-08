@@ -10,6 +10,9 @@ namespace WebShop.Models.DTOs
     public class ProductCategoryDto
     {
         public int Id { get; set; }
-        public string? Name { get; set; }
+
+        public string? Name { get; set; } = default!;
+
+        public string IconCSS { get; set; } = default!;
     }
 }

@@ -1,0 +1,72 @@
+﻿@page "/register"
+@inject NavigationManager navigationManager
+@inject CustomStateProvider authStateProvider
+<h1 class="h2 font-weight-normal login-title">
+    Register
+</h1>
+<EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="registerRequest">
+
+    <DataAnnotationsValidator />
+    <label for="inputFirstName" class="sr-only">Firstname</label>
+    <InputText id="inputFirstName" class="form-control" placeholder="Firstname" autofocus @bind-Value="@registerRequest.FirstName" />
+    <ValidationMessage For="@(() => registerRequest.FirstName)" />
+
+    <DataAnnotationsValidator />
+    <label for="inputLastName" class="sr-only">Lastname</label>
+    <InputText id="inputLastName" class="form-control" placeholder="Lastname" autofocus @bind-Value="@registerRequest.LastName" />
+    <ValidationMessage For="@(() => registerRequest.LastName)" />
+
+    <DataAnnotationsValidator />
+    <label for="inputEmail" class="sr-only">E-mail</label>
+    <InputText id="inputEmail" class="form-control" placeholder="E-mail" autofocus @bind-Value="@registerRequest.Email" />
+    <ValidationMessage For="@(() => registerRequest.Email)" />
+    
+    <DataAnnotationsValidator />
+    <label for="inputAdress" class="sr-only">Adress</label>
+    <InputText id="inputAdress" class="form-control" placeholder="Adress" autofocus @bind-Value="@registerRequest.Adress" />
+    <ValidationMessage For="@(() => registerRequest.Adress)" />
+   
+    <DataAnnotationsValidator />
+    <label for="inputPhonenumber" class="sr-only">Phonenumber</label>
+    <InputText id="inputPhonenumber" class="form-control" placeholder="Phonenumber" autofocus @bind-Value="@registerRequest.Phonenumber" />
+    <ValidationMessage For="@(() => registerRequest.Phonenumber)" />
+    
+    <label for="inputUsername" class="sr-only">UserName</label>
+    <InputText id="inputUsername" class="form-control" placeholder="Username" autofocus @bind-Value="@registerRequest.UserName" />
+    <ValidationMessage For="@(() => registerRequest.UserName)" />
+   
+    <label for="inputPassword" class="sr-only">Password</label>
+    <InputText type="password" id="inputPassword" class="form-control" placeholder="Password" @bind-Value="@registerRequest.Password" />
+    <ValidationMessage For="@(() => registerRequest.Password)" />
+    
+    <label for="inputConfirmPassword" class="sr-only">Password Confirmation</label>
+    <InputText type="password" id="inputConfirmPassword" class="form-control" placeholder="Password Confirmation" @bind-Value="@registerRequest.ConfirmPassword" />
+    <ValidationMessage For="@(() => registerRequest.ConfirmPassword)" />
+
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Create account</button>
+
+    <label class="text-danger">@error</label>
+
+    <NavLink href="login">
+        <h6 class="font-weight-normal text-center">Already have an account? Click here to login</h6>
+    </NavLink>
+
+</EditForm>
+
+@functions {
+    UserDto registerRequest { get; set; } = new UserDto();
+    string? error { get; set; }
+    async Task OnSubmit()
+    {
+        error = null;
+        try
+        {
+            await authStateProvider.Register(registerRequest);
+            navigationManager.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+}

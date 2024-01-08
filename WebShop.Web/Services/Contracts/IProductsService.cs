@@ -4,10 +4,15 @@ namespace WebShop.Web.Services.Contracts;
 
 public interface IProductsService
 {
-    Task<ICollection<ProductDto>> GetProducts();
-    Task<ProductDto>? GetProduct(int productId);
+    Task<List<ProductDto>> GetProducts();
+
+    Task<List<ProductDto>> GetProductsByCategory(int categoryId);
+
+    Task<ProductDto> GetProduct(int productId);
+
     Task<ProductDto> CreateProduct(ProductDto product);
-    //Kan bli error för i repository är det bool, här är det en ProductDto
-    Task<ProductDto> UpdateProduct(ProductDto product);
-    Task<ProductDto> DeleteProduct(int productId);
+
+    Task<bool> UpdateProduct(ProductDto product);
+
+    Task<bool> DeleteProduct(int productId);
 }

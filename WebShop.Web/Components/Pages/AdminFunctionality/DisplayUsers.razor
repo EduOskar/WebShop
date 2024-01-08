@@ -1,0 +1,117 @@
+﻿@page "/DisplayUsers"
+
+<PageTitle>User information</PageTitle>
+
+<AuthorizeView Roles="Admin">
+    <Authorized>
+        @if (UserList == null)
+        {
+            <DisplaySpinner />
+        }
+        else
+        {
+            <h3>Users</h3>
+
+            <div class="form-group">
+                <input class="form-control" type="text" placeholder="filter" @bind="filterUser" @bind:event="oninput" />
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Firstname</th>
+                        <th>Lastname</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Password</th>
+                        <th>Confirm Password</th>
+                        <th>Phonenumer</th>
+                        <th>Adress</th>
+                        <th>Credits</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var users in UserList)
+                    {
+
+                        if (!ApplyFilterUsers(users))
+                        {
+                            continue;
+                        }
+                        <tr>
+                            <td>@users.Id</td>
+                            <td>@users.FirstName</td>
+                            <td>@users.LastName</td>
+                            <td>@users.UserName</td>
+                            <td>@users.Email</td>
+                            <td>@users.Password</td>
+                            <td>@users.ConfirmPassword</td>
+                            <td>@users.Phonenumber</td>
+                            <td>@users.Adress</td>
+                            <td>@users.Credit</td>
+                            <td><a href="edit-user/@users.Id">Edit</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <a href="edit-user">Add User</a>
+        }
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    [Inject]
+    IUsersService UserService { get; set; } = default!;
+
+    List<UserDto> UserList { get; set; } = default!;
+
+    private string? ErrorMessage = string.Empty;
+
+    string? filterUser { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchUsers();
+    }
+
+    private async Task FetchUsers()
+    {
+        try
+        {
+            UserList = await UserService.GetUsers();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+        
+    }
+
+    private bool ApplyFilterUsers(UserDto users)
+    {
+        if (string.IsNullOrEmpty(filterUser))
+            return true;
+
+        if (users.FirstName.Contains(filterUser, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (users.LastName!.Contains(filterUser, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (users.Adress!.Contains(filterUser, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (users.Phonenumber!.Contains(filterUser, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (users.Email!.Contains(filterUser, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (users.Id.ToString().StartsWith(filterUser) || users.Id.ToString().StartsWith(filterUser))
+            return true;
+
+        return false;
+    }
+
+}

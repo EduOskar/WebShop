@@ -46,20 +46,13 @@ public class ProductsService : IProductsService
         }
     }
 
-    public async Task<ProductDto> DeleteProduct(int productId)
+    public async Task<bool> DeleteProduct(int productId)
     {
         try
         {
             var response = await _httpClient.DeleteAsync($"api/Products/{productId}");
 
-            if (response.IsSuccessStatusCode)
-            {
-                var productDelete = await response.Content.ReadFromJsonAsync<ProductDto>();
-
-                return productDelete!;
-            }
-
-            return null!;
+            return response.IsSuccessStatusCode;
         }
         catch (Exception)
         {
@@ -84,7 +77,7 @@ public class ProductsService : IProductsService
                 var product = await response.Content.ReadFromJsonAsync<ProductDto>();
                 return product!;
             }
-            else
+            else  
             {
                 var message = await response.Content.ReadAsStringAsync();
                 throw new Exception($"Http status:{response.StatusCode} Message -{message}");
@@ -97,7 +90,7 @@ public class ProductsService : IProductsService
         }
     }
 
-    public async Task<ICollection<ProductDto>> GetProducts()
+    public async Task<List<ProductDto>> GetProducts()
     {
         try
         {
@@ -110,7 +103,7 @@ public class ProductsService : IProductsService
                     return null!;
                 }
 
-                var products = await response.Content.ReadFromJsonAsync<ICollection<ProductDto>>();
+                var products = await response.Content.ReadFromJsonAsync<List<ProductDto>>();
                 return products!;
             }
             else
@@ -126,7 +119,38 @@ public class ProductsService : IProductsService
             throw;
         }
     }
-    public async Task<ProductDto> UpdateProduct(ProductDto productUpdate)
+
+    public async Task<List<ProductDto>> GetProductsByCategory(int CategoryId)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"api/Products/GetProducts-By-Category/{CategoryId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                {
+                    return null!;
+                }
+
+                var productByCategory = await response.Content.ReadFromJsonAsync<List<ProductDto>>();
+
+                return productByCategory!;
+            }
+            else
+            {
+                var message = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Http status:{response.StatusCode} Message -{message}");
+            }
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
+    public async Task<bool> UpdateProduct(ProductDto productUpdate)
     {
         try
         {
@@ -136,14 +160,8 @@ public class ProductsService : IProductsService
 
             var response = await _httpClient.PutAsync($"api/Products/{productUpdate.Id}", content);
 
-            if (response.IsSuccessStatusCode)
-            {
-                var product = await response.Content.ReadFromJsonAsync<ProductDto>();
+            return response.IsSuccessStatusCode;
 
-                return product!;
-            }
-
-            return null!;
         }
         catch (Exception)
         {

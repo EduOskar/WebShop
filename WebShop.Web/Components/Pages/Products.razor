@@ -1,4 +1,5 @@
-﻿@page "/"
+﻿@page "/products"
+@inject CustomStateProvider authenticationStateProvider
 
 @if (ProductList == null)
 {
@@ -6,8 +7,6 @@
 }
 else
 {
-    <h3 class="mb-5">Products</h3>
-
     var productCount = ProductList.Count();
 
     @if (productCount > 0)
@@ -22,7 +21,6 @@ else
             </div>
             <hr class="mb-3" />
         }
-
     }
 }
 
@@ -34,26 +32,55 @@ else
     [Inject]
     public ICartItemsService CartitemService { get; set; } = default!;
 
-    public IEnumerable<ProductDto> ProductList { get; set; } = default!;
+    [Inject]
+    private IUsersService UserService { get; set; } = default!;
+
+    private ClaimsPrincipal User = default!;
+
+    private int UserId;
+
+    public List<ProductDto> ProductList { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
+            await GetAuthenticatedUserCart();
+
+            if (User != null && User.Identity!.IsAuthenticated)
+            {
+
+                var UserCartItems = await UserService.GetUser(UserId);
+
+                var shoppingCartItems = await CartitemService.GetCartItems(UserCartItems.Id);
+
+                var totalQuantity = shoppingCartItems.Sum(ci => ci.Quantity);
+
+                CartitemService.RaiseEventOnShoppingCartChanged(totalQuantity);
+            }
+
             ProductList = await ProductService.GetProducts();
-
-            var shoppingCartItems = await CartitemService.GetCartItems(HardCoded.UserId);
-
-            var totalQty = shoppingCartItems.Sum(ci => ci.Qty);
-
-            CartitemService.RaiseEventOnShoppingCartChanged(totalQty);
+           
         }
         catch (Exception)
         {
-            
+
             throw;
         }
-       
+
+    }
+
+    protected async Task GetAuthenticatedUserCart()
+    {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+
+        User = authState.User;
+
+        string userIdClaimValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+        if (int.TryParse(userIdClaimValue, out int userId))
+        {
+            UserId = userId;
+        }
     }
 
     protected IOrderedEnumerable<IGrouping<int, ProductDto>> GetGroupedProductsByCategory()

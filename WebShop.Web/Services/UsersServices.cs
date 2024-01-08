@@ -44,20 +44,14 @@ public class UsersServices : IUsersService
         }
     }
 
-    public async Task<UserDto> DeleteUser(int userId)
+    public async Task<bool> DeleteUser(int userId)
     {
         try
         {
             var response = await _httpClient.DeleteAsync($"api/Users/{userId}");
 
-            if (response.IsSuccessStatusCode)
-            {
-                var userDelete = await response.Content.ReadFromJsonAsync<UserDto>();
+            return response.IsSuccessStatusCode;
 
-                return userDelete!;
-            }
-
-            return null!;
         }
         catch (Exception)
         {
@@ -70,7 +64,6 @@ public class UsersServices : IUsersService
     {
         try
         {
-            //Förändra när jag implementerar inloggning
             var response = await _httpClient.GetAsync($"api/Users/{userId}");
 
             if (response.IsSuccessStatusCode)
@@ -96,7 +89,7 @@ public class UsersServices : IUsersService
         }
     }
 
-    public async Task<ICollection<UserDto>> GetUsers()
+    public async Task<List<UserDto>> GetUsers()
     {
         try
         {
@@ -108,7 +101,7 @@ public class UsersServices : IUsersService
                 {
                     return null!;
                 }
-                var users = await response.Content.ReadFromJsonAsync<ICollection<UserDto>>();
+                var users = await response.Content.ReadFromJsonAsync<List<UserDto>>();
                 return users!;
             }
             else
@@ -125,23 +118,18 @@ public class UsersServices : IUsersService
         }
     }
 
-    public async Task<UserDto> UpdateUser(UserDto userUpdate)
+    public async Task<bool> UpdateUser(UserDto userUpdate)
     {
         try
         {
             var jsonRequest = JsonConvert.SerializeObject(userUpdate);
+
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json-patch+json");
 
-            var response = await _httpClient.PutAsync($"api/Products/{userUpdate.Id}", content);
+            var response = await _httpClient.PutAsync($"api/Users/{userUpdate.Id}", content);
 
-            if (response.IsSuccessStatusCode)
-            {
-                var user = await response.Content.ReadFromJsonAsync<UserDto>();
-
-                return user!;
-            }
-
-            return null!;
+            return response.IsSuccessStatusCode;
+           
         }
         catch (Exception)
         {

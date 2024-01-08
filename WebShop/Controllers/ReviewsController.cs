@@ -108,8 +108,9 @@ public class ReviewsController : ControllerBase
             return BadRequest(ModelState);
         }
 
+
         var reviewMap = _mapper.Map<Review>(reviewCreate);
-        reviewMap.User = await _userRepository.GetUser(reviewCreate.UserId);
+        //reviewMap.User = await _userRepository.GetUser(reviewCreate.UserId);
         reviewMap.Product = await _productRepository.GetProduct(reviewCreate.ProductId);
 
         if (!await _reviewRepository.CreateReview(reviewMap))

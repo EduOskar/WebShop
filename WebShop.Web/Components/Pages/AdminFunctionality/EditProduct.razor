@@ -1,0 +1,212 @@
+﻿@page "/edit-product"
+@page "/edit-product/{Id:int}"
+@inject NavigationManager navigationManager
+@inject IConfiguration config
+
+
+@if (Id is null)
+{
+    <PageTitle>Add a new Product</PageTitle>
+    <h3>Add a new Product</h3>
+    Message = "Create Product";
+}
+else
+{
+    <PageTitle>Edit "@CurrentProduct.Name"</PageTitle>
+    <h3>Edit @CurrentProduct.Name</h3>
+    Message = "Update Product";
+}
+
+<EditForm Model="CurrentProduct" OnValidSubmit="HandleSubmit" FormName="ProductForm">
+    <div>
+        <label for="name">name</label>
+        <InputText id="name" @bind-Value="@CurrentProduct.Name" class="form-control" />
+    </div>
+    <div>
+        <label for="description">description</label>
+        <InputText id="description" @bind-Value="@CurrentProduct.Description" class="form-control" />
+    </div>
+    <div>
+        <label for="imageFile">Upload Image</label>
+        <InputFile id="imageFile" OnChange="@Loadfiles" class="form-control"/>
+    </div>
+    <div>
+        <label for="categoryid">categoryid</label>
+        <InputNumber id="categoryid" @bind-Value="@CurrentProduct.CategoryId" class="form-control" />
+    </div>
+    <div>
+        <label for="price">price</label>
+        <InputNumber id="price" @bind-Value="@CurrentProduct.Price" class="form-control" />
+    </div>
+    <div>
+        <label for="quantity">quantity</label>
+        <InputNumber id="quantity" @bind-Value="@CurrentProduct.Quantity" class="form-control" />
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">@Message</button>
+    <button type="button" class="btn btn-danger"
+        @onclick="DeleteProduct">
+        Delete Product
+    </button>
+</EditForm>
+
+<p>@Status</p>
+<br />
+<p>@ErrorMessage</p>
+
+
+
+@code {
+    private long maxFileSize = 1280 * 720 * 3; // represents 3MB
+    private int maxAllowedFiles = 1;
+    private List<string> errors = new();
+    private readonly string _imageStoragePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Images", "Unsafe-uploads");
+
+    [Inject]
+    private IProductsService ProductService { get; set; } = default!;
+
+    [Parameter]
+    public int? Id { get; set; } = null;
+
+    [SupplyParameterFromForm]
+    public ProductDto CurrentProduct { get; set; } = new();
+
+    private string Status = string.Empty;
+    private string Message = string.Empty;
+    private string ErrorMessage = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id is not null)
+        {
+            var product = await ProductService.GetProduct(Id.Value)!;
+            if (product is not null)
+            {
+                CurrentProduct.Id = product.Id;
+                CurrentProduct.Name ??= product.Name;
+                CurrentProduct.Description ??= product.Description;
+                CurrentProduct.ImageURL ??= product.ImageURL;
+                CurrentProduct.CategoryId = product.CategoryId;
+                CurrentProduct.CategoryName ??= product.CategoryName;
+                CurrentProduct.Price = product.Price;
+                CurrentProduct.Quantity = product.Quantity;
+            }
+        }
+    }
+
+    async Task HandleSubmit()
+    {
+        if (Id is not null)
+        {
+            await UpdateProduct();
+        }
+        else
+        {
+            await CreateProduct();
+        }
+    }
+
+    async Task CreateProduct()
+    {
+        try
+        {
+            var result = await ProductService.CreateProduct(CurrentProduct);
+
+            if (result != null)
+            {
+                Status = "Product added successfully!";
+                navigationManager.NavigateTo("AdminProducts");
+            }
+            else
+            {
+                Status = "Something went wrong";
+            }
+        }
+        catch (Exception ex)
+        {
+
+            ErrorMessage = ex.Message;
+        }
+
+    }
+
+    async Task UpdateProduct()
+    {
+        try
+        {
+            var result = await ProductService.UpdateProduct(CurrentProduct);
+
+            if (result)
+            {
+                Status = "Product Updated Successfully!";
+                navigationManager.NavigateTo("AdminProducts");
+            }
+            else
+            {
+                Status = "Something went wrong";
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+
+    }
+
+    async Task DeleteProduct()
+    {
+        try
+        {
+            await ProductService.DeleteProduct(CurrentProduct.Id);
+            navigationManager.NavigateTo("AdminProducts");
+        }
+        catch (Exception ex)
+        {
+
+            ErrorMessage = ex.Message;
+        }
+
+    }
+
+    private async Task Loadfiles(InputFileChangeEventArgs e)
+    {
+        errors.Clear();
+
+        if (e.FileCount > maxAllowedFiles)
+        {
+            errors.Add($"Error: Attempting to upload {e.FileCount} files, but only {maxAllowedFiles} files are allowed");
+            return;
+        }
+
+        var file = e.File;
+
+        try
+        {
+
+            await file.RequestImageFileAsync(file.ContentType, 720, 1280);
+
+            string newFileName = Path.ChangeExtension(
+            Path.GetRandomFileName(),
+            Path.GetExtension(file.Name));
+
+
+            string path = Path.Combine(_imageStoragePath, newFileName);
+
+            Directory.CreateDirectory(_imageStoragePath);
+
+            // Directory.CreateDirectory(Path.Combine(
+            // config.GetValue<string>("FileStorage")!));
+
+            await using FileStream fs = new(path, FileMode.Create);
+            await file.OpenReadStream(maxFileSize).CopyToAsync(fs);
+
+            CurrentProduct.ImageURL = $"/Images/Unsafe-uploads/{newFileName}";
+        }
+        catch (Exception ex)
+        {
+
+            errors.Add($"File:{file.Name} Error: {ex.Message}");
+        }
+
+    }
+}

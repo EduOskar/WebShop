@@ -11,4 +11,6 @@ public class ProductCategory
     [Required]
     [StringLength(100)]
     public string Name { get; set; } = default!;
+
+    public string IconCSS { get; set; } = default!;
 }

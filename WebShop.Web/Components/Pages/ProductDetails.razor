@@ -1,4 +1,5 @@
 ﻿@page "/ProductDetails/{productId:int}"
+@inject CustomStateProvider authenticationStateProvider
 
 @if (Product == null && ErrorMessage == null)
 {
@@ -20,20 +21,33 @@ else
             <p class="mb-4">@Product?.Description</p>
             <p class="mb-4">
                 <b>
-                    @Product?.Price.ToString("C")&nbsp;(@Product?.Qty items in stock);
+                    @Product?.Price.ToString("C")&nbsp;(@Product?.Quantity items in stock);
                 </b>
             </p>
-            <div class="btn btn-success"
-                 @onclick="() => (AddToCart_Click( new CartItemDto{
-                CartId = HardCoded.CartId,
-                ProductId = Product!.Id, 
-                Qty = 1
+            @if (!User.Identity!.IsAuthenticated)
+            {
+                <h5>You need to be logged in to have a shoppingcart</h5>
+                <a href="" class="btn btn-success">
+                    <span></span>&nbsp; Proceed to login
+                </a>
+            }
+            else
+            {
+                <div class="btn btn-success"
+                     @onclick="() => (AddToCart_Click( new CartItemDto{
+                CartId = cart.Id,
+                ProductId = Product!.Id,
+                Quantity = 1
             }))">
-                <b>Add to Cart</b>
-            </div>
+                    <b>Add to Cart</b>
+                </div>
+            }
+
         </div>
     </div>
 }
+
+
 
 @code {
 
@@ -47,24 +61,69 @@ else
     public ICartItemsService CartItemsService { get; set; } = default!;
 
     [Inject]
+    private ICartsService CartsService { get; set; } = default!;
+
+    [Inject]
+    private IUsersService UserService { get; set; } = default!;
+
+    [Inject]
     public NavigationManager NavigationManager { get; set; } = default!;
 
     public ProductDto Product { get; set; } = default!;
 
     public string? ErrorMessage { get; set; }
+
     private List<CartItemDto>? ShoppingCartItems { get; set; }
+
+    private ClaimsPrincipal User = default!;
+
+    private int UserId;
+
+    private CartDto cart = default!;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            ShoppingCartItems = await CartItemsService.GetCartItems(HardCoded.UserId);
+            await GetAuthenticatedUserCart();
+
+            if (User != null && User.Identity!.IsAuthenticated)
+            {
+                cart = await CartsService.GetCartByUser(UserId);
+
+                var UserCartItems = await UserService.GetUser(UserId);
+
+                ShoppingCartItems = await CartItemsService.GetCartItems(UserCartItems.Id);
+            }
 
             Product = await ProductsService.GetProduct(productId)!;
         }
         catch (Exception)
         {
             throw;
+        }
+    }
+
+    // protected override async Task OnParameterSetAsync()
+    // {
+    //     throw new NotImplementedException();
+    // }
+
+    // async Task HandleSubmit()
+    // {
+    //     throw new NotImplementedException();
+    // }
+
+    protected async Task GetAuthenticatedUserCart()
+    {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+
+        User = authState.User;
+
+        string userIdClaimValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+        if (int.TryParse(userIdClaimValue, out int userId))
+        {
+            UserId = userId;
         }
     }
 
@@ -81,4 +140,5 @@ else
             throw;
         }
     }
+
 }

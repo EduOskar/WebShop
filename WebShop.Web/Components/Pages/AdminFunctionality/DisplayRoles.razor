@@ -1,0 +1,77 @@
+﻿@page "/DisplayRoles"
+
+<PageTitle>DisplayRoles</PageTitle>
+
+<h3>DisplayRoles</h3>
+
+@if (UserRolesList == null || RolesList == null)
+{
+    <DisplaySpinner/>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>RoleId</th>
+                <th>Rolenames</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var roles in RolesList)
+            {
+                <tr>
+                    <td>@roles.Id</td>
+                    <td>@roles.Name</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>UserId</th>
+                <th>RoleId</th>
+                <th>Edit</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var userRole in UserRolesList)
+            {
+                <tr>
+                    <td>@userRole.UserId</td>
+                    <td>@userRole.RoleId</td>
+                    <td><a href="edit-usersroles/@userRole.UserId">Edit</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Inject]
+    private IRoleService RoleService { get; set; } = default!;
+
+    List<UserRoleDto> UserRolesList { get; set; } = default!;
+
+    List<RolesDto> RolesList { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchRoles();
+    }
+
+    private async Task FetchRoles()
+    {
+        try
+        {
+            RolesList = await RoleService.GetRoles();
+
+            UserRolesList = await RoleService.GetUsersAndRoles();
+        }
+        catch (Exception)
+        {
+        }
+    }
+}

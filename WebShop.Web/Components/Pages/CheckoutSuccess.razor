@@ -1,19 +1,13 @@
 ﻿@page "/CheckoutSuccess"
+@inject CustomStateProvider authenticationStateProvider
+@inject NavigationManager navigationManager
 
 @if (ShoppingCartItems == null)
 {
     <DisplaySpinner />
 }
-else if (ShoppingCartItems.Count > 0)
-{
-    <h5>Your Order is being proccesed</h5>
-    <br />
-    <DisplaySpinner />
-}
 else
 {
- 
-
     @if(OrderItems == null)
     {
         <DisplaySpinner />
@@ -21,15 +15,16 @@ else
     else if(OrderItems.Count > 0)
     {
 
-        <div class="col-md-6 offset-md-3">
+        <div class="col-md-6"> 
             <h4 class="mb-2">Order Summary</h4>
+            <h8 class="mb-2">Order Serialnumber: @Order.Id</h8>
             @if (OrderItems.Count() > 0)
             {
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Order serial number</th>
                             <th>Product</th>
+                            <th>Quantity</th>
                             <th>Product Description</th>
                         </tr>
                     </thead>
@@ -37,8 +32,8 @@ else
                         @foreach (var item in OrderItems)
                         {
                             <tr>
-                                <td>@item.Id</td>
-                                <td>@item.Qty x @item.ProductName</td>
+                                <td>@item.ProductName</td>
+                                <th>@item.Quantity</th>
                                 <td>@item.ProductDescription</td>
                             </tr>
                         }
@@ -56,13 +51,6 @@ else
 }
 
 @code {
-
-    protected List<CartItemDto> ShoppingCartItems { get; set; } = default!;
-
-    protected List<OrderItemDto> OrderItems { get; set; } = default!;
-
-    protected OrderDto Order { get; set; } = default!;
-
     [Inject]
     ICartOrderTransferService CartOrderTransferService { get; set; } = default!;
 
@@ -75,22 +63,41 @@ else
     [Inject]
     IOrdersService OrderService { get; set; } = default!;
 
+    protected List<CartItemDto> ShoppingCartItems { get; set; } = default!;
+
+    private ClaimsPrincipal User = default!;
+
+    protected List<OrderItemDto> OrderItems { get; set; } = default!;
+
+    protected OrderDto Order { get; set; } = default!;
+
+    private int UserId;
+
+
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            ShoppingCartItems = await CartItemService.GetCartItems(HardCoded.UserId);
+            await GetAuthenticatedUserCart();
 
-            if (ShoppingCartItems?.Count != 0)
+            if (User != null && User.Identity!.IsAuthenticated)
             {
-                await CartOrderTransfer(HardCoded.UserId);
+                ShoppingCartItems = await CartItemService.GetCartItems(UserId);
 
-                
+                if (ShoppingCartItems?.Count != 0)
+                {
+                    await CartOrderTransfer(UserId);
+                }
+
+                Order = await OrderService.GetLastOrderFromUser(UserId);
+
+                OrderItems = await OrderItemService.GetOrderItemsFromOrder(Order.Id);
+            }
+            else
+            {
+                navigationManager.NavigateTo("");
             }
 
-            Order = await OrderService.GetLastOrderFromUser(HardCoded.UserId);
-
-            OrderItems = await OrderItemService.GetOrderItemsFromOrder(Order.Id);
         }
         catch (Exception)
         {
@@ -100,8 +107,21 @@ else
 
     }
 
+    protected async Task GetAuthenticatedUserCart()
+    {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+
+        User = authState.User;
+
+        string userIdClaimValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+        if (int.TryParse(userIdClaimValue, out int userId))
+        {
+            UserId = userId;
+        }
+    }
+
     protected async Task CartOrderTransfer(int userId)
     {
-        await CartOrderTransferService.CartOrderTransfer(HardCoded.UserId);
+        await CartOrderTransferService.CartOrderTransfer(userId);
     }
 }

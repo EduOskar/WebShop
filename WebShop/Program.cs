@@ -1,8 +1,7 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.Identity.Client;
 using Microsoft.Net.Http.Headers;
-using System.Text;
 using System.Text.Json.Serialization;
 using WebShop.Api.Data;
 using WebShop.Api.Entity;
@@ -24,23 +23,20 @@ builder.Services.AddDbContextPool<ApplicationDbContext>(options =>
     options.UseSqlServer(builder
     .Configuration.GetConnectionString("WebShop")));
 
-builder.Services.AddDefaultIdentity<User>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddIdentity<User, IdentityRole<int>>()
+    .AddRoles<IdentityRole<int>>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-       .AddJwtBearer(options =>
-       {
-           options.TokenValidationParameters = new TokenValidationParameters
-           {
-               ValidateIssuer = true,
-               ValidateAudience = true,
-               ValidateLifetime = true,
-               ValidateIssuerSigningKey = true,
-               ValidIssuer = "JwtIssuer",
-               ValidAudience = "JwtAudience",
-               IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("JwtSecurityKey"))
-           };
-       });
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.HttpOnly = false;
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.StatusCode = 401;
+        return Task.CompletedTask;
+    };
+});
 
 builder.Services.AddControllers()
    .AddJsonOptions(options =>
@@ -48,7 +44,9 @@ builder.Services.AddControllers()
        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
    });
 
+
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IRolesRepository, RolesRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 builder.Services.AddScoped<IProductCategoryRepository, ProductCategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -79,5 +77,46 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+//using (var scope = app.Services.CreateScope())
+//{
+//    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
+
+//    var roles = new[] { "Admin", "User" };
+
+//    foreach (var role in roles)
+//    {
+//        if (!await roleManager.RoleExistsAsync(role))
+//        {
+//            await roleManager.CreateAsync(new IdentityRole<int>(role));
+//        }
+//    }
+//}
+
+//using (var scope = app.Services.CreateScope())
+//{
+//    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+
+//    string email = "admin@admin.com";
+//    string userName = "Admin";
+//    string password = "Admin123!";
+
+//    if (await userManager.FindByNameAsync(userName) == null)
+//    {
+//        var user = new User();
+//        user.Email = email;
+//        user.UserName = userName;
+//        user.Password = password;
+//        user.ConfirmPassword = password;
+//        user.FirstName = "Adi";
+//        user.LastName = "Administratum";
+//        user.Adress = "Adminstreet";
+//        user.PhoneNumber = "0709998877";
+
+//        await userManager.CreateAsync(user, password);
+
+//        await userManager.AddToRoleAsync(user, "Admin");
+//    }
+//}
 
 app.Run();

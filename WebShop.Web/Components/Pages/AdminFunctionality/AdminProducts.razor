@@ -1,0 +1,160 @@
+﻿@page "/AdminProducts"
+
+
+<PageTitle>Products information</PageTitle>
+
+<AuthorizeView Roles="Admin">
+    <Authorized>
+        @if (ProductList == null || CategoryList == null)
+        {
+            <DisplaySpinner />
+        }
+        else
+        {
+
+            <h3>Categories</h3>
+
+            <div class="form-group">
+                <input class="form-control" type="text" placeholder="filter" @bind="filterCategory" @bind:event="oninput" />
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Icons</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var categories in CategoryList)
+                    {
+
+                        if (!ApplyFilterCategory(categories))
+                        {
+                            continue;
+                        }
+                        <tr>
+                            <td>@categories.Id</td>
+                            <td>@categories.Name</td>
+                            <td>@categories.IconCSS</td>
+                            <td><a href="edit-category/@categories.Id">Edit</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <a href="edit-category">Add Category</a>
+            <br />
+            <br />
+            <br />
+            <br />
+            <h3>Product Information</h3>
+
+            <div class="form-group">
+                <input class="form-control" type="text" placeholder="filter" @bind="filterProduct" @bind:event="oninput" />
+            </div>
+
+
+            <table class="table container-fluid">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>CategoryId</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var products in ProductList)
+                    {
+                        if (!ApplyFilterProduct(products))
+                        {
+                            continue;
+                        }
+                        <tr>
+                            <td>@products.Id</td>
+                            <td>@products.Name</td>
+                            <td>@products.Description</td>
+                            <td>@products.CategoryId</td>
+                            <td>@products.CategoryName</td>
+                            <td>@products.Price</td>
+                            <td>@products.Quantity</td>
+                            <td><a href="edit-product/@products.Id">Edit</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <a href="edit-product">Add Product</a>
+
+        }
+    </Authorized>
+</AuthorizeView>
+
+
+@code {
+
+    [Inject]
+    IProductsService ProductService { get; set; } = default!;
+
+    [Inject]
+    IProductsCategoryService CategoryService { get; set; } = default!;
+
+    List<ProductCategoryDto> CategoryList { get; set; } = default!;
+
+    List<ProductDto> ProductList { get; set; } = default!;
+
+    string? filterProduct { get; set; }
+    string? filterCategory { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        @* @attribute [StreamRendering] Enables Task.Delay for site.. add this ontop of page *@ 
+        // await Task.Delay(500);
+        await FetchProductsAndCategories();
+
+    }
+
+    private async Task FetchProductsAndCategories()
+    {
+        ProductList = await ProductService.GetProducts();
+
+        CategoryList = await CategoryService.GetCategories();
+    }
+
+    private bool ApplyFilterProduct(ProductDto products)
+    {
+        if (string.IsNullOrEmpty(filterProduct))
+            return true;
+
+        if (products.Name.Contains(filterProduct, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (products.Description.Contains(filterProduct, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (products.CategoryName!.Contains(filterProduct, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (products.Id.ToString().StartsWith(filterProduct) || products.Id.ToString().StartsWith(filterProduct))
+            return true;
+
+        return false;
+    }
+
+    private bool ApplyFilterCategory(ProductCategoryDto category)
+    {
+        if (string.IsNullOrEmpty(filterCategory))
+            return true;
+
+        if (category.Name!.Contains(filterCategory, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (category.Id.ToString().StartsWith(filterCategory) || category.Id.ToString().StartsWith(filterCategory))
+            return true;
+
+        return false;
+    }
+}

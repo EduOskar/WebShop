@@ -103,12 +103,10 @@ namespace WebShop.Api.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -144,12 +142,10 @@ namespace WebShop.Api.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -175,7 +171,7 @@ namespace WebShop.Api.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Carts");
+                    b.ToTable("Carts", (string)null);
                 });
 
             modelBuilder.Entity("WebShop.Api.Entity.CartItem", b =>
@@ -189,14 +185,10 @@ namespace WebShop.Api.Migrations
                     b.Property<int>("CartId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Qty")
-                        .HasMaxLength(200)
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -205,7 +197,7 @@ namespace WebShop.Api.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("CartItems");
+                    b.ToTable("CartItems", (string)null);
                 });
 
             modelBuilder.Entity("WebShop.Api.Entity.Order", b =>
@@ -227,7 +219,7 @@ namespace WebShop.Api.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("WebShop.Api.Entity.OrderItem", b =>
@@ -244,7 +236,7 @@ namespace WebShop.Api.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Qty")
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -253,7 +245,7 @@ namespace WebShop.Api.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderItems");
+                    b.ToTable("OrderItems", (string)null);
                 });
 
             modelBuilder.Entity("WebShop.Api.Entity.Product", b =>
@@ -286,7 +278,7 @@ namespace WebShop.Api.Migrations
                         .HasMaxLength(100000)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("Qty")
+                    b.Property<int>("Quantity")
                         .HasMaxLength(500)
                         .HasColumnType("int");
 
@@ -294,7 +286,7 @@ namespace WebShop.Api.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
 
                     b.HasData(
                         new
@@ -305,7 +297,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Beauty/Beauty1.png",
                             Name = "Glossier - Beauty Kit",
                             Price = 1000m,
-                            Qty = 100
+                            Quantity = 100
                         },
                         new
                         {
@@ -315,7 +307,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Beauty/Beauty2.png",
                             Name = "Curology - Skin Care Kit",
                             Price = 500m,
-                            Qty = 45
+                            Quantity = 45
                         },
                         new
                         {
@@ -325,7 +317,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Beauty/Beauty3.png",
                             Name = "Cocooil - Organic Coconut Oil",
                             Price = 200m,
-                            Qty = 30
+                            Quantity = 30
                         },
                         new
                         {
@@ -335,7 +327,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Beauty/Beauty4.png",
                             Name = "Schwarzkopf - Hair Care and Skin Care Kit",
                             Price = 500m,
-                            Qty = 60
+                            Quantity = 60
                         },
                         new
                         {
@@ -345,7 +337,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Beauty/Beauty5.png",
                             Name = "Skin Care Kit",
                             Price = 300m,
-                            Qty = 85
+                            Quantity = 85
                         },
                         new
                         {
@@ -355,7 +347,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Electronic/Electronics1.png",
                             Name = "Air Pods",
                             Price = 1000m,
-                            Qty = 120
+                            Quantity = 120
                         },
                         new
                         {
@@ -365,7 +357,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Electronic/Electronics2.png",
                             Name = "On-ear Golden Headphones",
                             Price = 499m,
-                            Qty = 200
+                            Quantity = 200
                         },
                         new
                         {
@@ -375,7 +367,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Electronic/Electronics3.png",
                             Name = "On-ear Black Headphones",
                             Price = 499m,
-                            Qty = 300
+                            Quantity = 300
                         },
                         new
                         {
@@ -385,7 +377,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Electronic/Electronics4.png",
                             Name = "Sennheiser Digital Camera with Tripod",
                             Price = 5999m,
-                            Qty = 20
+                            Quantity = 20
                         },
                         new
                         {
@@ -395,7 +387,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Electronic/Electronics5.png",
                             Name = "Canon Digital Camera",
                             Price = 6999m,
-                            Qty = 15
+                            Quantity = 15
                         },
                         new
                         {
@@ -405,7 +397,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Electronic/Electronics6.png",
                             Name = "Nintendo Gameboy",
                             Price = 1050m,
-                            Qty = 60
+                            Quantity = 60
                         },
                         new
                         {
@@ -415,7 +407,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Furniture/Furniture1.png",
                             Name = "Black Leather Office Chair",
                             Price = 550m,
-                            Qty = 212
+                            Quantity = 212
                         },
                         new
                         {
@@ -425,7 +417,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Furniture/Furniture2.png",
                             Name = "Pink Leather Office Chair",
                             Price = 500m,
-                            Qty = 112
+                            Quantity = 112
                         },
                         new
                         {
@@ -435,7 +427,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Furniture/Furniture3.png",
                             Name = "Lounge Chair",
                             Price = 700m,
-                            Qty = 90
+                            Quantity = 90
                         },
                         new
                         {
@@ -445,7 +437,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Furniture/Furniture4.png",
                             Name = "Silver Lounge Chair",
                             Price = 1200m,
-                            Qty = 95
+                            Quantity = 95
                         },
                         new
                         {
@@ -455,7 +447,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Furniture/Furniture6.png",
                             Name = "Porcelain Table Lamp",
                             Price = 150m,
-                            Qty = 100
+                            Quantity = 100
                         },
                         new
                         {
@@ -465,7 +457,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Furniture/Furniture7.png",
                             Name = "Office Table Lamp",
                             Price = 200m,
-                            Qty = 73
+                            Quantity = 73
                         },
                         new
                         {
@@ -475,7 +467,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Shoes/Shoes1.png",
                             Name = "Puma Sneakers",
                             Price = 1000m,
-                            Qty = 50
+                            Quantity = 50
                         },
                         new
                         {
@@ -485,7 +477,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Shoes/Shoes2.png",
                             Name = "Colorful Trainers",
                             Price = 1500m,
-                            Qty = 60
+                            Quantity = 60
                         },
                         new
                         {
@@ -495,7 +487,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Shoes/Shoes3.png",
                             Name = "Blue Nike Trainers",
                             Price = 2000m,
-                            Qty = 70
+                            Quantity = 70
                         },
                         new
                         {
@@ -505,7 +497,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Shoes/Shoes4.png",
                             Name = "Colorful Hummel Trainers",
                             Price = 1200m,
-                            Qty = 120
+                            Quantity = 120
                         },
                         new
                         {
@@ -515,7 +507,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Shoes/Shoes5.png",
                             Name = "Red Nike Trainers",
                             Price = 2000m,
-                            Qty = 100
+                            Quantity = 100
                         },
                         new
                         {
@@ -525,7 +517,7 @@ namespace WebShop.Api.Migrations
                             ImageURL = "/Images/Shoes/Shoes6.png",
                             Name = "Birkenstock Sandles",
                             Price = 500m,
-                            Qty = 150
+                            Quantity = 150
                         });
                 });
 
@@ -537,6 +529,10 @@ namespace WebShop.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("IconCSS")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -544,27 +540,31 @@ namespace WebShop.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProductCategories");
+                    b.ToTable("ProductCategories", (string)null);
 
                     b.HasData(
                         new
                         {
                             Id = 1,
+                            IconCSS = "fas fa-spa",
                             Name = "Beauty"
                         },
                         new
                         {
                             Id = 2,
+                            IconCSS = "fas fa-couch",
                             Name = "Furniture"
                         },
                         new
                         {
                             Id = 3,
+                            IconCSS = "fas fa-headphones",
                             Name = "Electronics"
                         },
                         new
                         {
                             Id = 4,
+                            IconCSS = "fas fa-shoe-prints",
                             Name = "Shoes"
                         });
                 });
@@ -603,7 +603,7 @@ namespace WebShop.Api.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Reviews");
+                    b.ToTable("Reviews", (string)null);
                 });
 
             modelBuilder.Entity("WebShop.Api.Entity.User", b =>
@@ -625,10 +625,15 @@ namespace WebShop.Api.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ConfirmPassword")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal?>("Credit")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -657,17 +662,19 @@ namespace WebShop.Api.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
-
-                    b.Property<int>("Role")
-                        .HasColumnType("int");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -690,42 +697,6 @@ namespace WebShop.Api.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AccessFailedCount = 0,
-                            Adress = "Fakestreet 101",
-                            ConcurrencyStamp = "bdb61342-52e1-423f-96ec-712967947016",
-                            Credit = 100000m,
-                            Email = "Bob@Mail.com",
-                            EmailConfirmed = false,
-                            FirstName = "Bob",
-                            LastName = "Bobinsson",
-                            LockoutEnabled = false,
-                            PhoneNumberConfirmed = false,
-                            Role = 1,
-                            TwoFactorEnabled = false,
-                            UserName = "Bob"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AccessFailedCount = 0,
-                            Adress = "Fakestreet 102",
-                            ConcurrencyStamp = "591b8ebd-c148-47f0-a3dd-ab0f1a1296ec",
-                            Credit = 100000m,
-                            Email = "Sarah@Mail.com",
-                            EmailConfirmed = false,
-                            FirstName = "Sarah",
-                            LastName = "SarahsDaughter",
-                            LockoutEnabled = false,
-                            PhoneNumberConfirmed = false,
-                            Role = 1,
-                            TwoFactorEnabled = false,
-                            UserName = "Sarah"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

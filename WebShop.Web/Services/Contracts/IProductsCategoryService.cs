@@ -4,10 +4,9 @@ namespace WebShop.Web.Services.Contracts;
 
 public interface IProductsCategoryService
 {
-    Task<ICollection<ProductCategoryDto>> GetCategories();
+    Task<List<ProductCategoryDto>> GetCategories();
     Task<ProductCategoryDto> GetCategory(int categoryId);
-    Task<ProductCategoryDto> CategoryExist(int categoryId);
-    Task<ProductCategoryDto> CreateCategory(ProductCategoryDto category);
-    Task<ProductCategoryDto> UpdateCategory(ProductCategoryDto category);
-    Task<ProductCategoryDto> DeleteCategory(ProductCategoryDto category);
+    Task<ProductCategoryDto> CreateCategory(ProductCategoryDto categoryCreate);
+    Task<bool> UpdateCategory(ProductCategoryDto categoryUpdate);
+    Task<bool> DeleteCategory(int categoryId);
 }

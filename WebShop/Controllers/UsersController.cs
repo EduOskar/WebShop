@@ -1,8 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.WebSockets;
+using WebShop.Api.Data;
 using WebShop.Api.Entity;
+using WebShop.Api.Repositories;
 using WebShop.Api.Repositories.Contracts;
 using WebShop.Models.DTOs;
 
@@ -12,19 +17,23 @@ namespace WebShop.Api.Controllers;
 [ApiController]
 public class UsersController : ControllerBase
 {
+    //private static UserModel loggedOutUser = new UserModel { IsAuthenticated  = false };
+
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
+    private readonly UserManager<User> _userManager;
 
-    public UsersController(IUserRepository userRepository, IMapper mapper)
+    public UsersController(IUserRepository userRepository, IMapper mapper, UserManager<User> userManager)
     {
         _userRepository = userRepository;
         _mapper = mapper;
+        _userManager = userManager;
     }
 
     [HttpGet]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
-    public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+    public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
     {
         var users = _mapper.Map<List<UserDto>>(await _userRepository.GetUsers());
 
@@ -67,63 +76,68 @@ public class UsersController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        var user = await _userRepository.GetUsers(); 
+        var user = await _userRepository.GetUsers();
         var userCheck = user
             .Where(u => u.Email!.Trim().Equals(userCreate.Email.TrimEnd(), StringComparison.CurrentCultureIgnoreCase))
             .Any();
 
         if (userCheck)
         {
-            ModelState.AddModelError("", "User Already Exist");
-            return BadRequest(ModelState);
+
+            return BadRequest("User already exist");
         }
 
         var userMap = _mapper.Map<User>(userCreate);
 
-        if (! await _userRepository.CreateUser(userMap)) 
-        {
-            ModelState.AddModelError("", "Something went wrong while saving");
-            return BadRequest(ModelState);
-        }
+        await _userRepository.CreateUser(userMap);
 
-        return CreatedAtAction("GetUser", new {userId = userCreate.Id}, userCreate);
+        return CreatedAtAction("GetUser", new { userId = userMap.Id }, userMap);
 
     }
 
-    [HttpPut("{userId:int}")]
+
+
+    [HttpPut("{userId}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
-    public async Task<ActionResult> UpdateUser(int userId, [FromBody] UserDto updatedUser)
+    public async Task<ActionResult<IdentityResult>> UpdateUser(int userId, UserDto updatedUser)
     {
-        if (updatedUser == null)
+        try
         {
-            return BadRequest(ModelState);
+            if (userId != updatedUser.Id)
+            {
+                return BadRequest("Invalid Id");
+            }
+
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+
+            if (user == null)
+            {
+                return NotFound("User was not found");
+            }
+
+            _mapper.Map(updatedUser, user);
+
+            var hashedPasswod = _userManager.PasswordHasher.HashPassword(user, updatedUser.Password);
+
+            user.PasswordHash = hashedPasswod;
+
+            var result = await _userRepository.UpdateUser(user);
+
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+
+            return BadRequest(ex.Message);
         }
 
-        if (userId != updatedUser.Id)
-        {
-            return BadRequest(ModelState);
-        }
-
-        if (! await _userRepository.UserExist(userId))
-        {
-            return NotFound();
-        }
-
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
-        var userMap = _mapper.Map<User>(updatedUser);
-
-        if (!await _userRepository.UpdateUser(userMap))
-        {
-            ModelState.AddModelError("", "Something went wrong while updating");
-        }
-
-        return NoContent();
     }
     [HttpDelete("{userId:int}")]
     [ProducesResponseType(204)]
@@ -138,12 +152,9 @@ public class UsersController : ControllerBase
 
         var userDelete = await _userRepository.GetUser(userId);
 
-        if (!await _userRepository.DeleteUser(userDelete))
-        {
-            return BadRequest();
-        }
+        await _userRepository.DeleteUser(userDelete);
 
         return NoContent();
     }
-    
+
 }

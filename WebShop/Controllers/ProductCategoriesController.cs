@@ -58,25 +58,23 @@ public class ProductCategoriesController : ControllerBase
     {
         if (productCategoryCreate == null)
         {
-            return BadRequest(ModelState);
+            return BadRequest("Something went wrong");
         }
 
         var categories = await _productCategoryRepository.GetCategories();
 
         if (categories == null)
         {
-            ModelState.AddModelError("", "Error fetching Categories");
-            return BadRequest(ModelState);
+            return BadRequest("Error fetching Categories");
         }
 
-        var categoryCheck = categories
+        bool categoryCheck = categories
             .Where(u => u.Name.Trim().Equals(productCategoryCreate.Name!.TrimEnd(), StringComparison.CurrentCultureIgnoreCase))
             .Any();
 
-        if (!categoryCheck)
+        if (categoryCheck)
         {
-            ModelState.AddModelError("", "ProductCategory already exist");
-            return StatusCode(422, ModelState);
+            return StatusCode(422, "ProductCategory already exist");
         }
 
         var categoryMap = _mapper.Map<ProductCategory>(productCategoryCreate);
@@ -109,11 +107,6 @@ public class ProductCategoriesController : ControllerBase
         if (!await _productCategoryRepository.CategoryExist(categoryId))
         {
             return NotFound();
-        }
-
-        if (!ModelState.IsValid)
-        {
-            return BadRequest();
         }
 
         var categoryMap = _mapper.Map<ProductCategory>(updatedProductCategory);

@@ -22,7 +22,7 @@ public class Product
     public decimal Price { get; set; } = default!;
 
     [MaxLength(500)]
-    public int Qty { get; set; } = default!;
+    public int Quantity { get; set; } = default!;
 
     public int CategoryId { get; set; }
 

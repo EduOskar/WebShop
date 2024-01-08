@@ -1,23 +1,87 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager navigationManager
+@inject CustomStateProvider authenticationStateProvider
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
 
-    <main>
-        <div class="top-row px-4">
-            <CartMenu/>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="sidebar">
+            <NavMenu />
         </div>
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
+        <main>
+            <div class="top-row px-4">
+                <CartMenu />
+                <AuthorizeView>
+                    <Authorized>
+                        <a>
+                            <span>@context.User.Identity!.Name</span>
+                        </a>
+                    </Authorized>
+                </AuthorizeView>
+                <button type="button" class="btn btn-link" @onclick="@HandleLogin">@Message</button>
+            </div>
+            <div class="container-fluid">
+                <AuthorizeView roles="Admin">
+                    <Authorized>
+                        <AdminLayout />
+                    </Authorized>
+                </AuthorizeView>
+            </div>
+
+            <article class="content px-4">
+                @Body
+            </article>
+        </main>
+    </div>
 </div>
+
+
+
+
+
 
 <div id="blazor-error-ui">
     An unhandled error has occurred.
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
+
+@functions {
+    [CascadingParameter]
+    Task<AuthenticationState> AuthenticationState { get; set; } = default!;
+
+    // private ClaimsPrincipal User = default!;
+
+    String Message = "Login";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!(await AuthenticationState).User.Identity!.IsAuthenticated)
+        {
+            Message = "Login";
+            StateHasChanged();
+        }
+        else
+        {
+            Message = "Logout";
+            StateHasChanged();
+        }
+    }
+
+    async Task HandleLogin()
+    {
+        if ((await AuthenticationState).User.Identity!.IsAuthenticated)
+        {
+            await authenticationStateProvider.Logout();
+            navigationManager.NavigateTo("/");
+        }
+        else
+        {
+            navigationManager.NavigateTo("/");
+        }
+
+    }
+}

@@ -1,6 +1,8 @@
 ﻿
+
 a {
     text-decoration: none;
+    display: flex;
 }
 
 a:hover .card {
@@ -11,6 +13,8 @@ a:hover .card {
 .card {
     transition: box-shadow 0.3s ease-in-out;
     overflow: hidden;
+    width: 400px;
+    height: 322px;
 }
 
 a:hover img {
@@ -20,4 +24,7 @@ a:hover img {
 
 img {
     transition: 0.5s ease-in-out;
+    width: 300px;
+    height: 200px;
 }
+

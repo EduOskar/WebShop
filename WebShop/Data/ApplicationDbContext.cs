@@ -9,7 +9,9 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     { 
+        
     }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -21,9 +23,10 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
                 .HasMany(c => c.Orders)
                 .WithOne(o => o.User)
                 .HasForeignKey(o => o.UserId);
+
             customer
                 .HasMany(c => c.Reviews)
-                .WithOne(r => r.User)                              
+                .WithOne(r => r.User)
                 .HasForeignKey(r => r.UserId);
         });
 
@@ -69,7 +72,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             Description = "A kit provided by Glossier, containing skin care, hair care and makeup products",
             ImageURL = "/Images/Beauty/Beauty1.png",
             Price = 1000,
-            Qty = 100,
+            Quantity = 100,
             CategoryId = 1
 
         });
@@ -80,7 +83,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             Description = "A kit provided by Curology, containing skin care products",
             ImageURL = "/Images/Beauty/Beauty2.png",
             Price = 500,
-            Qty = 45,
+            Quantity = 45,
             CategoryId = 1
 
         });
@@ -91,7 +94,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             Description = "A kit provided by Curology, containing skin care products",
             ImageURL = "/Images/Beauty/Beauty3.png",
             Price = 200,
-            Qty = 30,
+            Quantity = 30,
             CategoryId = 1
 
         });
@@ -102,7 +105,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             Description = "A kit provided by Schwarzkopf, containing skin care and hair care products",
             ImageURL = "/Images/Beauty/Beauty4.png",
             Price = 500,
-            Qty = 60,
+            Quantity = 60,
             CategoryId = 1
 
         });
@@ -113,7 +116,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             Description = "Skin Care Kit, containing skin care and hair care products",
             ImageURL = "/Images/Beauty/Beauty5.png",
             Price = 300,
-            Qty = 85,
+            Quantity = 85,
             CategoryId = 1
 
         });
@@ -125,7 +128,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             Description = "Air Pods - in-ear wireless headphones",
             ImageURL = "/Images/Electronic/Electronics1.png",
             Price = 1000,
-            Qty = 120,
+            Quantity = 120,
             CategoryId = 3
 
         });
@@ -136,7 +139,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             Description = "On-ear Golden Headphones - these headphones are not wireless",
             ImageURL = "/Images/Electronic/Electronics2.png",
             Price = 499,
-            Qty = 200,
+            Quantity = 200,
             CategoryId = 3
 
         });
@@ -147,7 +150,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             Description = "On-ear Black Headphones - these headphones are not wireless",
             ImageURL = "/Images/Electronic/Electronics3.png",
             Price = 499,
-            Qty = 300,
+            Quantity = 300,
             CategoryId = 3
 
         });
@@ -158,7 +161,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             Description = "Sennheiser Digital Camera - High quality digital camera provided by Sennheiser - includes tripod",
             ImageURL = "/Images/Electronic/Electronics4.png",
             Price = 5999,
-            Qty = 20,
+            Quantity = 20,
             CategoryId = 3
 
         });
@@ -169,7 +172,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             Description = "Canon Digital Camera - High quality digital camera provided by Canon",
             ImageURL = "/Images/Electronic/Electronics5.png",
             Price = 6999,
-            Qty = 15,
+            Quantity = 15,
             CategoryId = 3
 
         });
@@ -180,7 +183,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             Description = "Gameboy - Provided by Nintendo",
             ImageURL = "/Images/Electronic/Electronics6.png",
             Price = 1050,
-            Qty = 60,
+            Quantity = 60,
             CategoryId = 3
         });
         //Furniture Category
@@ -191,7 +194,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             Description = "Very comfortable black leather office chair",
             ImageURL = "/Images/Furniture/Furniture1.png",
             Price = 550,
-            Qty = 212,
+            Quantity = 212,
             CategoryId = 2
         });
 
@@ -202,7 +205,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             Description = "Very comfortable pink leather office chair",
             ImageURL = "/Images/Furniture/Furniture2.png",
             Price = 500,
-            Qty = 112,
+            Quantity = 112,
             CategoryId = 2
         });
         modelBuilder.Entity<Product>().HasData(new Product
@@ -212,7 +215,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             Description = "Very comfortable lounge chair",
             ImageURL = "/Images/Furniture/Furniture3.png",
             Price = 700,
-            Qty = 90,
+            Quantity = 90,
             CategoryId = 2
         });
         modelBuilder.Entity<Product>().HasData(new Product
@@ -222,7 +225,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             Description = "Very comfortable Silver lounge chair",
             ImageURL = "/Images/Furniture/Furniture4.png",
             Price = 1200,
-            Qty = 95,
+            Quantity = 95,
             CategoryId = 2
         });
         modelBuilder.Entity<Product>().HasData(new Product
@@ -232,7 +235,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             Description = "White and blue Porcelain Table Lamp",
             ImageURL = "/Images/Furniture/Furniture6.png",
             Price = 150,
-            Qty = 100,
+            Quantity = 100,
             CategoryId = 2
         });
         modelBuilder.Entity<Product>().HasData(new Product
@@ -242,7 +245,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             Description = "Office Table Lamp",
             ImageURL = "/Images/Furniture/Furniture7.png",
             Price = 200,
-            Qty = 73,
+            Quantity = 73,
             CategoryId = 2
         });
         //Shoes Category
@@ -253,7 +256,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             Description = "Comfortable Puma Sneakers in most sizes",
             ImageURL = "/Images/Shoes/Shoes1.png",
             Price = 1000,
-            Qty = 50,
+            Quantity = 50,
             CategoryId = 4
         });
         modelBuilder.Entity<Product>().HasData(new Product
@@ -263,7 +266,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             Description = "Colorful trainsers - available in most sizes",
             ImageURL = "/Images/Shoes/Shoes2.png",
             Price = 1500,
-            Qty = 60,
+            Quantity = 60,
             CategoryId = 4
         });
         modelBuilder.Entity<Product>().HasData(new Product
@@ -273,7 +276,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             Description = "Blue Nike Trainers - available in most sizes",
             ImageURL = "/Images/Shoes/Shoes3.png",
             Price = 2000,
-            Qty = 70,
+            Quantity = 70,
             CategoryId = 4
         });
         modelBuilder.Entity<Product>().HasData(new Product
@@ -283,7 +286,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             Description = "Colorful Hummel Trainers - available in most sizes",
             ImageURL = "/Images/Shoes/Shoes4.png",
             Price = 1200,
-            Qty = 120,
+            Quantity = 120,
             CategoryId = 4
         });
         modelBuilder.Entity<Product>().HasData(new Product
@@ -293,7 +296,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             Description = "Red Nike Trainers - available in most sizes",
             ImageURL = "/Images/Shoes/Shoes5.png",
             Price = 2000,
-            Qty = 100,
+            Quantity = 100,
             CategoryId = 4
         });
         modelBuilder.Entity<Product>().HasData(new Product
@@ -303,70 +306,35 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             Description = "Birkenstock Sandles - available in most sizes",
             ImageURL = "/Images/Shoes/Shoes6.png",
             Price = 500,
-            Qty = 150,
+            Quantity = 150,
             CategoryId = 4
         });
 
-        //Add users
-        modelBuilder.Entity<User>().HasData(new User
-        {
-            Id = 1,
-            FirstName = "Bob",
-            LastName = "Bobinsson",
-            UserName = "Bob",
-            Credit = 100000,
-            Adress = "Fakestreet 101",
-            Email = "Bob@Mail.com",
-            //Phonenumber = "070-1231212",
-            Role = 1
-        });
-        modelBuilder.Entity<User>().HasData(new User
-        {
-            Id = 2,
-            FirstName = "Sarah",
-            LastName = "SarahsDaughter",
-            UserName = "Sarah",
-            Credit = 100000,
-            Adress = "Fakestreet 102",
-            Email = "Sarah@Mail.com",
-            //Phonenumber = "070-3213232",
-            Role = 1
-        });
 
-        //Create Shopping Cart for Users
-        //modelBuilder.Entity<Cart>().HasData(new Cart
-        //{
-        //    Id = 1,
-        //    UserId = 1,
-
-
-        //});
-        //modelBuilder.Entity<Cart>().HasData(new Cart
-        //{
-        //    Id = 2,
-        //    UserId = 2
-
-        //});
         //Add Product Categories
         modelBuilder.Entity<ProductCategory>().HasData(new ProductCategory
         {
             Id = 1,
-            Name = "Beauty"
+            Name = "Beauty",
+            IconCSS = "fas fa-spa" 
         });
         modelBuilder.Entity<ProductCategory>().HasData(new ProductCategory
         {
             Id = 2,
-            Name = "Furniture"
+            Name = "Furniture",
+            IconCSS = "fas fa-couch"
         });
         modelBuilder.Entity<ProductCategory>().HasData(new ProductCategory
         {
             Id = 3,
-            Name = "Electronics"
+            Name = "Electronics",
+            IconCSS = "fas fa-headphones"
         });
         modelBuilder.Entity<ProductCategory>().HasData(new ProductCategory
         {
             Id = 4,
-            Name = "Shoes"
+            Name = "Shoes",
+            IconCSS = "fas fa-shoe-prints"
         });
                                }
     public DbSet<Cart> Carts { get; set; }

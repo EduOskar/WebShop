@@ -85,7 +85,7 @@ public class CartItemRepository : ICartItemRepository
 
         if (cartItem != null)
         {
-            cartItem.Qty = updatedQty.Qty;
+            cartItem.Quantity = updatedQty.Quantity;
 
             _dbContext.Update(cartItem);
 

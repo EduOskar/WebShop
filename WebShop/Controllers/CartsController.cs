@@ -60,19 +60,19 @@ public class CartsController : ControllerBase
         return Ok(cart);
     }
 
-    [HttpGet("Get-Cart-By-Users/{userId:int}")]
+    [HttpGet("Get-Cart-By-User/{userId:int}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
     public async Task<ActionResult<CartDto>> GetCartByUser(int userId)
     {
 
-        if (!await _cartRepository.CartExist(userId))
+        var cart = _mapper.Map<CartDto>(await _cartRepository.GetCartByUser(userId));
+
+        if (!await _cartRepository.CartExist(cart.Id))
         {
             return NotFound();
         }
-
-        var cart = _mapper.Map<CartDto>(await _cartRepository.GetCart(userId));
 
         if (!ModelState.IsValid)
         {
