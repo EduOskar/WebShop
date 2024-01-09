@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
+using WebShop.Api.Controllers;
 
 namespace WebShop.Api.Entity;
 
@@ -17,5 +18,6 @@ public class Order
     public int UserId { get; set; }
     public User? User { get; set; }
 
-    public ICollection<OrderItem>? OrderItems { get; set; } = default!;
+    public List<OrderItem>? OrderItems { get; set; } = default!;
+
 }

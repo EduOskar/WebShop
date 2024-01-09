@@ -27,10 +27,10 @@ else
     </div>
     <br />
     <button type="submit" class="btn btn-primary">@Message</button>
- @*    <button type="button" class="btn btn-danger"
+     <button type="button" class="btn btn-danger"
             @onclick="DeleteUsersRoles">
-        Delete User
-    </button> *@
+        Delete UsersRoles
+    </button> 
 </EditForm>
 
 <p>@Status</p>
@@ -42,7 +42,7 @@ else
 
 @code {
     [Inject]
-    private IRoleService RoleService { get; set; } = default!;
+    private IUsersAndRoleService UserRoleService { get; set; } = default!;
 
     [Parameter]
     public int? UserId { get; set; } = null;
@@ -61,7 +61,7 @@ else
         {
             if (UserId is not null)
             {
-                var userRole = await RoleService.GetUserRole(UserId.Value)!;
+                var userRole = await UserRoleService.GetUserRole(UserId.Value)!;
                 if (userRole is not null)
                 {
                     CurrentUserRole.UserId = userRole.UserId;
@@ -92,12 +92,12 @@ else
 
     async Task CreateUserRole()
     {
-        var result = await RoleService.UpdateUserToRole(CurrentUserRole);
+        var result = await UserRoleService.UpdateUserToRole(CurrentUserRole);
 
         if (result)
         {
             Status = "User added successfully!";
-            navigationManager.NavigateTo("DisplayRoles");
+            navigationManager.NavigateTo("DisplayUsersAndRoles");
         }
         else
         {
@@ -107,12 +107,12 @@ else
 
     async Task UpdateUserRole()
     {
-        var result = await RoleService.UpdateUserToRole(CurrentUserRole);
+        var result = await UserRoleService.UpdateUserToRole(CurrentUserRole);
 
         if (result)
         {
             Status = "User Updated Successfully!";
-            navigationManager.NavigateTo("DisplayRoles");
+            navigationManager.NavigateTo("DisplayUsersAndRoles");
         }
         else
         {
@@ -120,9 +120,9 @@ else
         }
     }
 
-    // /* async  Task*/ DeleteUsersRoles()
-    // {
-    //     // await UserService.DeleteUser(CurrentUserRole);
-    //     navigationManager.NavigateTo("DisplayUsers");
-    // }
+    async  Task DeleteUsersRoles()
+    {
+        await UserRoleService.DeleteUserRoles(CurrentUserRole.UserId);
+        navigationManager.NavigateTo("DisplayUsersAndRoles");
+    }
 }

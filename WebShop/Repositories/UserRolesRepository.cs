@@ -7,12 +7,12 @@ using WebShop.Api.Repositories.Contracts;
 
 namespace WebShop.Api.Repositories;
 
-public class RolesRepository : IRolesRepository
+public class UserRolesRepository : IUserRolesRepository
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly RoleManager<IdentityRole<int>> _rolemanager;
 
-    public RolesRepository(ApplicationDbContext dbContext, RoleManager<IdentityRole<int>> Rolemanager)
+    public UserRolesRepository(ApplicationDbContext dbContext, RoleManager<IdentityRole<int>> Rolemanager)
     {
         _dbContext = dbContext;
         _rolemanager = Rolemanager;
@@ -72,5 +72,21 @@ public class RolesRepository : IRolesRepository
         }
 
         throw new Exception();
+    }
+
+    public async Task<bool> DeleteUserRoles(int UserId)
+    {
+        var deleteRoleUser = await _dbContext.UserRoles.Where(ur => ur.UserId == UserId).FirstOrDefaultAsync();
+
+        if (deleteRoleUser == null)
+        {
+            return false;
+        }
+
+        _dbContext.UserRoles.Remove(deleteRoleUser);
+
+        await _dbContext.SaveChangesAsync();
+
+        return true;
     }
 }

@@ -43,7 +43,7 @@ public class OrderItemRepository : IOrderItemRepository
         throw new Exception("OrderItem was not found");
     }
 
-    public async Task<ICollection<OrderItem>> GetOrderItems()
+    public async Task<List<OrderItem>> GetOrderItems()
     {
         var orderItem = await _dbContext.OrderItems
             .Include(p => p.Product)
@@ -52,7 +52,7 @@ public class OrderItemRepository : IOrderItemRepository
         return orderItem;
     }
 
-    public async Task<ICollection<OrderItem>> GetOrderItemsFromOrder(int orderId)
+    public async Task<List<OrderItem>> GetOrderItemsFromOrder(int orderId)
     {
         var orderItem = await _dbContext.OrderItems
             .Include(p => p.Product) 

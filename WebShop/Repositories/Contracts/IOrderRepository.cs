@@ -4,7 +4,7 @@ namespace WebShop.Api.Repositories.Contracts;
 
 public interface IOrderRepository
 {
-    Task<ICollection<Order>> GetOrders();
+    Task<List<Order>> GetOrders();
     Task<Order> GetOrder(int orderId);
     Task<Order> GetLastOrderFromUser(int userId);
     Task<bool> OrderExist(int orderID);

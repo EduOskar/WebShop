@@ -1,0 +1,50 @@
+﻿@page "/DisplayOrders"
+
+<h3>DisplayOrders</h3>
+
+<PageTitle>Display Orders</PageTitle>
+
+@if (OrdersList == null)
+{
+    <DisplaySpinner />
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Order placementdate</th>
+                <th>UserId</th>
+                <th>OrderItems</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in OrdersList)
+            {
+                <tr>
+                    <td>@order.Id</td>
+                    <td>@order.PlacementTime</td>
+                    <td>@order.UserId</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Inject]
+    private IOrdersService OrderService { get; set; } = default!;
+
+    private List<OrderDto> OrdersList { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchOrders();
+    }
+
+    protected async Task FetchOrders()
+    {
+        OrdersList = await OrderService.GetOrders();
+    }
+}

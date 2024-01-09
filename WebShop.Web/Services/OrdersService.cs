@@ -123,7 +123,7 @@ public class OrdersService : IOrdersService
         }
     }
 
-    public async Task<ICollection<OrderDto>> GetOrders()
+    public async Task<List<OrderDto>> GetOrders()
     {
         try
         {
@@ -136,7 +136,7 @@ public class OrdersService : IOrdersService
                     return null!;
                 }
 
-                var orders = await response.Content.ReadFromJsonAsync<ICollection<OrderDto>>();
+                var orders = await response.Content.ReadFromJsonAsync<List<OrderDto>>();
                 return orders!;
             }
             else

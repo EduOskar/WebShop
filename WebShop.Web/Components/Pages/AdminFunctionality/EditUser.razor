@@ -49,6 +49,10 @@ else
         <label for="confirmpassword">Confirm Password</label>
         <InputText id="confirmpassword" @bind-Value="@CurrentUser.ConfirmPassword" class="form-control" />
     </div>
+    <div>
+        <label for="credit">Credits</label>
+        <InputNumber id="credit" @bind-Value="@CurrentUser.Credit" class="form-control" />
+    </div>
     <br />
     <button type="submit" class="btn btn-primary">@Message</button>
     <button type="button" class="btn btn-danger"
@@ -128,7 +132,7 @@ else
         if (result != null)
         {
             Status = "User added successfully!";
-            navigationManager.NavigateTo("DisplayUsers");
+            navigationManager.NavigateTo("DisplayUsersAndRoles");
         }
         else
         {
@@ -143,7 +147,7 @@ else
         if (result)
         {
             Status = "User Updated Successfully!";
-            navigationManager.NavigateTo("DisplayUsers");
+            navigationManager.NavigateTo("DisplayUsersAndRoles");
         }
         else
         {
@@ -154,6 +158,6 @@ else
     async Task DeleteUser()
     {
         await UserService.DeleteUser(CurrentUser.Id);
-        navigationManager.NavigateTo("DisplayUsers");
+        navigationManager.NavigateTo("DisplayUsersAndRoles");
     }
 }

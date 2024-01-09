@@ -1,10 +1,10 @@
-﻿@page "/DisplayUsers"
+﻿@page "/DisplayUsersAndRoles"
 
-<PageTitle>User information</PageTitle>
+<PageTitle>Users and Roles information</PageTitle>
 
 <AuthorizeView Roles="Admin">
     <Authorized>
-        @if (UserList == null)
+        @if (UserList == null || UserRolesList == null || RolesList == null)
         {
             <DisplaySpinner />
         }
@@ -56,6 +56,51 @@
                 </tbody>
             </table>
             <a href="edit-user">Add User</a>
+
+            <br />
+            <br />
+            <h3>Display RoleId and RoleNames</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>RoleId</th>
+                        <th>Rolenames</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var roles in RolesList)
+                    {
+                        <tr>
+                            <td>@roles.Id</td>
+                            <td>@roles.Name</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <br />
+            <br />
+            <h3>Display UserIds and RoleIds</h3>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>UserId</th>
+                        <th>RoleId</th>
+                        <th>Edit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var userRole in UserRolesList)
+                    {
+                        <tr>
+                            <td>@userRole.UserId</td>
+                            <td>@userRole.RoleId</td>
+                            <td><a href="edit-usersroles/@userRole.UserId">Edit</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         }
     </Authorized>
 </AuthorizeView>
@@ -63,6 +108,13 @@
 @code {
     [Inject]
     IUsersService UserService { get; set; } = default!;
+
+    [Inject]
+    private IUsersAndRoleService RoleService { get; set; } = default!;
+
+    List<UserRoleDto> UserRolesList { get; set; } = default!;
+
+    List<RolesDto> RolesList { get; set; } = default!;
 
     List<UserDto> UserList { get; set; } = default!;
 
@@ -72,13 +124,17 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await FetchUsers();
+        await FetchUsersAndRoles();
     }
 
-    private async Task FetchUsers()
+    private async Task FetchUsersAndRoles()
     {
         try
         {
+            RolesList = await RoleService.GetRoles();
+
+            UserRolesList = await RoleService.GetUsersAndRoles();
+
             UserList = await UserService.GetUsers();
         }
         catch (Exception ex)

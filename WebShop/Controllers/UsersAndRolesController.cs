@@ -10,15 +10,15 @@ using WebShop.Models.DTOs;
 namespace WebShop.Api.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-public class RolesController : ControllerBase
+public class UsersAndRolesController : ControllerBase
 {
-    private readonly IRolesRepository _rolesRepository;
+    private readonly IUserRolesRepository _rolesRepository;
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
     private readonly UserManager<User> _userManager;
     private readonly RoleManager<IdentityRole<int>> _roleManager;
 
-    public RolesController(IRolesRepository rolesRepository, IUserRepository userRepository, IMapper mapper, UserManager<User> userManager, RoleManager<IdentityRole<int>> roleManager)
+    public UsersAndRolesController(IUserRolesRepository rolesRepository, IUserRepository userRepository, IMapper mapper, UserManager<User> userManager, RoleManager<IdentityRole<int>> roleManager)
     {
         _rolesRepository = rolesRepository;
         _userRepository = userRepository;
@@ -100,5 +100,19 @@ public class RolesController : ControllerBase
         }
 
         return Ok(roles);
-    } 
+    }
+
+    [HttpDelete("{UserId:int}")]
+    public async Task<ActionResult<bool>> DeleteRoles(int UserId)
+    {
+
+        var deletedUser = await _rolesRepository.DeleteUserRoles(UserId);
+
+        if (!deletedUser)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
+    }
 }

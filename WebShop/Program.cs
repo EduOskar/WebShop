@@ -46,7 +46,7 @@ builder.Services.AddControllers()
 
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IRolesRepository, RolesRepository>();
+builder.Services.AddScoped<IUserRolesRepository, UserRolesRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 builder.Services.AddScoped<IProductCategoryRepository, ProductCategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -78,45 +78,45 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-//using (var scope = app.Services.CreateScope())
-//{
-//    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
 
-//    var roles = new[] { "Admin", "User" };
+    var roles = new[] { "Admin", "User" };
 
-//    foreach (var role in roles)
-//    {
-//        if (!await roleManager.RoleExistsAsync(role))
-//        {
-//            await roleManager.CreateAsync(new IdentityRole<int>(role));
-//        }
-//    }
-//}
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole<int>(role));
+        }
+    }
+}
 
-//using (var scope = app.Services.CreateScope())
-//{
-//    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+using (var scope = app.Services.CreateScope())
+{
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
 
-//    string email = "admin@admin.com";
-//    string userName = "Admin";
-//    string password = "Admin123!";
+    string email = "admin@admin.com";
+    string userName = "Admin";
+    string password = "Admin123!";
 
-//    if (await userManager.FindByNameAsync(userName) == null)
-//    {
-//        var user = new User();
-//        user.Email = email;
-//        user.UserName = userName;
-//        user.Password = password;
-//        user.ConfirmPassword = password;
-//        user.FirstName = "Adi";
-//        user.LastName = "Administratum";
-//        user.Adress = "Adminstreet";
-//        user.PhoneNumber = "0709998877";
+    if (await userManager.FindByNameAsync(userName) == null)
+    {
+        var user = new User();
+        user.Email = email;
+        user.UserName = userName;
+        user.Password = password;
+        user.ConfirmPassword = password;
+        user.FirstName = "Adi";
+        user.LastName = "Administratum";
+        user.Adress = "Adminstreet";
+        user.PhoneNumber = "0709998877";
 
-//        await userManager.CreateAsync(user, password);
+        await userManager.CreateAsync(user, password);
 
-//        await userManager.AddToRoleAsync(user, "Admin");
-//    }
-//}
+        await userManager.AddToRoleAsync(user, "Admin");
+    }
+}
 
 app.Run();

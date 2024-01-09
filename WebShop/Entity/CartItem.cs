@@ -16,7 +16,7 @@ public class CartItem
 
     public virtual Product Product { get; set; } = default!;
 
-    public decimal price => Product.Price;
+    public decimal Price => Product.Price;
 
     public decimal TotalPrice => Product.Price * Quantity;
 

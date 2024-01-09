@@ -35,6 +35,21 @@ public class AuthController : ControllerBase
     {
         var user = await _userManager.FindByNameAsync(request.UserName);
 
+        if (user != null)
+        {
+            var signInResult = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
+
+            if (signInResult.Succeeded)
+            {
+                await _signInManager.SignInAsync(user, request.RememberMe);
+
+                return Ok();
+            }            
+        }
+
+        return BadRequest("Invalid password or username");
+        /*
+
         if (user == null)
         {
             return BadRequest("User does not exist");
@@ -50,6 +65,7 @@ public class AuthController : ControllerBase
         await _signInManager.SignInAsync(user, request.RememberMe);
 
         return Ok();
+        */
     }
 
     [HttpPost("register")]

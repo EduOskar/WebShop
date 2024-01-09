@@ -3,7 +3,7 @@ using WebShop.Models.DTOs;
 
 namespace WebShop.Web.Services.Contracts;
 
-public interface IRoleService
+public interface IUsersAndRoleService
 {
     Task<UserRoleDto> GetUserRole(int userId);
 
@@ -12,4 +12,6 @@ public interface IRoleService
     Task<List<UserRoleDto>> GetUsersAndRoles();
 
     Task<bool> UpdateUserToRole(UserRoleDto userRole);
+
+    Task<bool> DeleteUserRoles(int userId);
 }

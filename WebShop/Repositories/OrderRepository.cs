@@ -62,7 +62,7 @@ public class OrderRepository : IOrderRepository
     }
 
 
-    public async Task<ICollection<Order>> GetOrders()
+    public async Task<List<Order>> GetOrders()
     {
         var orders = await _dbContext.Orders
             .Include(oi => oi.OrderItems)

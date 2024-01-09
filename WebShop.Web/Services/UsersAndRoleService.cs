@@ -7,20 +7,36 @@ using WebShop.Web.Services.Contracts;
 
 namespace WebShop.Web.Services;
 
-public class RoleService : IRoleService
+public class UsersAndRoleService : IUsersAndRoleService
 {
     private readonly HttpClient _httpClient;
 
-    public RoleService(HttpClient httpClient)
+    public UsersAndRoleService(HttpClient httpClient)
     {
         _httpClient = httpClient;
+    }
+
+    public async Task<bool> DeleteUserRoles(int userId)
+    {
+        try
+        {
+            var response = await _httpClient.DeleteAsync($"api/UsersAndRoles/{userId}");
+
+            return response.IsSuccessStatusCode;
+
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
     }
 
     public async Task<List<RolesDto>> GetRoles()
     {
         try
         {
-            var response = await _httpClient.GetAsync("api/Roles/Roles");
+            var response = await _httpClient.GetAsync("api/UsersAndRoles/Roles");
 
             if (response.IsSuccessStatusCode)
             {
@@ -49,7 +65,7 @@ public class RoleService : IRoleService
     {
         try
         {
-            var response = await _httpClient.GetAsync($"api/Roles/{userId}");
+            var response = await _httpClient.GetAsync($"api/UsersAndRoles/{userId}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -78,7 +94,7 @@ public class RoleService : IRoleService
     {
         try
         {
-            var response = await _httpClient.GetAsync("api/Roles");
+            var response = await _httpClient.GetAsync("api/UsersAndRoles");
 
             if (response.IsSuccessStatusCode)
             {
@@ -111,7 +127,7 @@ public class RoleService : IRoleService
 
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json-patch+json");
 
-            var response = await _httpClient.PutAsync($"api/Roles/{userRole.UserId}", content);
+            var response = await _httpClient.PutAsync($"api/UsersAndRoles/{userRole.UserId}", content);
 
             return response.IsSuccessStatusCode;
 

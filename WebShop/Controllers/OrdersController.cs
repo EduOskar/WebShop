@@ -27,7 +27,7 @@ public class OrdersController : ControllerBase
     [HttpGet]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
-    public async Task<ActionResult<ICollection<OrderDto>>> GetOrders()
+    public async Task<ActionResult<List<OrderDto>>> GetOrders()
     {
         var orders = _mapper.Map<List<OrderDto>>(await _orderRepository.GetOrders());
 
