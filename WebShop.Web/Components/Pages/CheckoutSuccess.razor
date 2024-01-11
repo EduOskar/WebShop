@@ -32,9 +32,9 @@ else
                         @foreach (var item in OrderItems)
                         {
                             <tr>
-                                <td>@item.ProductName</td>
+                                <td>@item.Product.Name</td>
                                 <th>@item.Quantity</th>
-                                <td>@item.ProductDescription</td>
+                                <td>@item.Product.Description</td>
                             </tr>
                         }
                     </tbody>

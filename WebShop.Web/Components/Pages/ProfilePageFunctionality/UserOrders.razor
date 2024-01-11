@@ -1,0 +1,61 @@
+﻿@page "/UserOrders"
+@inject CustomStateProvider authenticationStateProvider
+
+@if (OrdersList == null)
+{
+    <DisplaySpinner />
+}
+else if(OrdersList.Count == 0)
+{
+    <h2>You have no orders that can be displayed</h2>
+}
+else
+{
+    @foreach (var order in OrdersList)
+    {
+        <OrderDisplay Order="@order" />
+    }
+}
+
+@code {
+
+    private ClaimsPrincipal User = default!;
+
+    private int UserId;
+
+    [Inject]
+    protected IOrderItemsService orderItemService { get; set; } = default!;
+
+    [Inject]
+    protected IOrdersService OrderService { get; set; } = default!;
+
+    private List<OrderItemDto> OrderItemsList { get; set; } = default!;
+
+    private List<OrderDto> OrdersList { get; set; } = default!;
+
+    string? error { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+
+        User = authState.User;
+
+        if (User != null && User.Identity!.IsAuthenticated)
+        {
+            string userIdClaimValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+            if (int.TryParse(userIdClaimValue, out int userId))
+            {
+                UserId = userId;
+            }
+        }
+
+        await FetchOrderInformation();
+    }
+
+    protected async Task FetchOrderInformation()
+    {
+        OrdersList = await OrderService.GetOrdersFromUser(UserId);
+    }
+}

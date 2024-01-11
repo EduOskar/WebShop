@@ -1,4 +1,6 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@inject CategoryStateService categoryStateService
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">WebShop.Web</a>
     </div>
@@ -15,7 +17,7 @@
             </NavLink>
         </div>
 
-        <CategoriesNavMenu/>
+        <CategoriesNavMenu @ref="categoriesNavMenu" />
 
         <AuthorizeView>
             <Authorized>
@@ -29,3 +31,21 @@
     </nav>
 </div>
 
+@code {
+    private CategoriesNavMenu categoriesNavMenu;
+
+    protected override void OnInitialized()
+    {
+        categoryStateService.OnCategoryChanged += RefreshCategories;
+    }
+
+    private void RefreshCategories()
+    {
+        var _ = categoriesNavMenu.RefreshCategoriesList();
+    }
+
+    public void Dispose()
+    {
+        categoryStateService.OnCategoryChanged -= RefreshCategories;
+    }
+}

@@ -1,36 +1,12 @@
 ﻿
-<AuthorizeView>
+<AuthorizeView Roles="Admin, User">
     <Authorized>
-        <RadzenStack AlignItems="AlignItems.Center" Class="rz-p-12">
-            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
-            </RadzenStack>
-
-            <RadzenPanelMenu id="RadzenMenu" Click="OnParentClicked" Style="width:130px" Multiple="@multiple">
-                <RadzenPanelMenuItem Text="@context.User.Identity!.Name" Icon="home">
-                    <RadzenPanelMenuItem Text="Profile" Path="ProfilePage" Icon="account_circle"></RadzenPanelMenuItem>
-                    @*  <RadzenPanelMenuItem Text="Menu" Path="menu" Icon="line_weight"></RadzenPanelMenuItem>
-                    <RadzenPanelMenuItem Text="FileInput" Path="fileinput" Icon="attach_file"></RadzenPanelMenuItem>
-                    <RadzenPanelMenuItem Text="Dialog" Path="dialog" Icon="perm_media"></RadzenPanelMenuItem>
-                    <RadzenPanelMenuItem Text="Notification" Path="notification" Icon="announcement"></RadzenPanelMenuItem> *@
-                </RadzenPanelMenuItem>
-            </RadzenPanelMenu>
-
-        </RadzenStack>
+        <Dropdown>
+            <DropdownToggleButton style="background-color:transparent;">@context.User.Identity!.Name</DropdownToggleButton>
+            <DropdownMenu>
+                <DropdownItem To="profilepage" Type="ButtonType.Link">Profile</DropdownItem>
+                <DropdownItem To="userorders" Type="ButtonType.Link">Orders</DropdownItem>
+            </DropdownMenu>
+        </Dropdown>
     </Authorized>
 </AuthorizeView>
-
-
-@* <EventConsole @ref=@console /> *@
-@code {
-    bool multiple = true;
-
-    void OnParentClicked(MenuItemEventArgs args)
-    {
-        // console.Log($"{args.Text} clicked from parent");
-    }
-
-    void OnChildClicked(MenuItemEventArgs args)
-    {
-        // console.Log($"{args.Text} from child clicked");
-    }
-}

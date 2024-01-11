@@ -30,7 +30,7 @@ public class ReviewsController : ControllerBase
     [HttpGet]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
-    public async Task<ActionResult<IEnumerable<Review>>> GetReviews()
+    public async Task<ActionResult<IEnumerable<ReviewDto>>> GetReviews()
     {
         var reviews = _mapper.Map<List<ReviewDto>>(await _reviewRepository.GetReviews());
 
@@ -46,7 +46,7 @@ public class ReviewsController : ControllerBase
     [HttpGet("{reviewId:int}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
-    public async Task<ActionResult<Review>> GetReview(int reviewId)
+    public async Task<ActionResult<ReviewDto>> GetReview(int reviewId)
     {
         if (!await _reviewRepository.ReviewExist(reviewId))
         {
@@ -65,7 +65,7 @@ public class ReviewsController : ControllerBase
 
     [HttpGet("{userId:int}/GetReviews-by-User")]
     [ProducesResponseType(200)]
-    public async Task<ActionResult<Review>> GetReviewsByUsers(int userId)
+    public async Task<ActionResult<ReviewDto>> GetReviewsByUsers(int userId)
     {
         var userReview = _mapper.Map<List<ReviewDto>>(await _reviewRepository.GetReviewsFromUser(userId));
 
@@ -75,6 +75,21 @@ public class ReviewsController : ControllerBase
         }
 
         return Ok(userReview);
+    }
+
+    [HttpGet("Get-Reviews-From-Product/{productId:int}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    public async Task<ActionResult<ReviewDto>> GetReviewsFromProduct(int productId)
+    {
+        var reviews = await _reviewRepository.GetReviewsByProduct(productId);
+
+        if (reviews != null)
+        {
+            return Ok(reviews);
+        }
+
+        return BadRequest();
     }
 
     [HttpPost]
@@ -92,14 +107,6 @@ public class ReviewsController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        var userExist = await _userRepository.UserExist(reviewCreate.UserId);
-
-        if (!userExist)
-        {
-            ModelState.AddModelError("", $"User with Id {reviewCreate.UserId} does not exist");
-            return BadRequest(ModelState);
-        }
-
         var productExist = await _productRepository.ProductExist(reviewCreate.ProductId);
 
         if (!productExist)
@@ -108,10 +115,18 @@ public class ReviewsController : ControllerBase
             return BadRequest(ModelState);
         }
 
+        var userExist = await _userRepository.UserExist(reviewCreate.UserId);
+
+        if (!userExist)
+        {
+            return BadRequest();
+        }
+
 
         var reviewMap = _mapper.Map<Review>(reviewCreate);
-        //reviewMap.User = await _userRepository.GetUser(reviewCreate.UserId);
         reviewMap.Product = await _productRepository.GetProduct(reviewCreate.ProductId);
+        reviewMap.CreatedAt = DateTime.Now;
+        reviewMap.User = await _userRepository.GetUser(reviewCreate.UserId);
 
         if (!await _reviewRepository.CreateReview(reviewMap))
         {

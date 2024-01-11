@@ -33,7 +33,8 @@ builder.Services.AddHttpClient<IUsersService, UsersServices>().ConfigureHttpClie
 builder.Services.AddHttpClient<IOrdersService, OrdersService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
 builder.Services.AddHttpClient<IOrderItemsService, OrderItemsService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
 builder.Services.AddHttpClient<ICartOrderTransferService, CartOrderTransferService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
-
+builder.Services.AddHttpClient<IReviewServices, ReviewService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
+builder.Services.AddSingleton<CategoryStateService>();
 
 builder.Services.AddScoped<CustomStateProvider>(); 
 builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<CustomStateProvider>());

@@ -38,6 +38,9 @@ else
     [Inject]
     private IProductsCategoryService CategoryService { get; set; } = default!;
 
+    [Inject]
+    CategoryStateService categoryStateservice { get; set; } = default!;
+
     [Parameter]
     public int? Id { get; set; } = null;
 
@@ -71,15 +74,16 @@ else
         {
             await CreateCategory();
         }
+
     }
 
     async Task CreateCategory()
     {
         var result = await CategoryService.CreateCategory(CurrentCategory);
-
         if (result != null)
         {
             Status = "Category added successfully!";
+            categoryStateservice.NotifyCategoryStateChanged();
             navigationManager.NavigateTo("AdminProducts");
         }
         else
@@ -95,6 +99,7 @@ else
         if (result)
         {
             Status = "Category Updated Successfully!";
+            categoryStateservice.NotifyCategoryStateChanged();
             navigationManager.NavigateTo("AdminProducts");
         }
         else
@@ -107,5 +112,6 @@ else
     {
         await CategoryService.DeleteCategory(CurrentCategory.Id);
         navigationManager.NavigateTo("AdminProducts");
+        categoryStateservice.NotifyCategoryStateChanged();
     }
 }

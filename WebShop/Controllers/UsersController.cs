@@ -63,7 +63,7 @@ public class UsersController : ControllerBase
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(400)]
-    public async Task<ActionResult> CreateUser(/*string password, */[FromBody] UserDto userCreate)
+    public async Task<ActionResult> CreateUser([FromBody] UserDto userCreate)
     {
         if (userCreate == null)
         {

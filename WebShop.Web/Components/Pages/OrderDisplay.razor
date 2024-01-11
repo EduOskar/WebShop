@@ -1,0 +1,41 @@
+﻿@if (Order != null)
+{
+    <div class="order-container">
+        <div class="order">
+            <div @onclick="ToggleDetails">
+                <Button Class="centered-button">Order ID: @Order.Id - Placed: @Order.PlacementTime</Button>
+                </div>
+                @if (showDetails)
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Description</th>
+                            <th>Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var orderItems in Order.OrderItems) // Access OrderItems from Order
+                        {
+                            <tr>
+                                <td>@orderItems.Product.Name</td>
+                                <td>@orderItems.Product.Description</td>
+                                <td>@orderItems.Quantity</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public OrderDto Order { get; set; } = default!;
+
+    private bool showDetails = false;
+
+    private void ToggleDetails() => showDetails = !showDetails;
+}

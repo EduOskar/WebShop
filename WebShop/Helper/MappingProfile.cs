@@ -13,11 +13,14 @@ public class MappingProfile : Profile
         CreateMap<CartItem, CartItemQtyUpdateDto>().ReverseMap();
         CreateMap<CartItemDto, CartItemQtyUpdateDto>().ReverseMap();
         CreateMap<Order, OrderDto>().ReverseMap();
-        CreateMap<OrderItem, OrderItemDto>().ReverseMap();
+        CreateMap<OrderItem, OrderItemDto>().ReverseMap()
+            .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product != null ? src.Product.Name : string.Empty))
+            .ForMember(dest => dest.ProductDescription, opt => opt.MapFrom(src => src.Product != null ? src.Product.Description : string.Empty));
         CreateMap<ProductCategory, ProductCategoryDto>().ReverseMap();
         CreateMap<Product, ProductDto>().ReverseMap();
         CreateMap<User, UserDto>().ReverseMap();
-        CreateMap<Review, ReviewDto>().ReverseMap();
+        CreateMap<Review, ReviewDto>().ReverseMap()
+            .ForMember(dest => dest.Product, opt => opt.MapFrom(src => src.Product));
         CreateMap<UserRole, UserRoleDto>().ReverseMap();
     }
 }

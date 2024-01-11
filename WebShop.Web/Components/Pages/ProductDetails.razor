@@ -12,37 +12,54 @@ else if (ErrorMessage != null)
 else
 {
     <h3 class="mb-5">Product details</h3>
-    <div class="row">
+    <div class="row mb-5">
         <div class="col-md-6 mb-4">
             <img class="img-fluid" src="@Product?.ImageURL" />
         </div>
         <div class="col-md-6">
             <h3>@Product?.Name</h3>
-            <p class="mb-4">@Product?.Description</p>
-            <p class="mb-4">
-                <b>
-                    @Product?.Price.ToString("C")&nbsp;(@Product?.Quantity items in stock);
-                </b>
+            <p>@Product?.Description</p>
+            <p>
+                <strong>
+                    @Product?.Price.ToString("C") (@Product?.Quantity items in stock);
+                </strong>
             </p>
             @if (!User.Identity!.IsAuthenticated)
             {
-                <h5>You need to be logged in to have a shoppingcart</h5>
-                <a href="" class="btn btn-success">
-                    <span></span>&nbsp; Proceed to login
-                </a>
+                <h5>You need to be logged in to have a shopping cart</h5>
+                <a href="" class="btn btn-primary">Proceed to login</a>
             }
             else
             {
-                <div class="btn btn-success"
-                     @onclick="() => (AddToCart_Click( new CartItemDto{
-                CartId = cart.Id,
-                ProductId = Product!.Id,
-                Quantity = 1
-            }))">
-                    <b>Add to Cart</b>
-                </div>
+                <button class="btn btn-success" @onclick="() => AddToCart_Click(new CartItemDto { CartId = cart.Id, ProductId = Product!.Id, Quantity = 1 })">
+                    Add to Cart
+                </button>
             }
+        </div>
+    </div>
 
+    @if (User.Identity!.IsAuthenticated)
+    {
+        <CreateReview ProductId="@productId" UserId="@UserId" OnReviewAdded="OnReviewAdded"/>
+    }
+
+    <div class="row">
+        <div class="col-12">
+            @if (ReviewList == null)
+            {
+                <h5>Error fetching Reviews</h5>
+            }
+            else if (!ReviewList.Any())
+            {
+                <h5>No Reviews for this product</h5>
+            }
+            else
+            {
+                @foreach (var review in ReviewList)
+                {
+                    <ReviewDisplay Review="review" />
+                }
+            }
         </div>
     </div>
 }
@@ -53,6 +70,12 @@ else
 
     [Parameter]
     public int productId { get; set; }
+
+    [Parameter]
+    public ReviewDto Review { get; set; } = default!;
+
+    [Inject]
+    public IReviewServices ReviewService { get; set; } = default!;
 
     [Inject]
     public IProductsService ProductsService { get; set; } = default!;
@@ -72,6 +95,8 @@ else
     public ProductDto Product { get; set; } = default!;
 
     public string? ErrorMessage { get; set; }
+
+    public List<ReviewDto> ReviewList { get; set; } = default!;
 
     private List<CartItemDto>? ShoppingCartItems { get; set; }
 
@@ -94,25 +119,20 @@ else
                 var UserCartItems = await UserService.GetUser(UserId);
 
                 ShoppingCartItems = await CartItemsService.GetCartItems(UserCartItems.Id);
+
             }
 
             Product = await ProductsService.GetProduct(productId)!;
+
+            ReviewList = new List<ReviewDto>();
+
+            await FetchReviews();
         }
         catch (Exception)
         {
             throw;
         }
     }
-
-    // protected override async Task OnParameterSetAsync()
-    // {
-    //     throw new NotImplementedException();
-    // }
-
-    // async Task HandleSubmit()
-    // {
-    //     throw new NotImplementedException();
-    // }
 
     protected async Task GetAuthenticatedUserCart()
     {
@@ -125,6 +145,19 @@ else
         {
             UserId = userId;
         }
+
+
+    }
+
+    private async Task OnReviewAdded()
+    {
+        await FetchReviews();
+    }
+
+    protected async Task FetchReviews()
+    {
+        ReviewList = await ReviewService.GetReviewsByProduct(productId);
+        StateHasChanged();
     }
 
     protected async Task AddToCart_Click(CartItemDto cartItemCreate)

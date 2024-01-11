@@ -18,6 +18,6 @@ public class Order
     public int UserId { get; set; }
     public User? User { get; set; }
 
-    public List<OrderItem>? OrderItems { get; set; } = default!;
+    public List<OrderItem> OrderItems { get; set; } = default!;
 
 }

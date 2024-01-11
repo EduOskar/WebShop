@@ -14,6 +14,7 @@ public class ProductCategoryService : IProductsCategoryService
     {
         _httpClient = httpclient;
     }
+
     public async Task<ProductCategoryDto> CreateCategory(ProductCategoryDto categoryCreate)
     {
         try

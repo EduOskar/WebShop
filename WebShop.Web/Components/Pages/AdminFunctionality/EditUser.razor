@@ -157,7 +157,17 @@ else
 
     async Task DeleteUser()
     {
-        await UserService.DeleteUser(CurrentUser.Id);
-        navigationManager.NavigateTo("DisplayUsersAndRoles");
+        var result = await UserService.DeleteUser(CurrentUser.Id);
+
+        if (result)
+        {
+            Status = "User was deleted Successfully!";
+            navigationManager.NavigateTo("DisplayUsersAndRoles");
+        }
+        else
+        {
+            Status = "Something went wrong";
+        }
+
     }
 }

@@ -1,8 +1,7 @@
 ﻿@page "/ProfilePage"
 @inject CustomStateProvider authenticationStateProvider
-@inject NavigationManager navigationManager
 
-<AuthorizeView Roles="Admin, User">
+<AuthorizeView>
     <Authorized>
         @if (User == null)
         {
@@ -10,9 +9,7 @@
         }
         else
         {
-            <section class="container-fluid">
-            </section>
-            <Card Style="width:18rem;">
+            <Card>
                 <CardBody>
                     <CardTitle>@User.FirstName @User.LastName</CardTitle  e>
                         <CardSubTitle Class="mb-2 text-muted">@User.Email</CardSubTitle>
@@ -47,17 +44,9 @@
             {
                 UserId = userId;
             }
-        }
-        else
-        {
-            RedirectToLogin();
-        }
 
-        User = await UserService.GetUser(UserId);
+            User = await UserService.GetUser(UserId);
+        }
     }
 
-    protected void RedirectToLogin()
-    {
-        navigationManager.NavigateTo("/");
-    }
 }

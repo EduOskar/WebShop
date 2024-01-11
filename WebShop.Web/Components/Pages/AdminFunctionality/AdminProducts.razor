@@ -111,8 +111,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        @* @attribute [StreamRendering] Enables Task.Delay for site.. add this ontop of page *@ 
-        // await Task.Delay(500);
         await FetchProductsAndCategories();
 
     }

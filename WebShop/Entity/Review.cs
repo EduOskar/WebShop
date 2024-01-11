@@ -22,11 +22,9 @@ public class Review
     [StringLength(500)]
     public string? Content { get; set; } = default!;
 
-    // Foreign Key
     public int? ProductId { get; set; }
     public virtual Product? Product { get; set; }
 
-    // Foreign Key
     public int? UserId { get; set; }
     public virtual User? User { get; set; }
 }

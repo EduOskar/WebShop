@@ -3,6 +3,8 @@
 a {
     text-decoration: none;
     display: flex;
+
+    justify-items:center;
 }
 
 a:hover .card {
@@ -13,8 +15,12 @@ a:hover .card {
 .card {
     transition: box-shadow 0.3s ease-in-out;
     overflow: hidden;
-    width: 400px;
-    height: 322px;
+    align-items:center;
+  
+/*    background-color:lightblue;*/
+    
+    width: 433px;
+    height: 300px;
 }
 
 a:hover img {
@@ -24,7 +30,7 @@ a:hover img {
 
 img {
     transition: 0.5s ease-in-out;
-    width: 300px;
+    width: 433px;
     height: 200px;
 }
 

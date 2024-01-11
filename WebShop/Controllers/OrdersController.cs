@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebShop.Api.Entity;
 using WebShop.Api.Repositories.Contracts;
 using WebShop.Models.DTOs;
-
+                
 namespace WebShop.Api.Controllers;
 
 [Route("api/[controller]")]
@@ -31,27 +31,43 @@ public class OrdersController : ControllerBase
     {
         var orders = _mapper.Map<List<OrderDto>>(await _orderRepository.GetOrders());
 
-        if (!ModelState.IsValid)
+        if (orders != null)
         {
-            return BadRequest();
+            return Ok(orders);
+            
         }
-
-        return Ok(orders);
+        return BadRequest();
     }
-
-    [HttpGet("Last-Orders-By-User/{userId:int}")]
+      
+    [HttpGet("Orders-from-user/{userId:int}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
-    public async Task<ActionResult<OrderDto>> GetOrdersFromUser(int userId)
+    public async Task<ActionResult<List<OrderDto>>> GetOrdersFromUser(int userId)
+    {
+        var orders = _mapper.Map<List<OrderDto>>(await _orderRepository.GetOrdersFromUser(userId));
+
+        if (orders != null)
+        {
+            return Ok(orders);
+        }
+
+        return BadRequest();
+    }
+
+    [HttpGet("Last-Order-By-User/{userId:int}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    public async Task<ActionResult<OrderDto>> GetOrderFromUser(int userId)
     {
         var orders = _mapper.Map<OrderDto>(await _orderRepository.GetLastOrderFromUser(userId));
 
-        if (!ModelState.IsValid)
+        if (orders != null)
         {
-            return BadRequest();
+            return Ok(orders);
+           
         }
 
-        return Ok(orders);
+        return BadRequest();
     }
 
     [HttpGet("{orderId:int}")]
@@ -67,12 +83,12 @@ public class OrdersController : ControllerBase
 
         var order = _mapper.Map<OrderDto>(await _orderRepository.GetOrder(orderId));
 
-        if (!ModelState.IsValid)
+        if (order != null)
         {
-            return BadRequest(ModelState);
+            return Ok(order);
         }
 
-        return Ok(order);
+        return BadRequest();
     }
 
     [HttpPost]
@@ -99,7 +115,6 @@ public class OrdersController : ControllerBase
         }
 
         var orderMap = _mapper.Map<Order>(orderCreate);
-        //orderMap.User = await _userRepository.GetUser(orderCreate.UserId);
 
         if (!await _orderRepository.CreateOrder(orderMap))
         {

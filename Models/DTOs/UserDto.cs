@@ -15,7 +15,7 @@ public class UserDto
 
     public string LastName { get; set; } = default!;
 
-    public decimal Credit { get; set; }
+    public decimal? Credit { get; set; }
 
     public string Adress { get; set; } = default!;
 

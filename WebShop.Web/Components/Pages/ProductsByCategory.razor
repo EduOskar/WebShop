@@ -1,4 +1,5 @@
 ﻿@page "/ProductsByCategory/{CategoryId:int}"
+@inject CategoryStateService CategoryStateService
 
 @if (ProductsList == null && ErrorMessage == null)
 {
@@ -32,7 +33,14 @@ else
 
     public string ErrorMessage { get; set; } = default!;
 
+
+
     protected override async Task OnParametersSetAsync()
+    {
+        await LoadProducts();
+    }
+
+    private async Task LoadProducts()
     {
         try
         {

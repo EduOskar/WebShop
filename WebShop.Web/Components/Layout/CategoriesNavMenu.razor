@@ -1,5 +1,4 @@
 ﻿
-
 @if (ProductCategory == null && ErrorMessage == null)
 {
     <DisplaySpinner />
@@ -23,19 +22,33 @@ else
 }
 
 @code {
+
     [Inject]
     public IProductsCategoryService CategoryService { get; set; } = default!;
 
-    public IEnumerable<ProductCategoryDto> ProductCategory { get; set; } = default!;
+    [Inject]
+    public CategoryStateService categoryStateService { get; set; } = default!;
+
+    public List<ProductCategoryDto> ProductCategory { get; set; } = default!;
 
     public string? ErrorMessage { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadCategories();
+    }
+
+    public async Task RefreshCategoriesList()
+    {
+        await LoadCategories();
+    }
+
+    private async Task LoadCategories()
+    {
         try
         {
             ProductCategory = await CategoryService.GetCategories();
-            StateHasChanged();
+            // categoryStateService.NotifyCategoryStateChanged();
         }
         catch (Exception ex)
         {

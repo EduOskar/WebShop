@@ -45,6 +45,7 @@ public class OrderItemsController : ControllerBase
     [ProducesResponseType(400)]
     public async Task<ActionResult<List<OrderItem>>> GetOrderItemsFromUser(int orderId)
     {
+
         var orderItems = _mapper.Map<List<OrderItemDto>>(await _orderItemRepository.GetOrderItemsFromOrder(orderId));
 
         if (!ModelState.IsValid)

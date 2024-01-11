@@ -32,7 +32,7 @@ public class OrderRepository : IOrderRepository
     public async Task<Order> GetOrder(int orderId)
     {
         var order = await _dbContext.Orders
-            .Include(oi => oi.OrderItems)
+            .Include(oi => oi.OrderItems).ThenInclude(oi => oi.Product)
             .Include(u => u.User)
             .SingleOrDefaultAsync(o => o.Id == orderId);
 
@@ -47,7 +47,7 @@ public class OrderRepository : IOrderRepository
     public async Task<Order> GetLastOrderFromUser(int userId)
     {
         var orders = await _dbContext.Orders
-            .Include(oi => oi.OrderItems)
+            .Include(oi => oi.OrderItems).ThenInclude(oi => oi.Product)
             .Include(u => u.User)
             .Where(o => o.UserId == userId)
             .OrderBy(o => o.Id)
@@ -65,8 +65,19 @@ public class OrderRepository : IOrderRepository
     public async Task<List<Order>> GetOrders()
     {
         var orders = await _dbContext.Orders
-            .Include(oi => oi.OrderItems)
+            .Include(oi => oi.OrderItems).ThenInclude(oi => oi.Product)
             .Include(u => u.User)
+            .ToListAsync();
+
+        return orders;
+    }
+
+    public async Task<List<Order>> GetOrdersFromUser(int userId)
+    {
+        var orders = await _dbContext.Orders
+            .Include(oi => oi.OrderItems).ThenInclude(oi=>oi.Product)
+            .Include(u => u.User)
+            .Where(o => o.UserId == userId)
             .ToListAsync();
 
         return orders;

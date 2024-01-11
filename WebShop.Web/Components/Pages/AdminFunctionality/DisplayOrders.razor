@@ -1,6 +1,5 @@
 ﻿@page "/DisplayOrders"
 
-<h3>DisplayOrders</h3>
 
 <PageTitle>Display Orders</PageTitle>
 
@@ -10,6 +9,8 @@
 }
 else
 {
+    <h3>DisplayOrders</h3>
+
     <div class="form-group">
         <input class="form-control" type="text" placeholder="filter" @bind="filterOrderAndOrderItems" @bind:event="oninput" />
     </div>
@@ -36,6 +37,14 @@ else
                 </tr>
             }
         </tbody>
+        
+    </table>
+
+    <br />
+    <h3>OrderItems</h3>
+    <br />
+
+    <table class="table">
         <thead>
             <tr>
                 <th>OrderId</th>
@@ -53,11 +62,11 @@ else
                 }
                 <tr>
                     <td>@orderItem.OrderId</td>
-                    <td>@orderItem.ProductId</td>
-                    <td>@orderItem.ProductName</td>
+                    <td>@orderItem.Product.Id</td>
+                    <td>@orderItem.Product.Name</td>
                     <td>@orderItem.Quantity</td>
                 </tr>
-               
+
             }
         </tbody>
     </table>
@@ -108,7 +117,7 @@ else
         if (orderItem.OrderId.ToString().StartsWith(filterOrderAndOrderItems) || orderItem.OrderId.ToString().StartsWith(filterOrderAndOrderItems))
             return true;
 
-        if (orderItem.ProductName!.Contains(filterOrderAndOrderItems, StringComparison.OrdinalIgnoreCase))
+        if (orderItem.Product.Name!.Contains(filterOrderAndOrderItems, StringComparison.OrdinalIgnoreCase))
             return true;
 
         return false;

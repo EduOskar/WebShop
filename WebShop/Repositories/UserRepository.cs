@@ -70,6 +70,7 @@ public class UserRepository : IUserRepository
 
         return users;
     }
+
     public async Task<IdentityResult> UpdateUser(User user)
     {
         return await _userManager.UpdateAsync(user);

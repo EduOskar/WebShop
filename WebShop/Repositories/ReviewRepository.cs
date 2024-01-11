@@ -22,7 +22,7 @@ namespace WebShop.Api.Repositories
 
         public async Task<bool> DeleteReview(Review review)
         {
-             _dbContext.Remove(review);
+            _dbContext.Remove(review);
 
             return await Save();
         }
@@ -38,7 +38,7 @@ namespace WebShop.Api.Repositories
         {
             var review = await _dbContext.Reviews.FindAsync(reviewId);
 
-            if (review != null) 
+            if (review != null)
             {
                 return review;
             }
@@ -48,9 +48,27 @@ namespace WebShop.Api.Repositories
 
         public async Task<ICollection<Review>> GetReviews()
         {
-            var reviews = await _dbContext.Reviews.ToListAsync();
+            var reviews = await _dbContext.Reviews
+                .Include(x => x.User)
+                .Include(x => x.Product)
+                .ToListAsync();
 
             return reviews;
+        }
+
+        public async Task<List<Review>> GetReviewsByProduct(int productId)
+        {
+            var reviewsByUser = await _dbContext.Reviews
+                .Include(x => x.User)
+                .Include(x => x.Product)
+                .Where(r => r.ProductId == productId).ToListAsync();
+
+            if (reviewsByUser != null)
+            {
+                return reviewsByUser;
+            }
+
+            throw new Exception("Review was not found");
         }
 
         public async Task<ICollection<Review>> GetReviewsFromUser(int userId)
@@ -58,7 +76,7 @@ namespace WebShop.Api.Repositories
             var userReview = await _dbContext.Reviews
                 .Where(u => u.User!.Id == userId).ToListAsync();
 
-           return userReview;
+            return userReview;
         }
 
         public async Task<bool> ReviewExist(int reviewId)
@@ -70,7 +88,7 @@ namespace WebShop.Api.Repositories
 
         public async Task<bool> Save()
         {
-            var saved = await  _dbContext.SaveChangesAsync();
+            var saved = await _dbContext.SaveChangesAsync();
 
             return saved > 0;
         }

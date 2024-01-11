@@ -98,7 +98,7 @@ public class OrdersService : IOrdersService
     {
         try
         {
-            var response = await _httpClient.GetAsync($"api/Orders/Last-Orders-By-User/{userId}");
+            var response = await _httpClient.GetAsync($"api/Orders/Last-Order-By-User/{userId}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -170,6 +170,35 @@ public class OrdersService : IOrdersService
             }
 
             return null!;
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
+    public async Task<List<OrderDto>> GetOrdersFromUser(int userId)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"api/Orders/Orders-from-user/{userId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                {
+                    return null!;
+                }
+
+                var orders = await response.Content.ReadFromJsonAsync<List<OrderDto>>();
+                return orders!;
+            }
+            else
+            {
+                var message = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Http status:{response.StatusCode} Message -{message}");
+            }
         }
         catch (Exception)
         {
