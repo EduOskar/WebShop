@@ -14,14 +14,13 @@
         <main>
             <div class="top-row px-4">
                 <CartMenu />
+                <button type="button" class="btn btn-link" @onclick="@HandleLogin">@Message</button>
                 <AuthorizeView>
                     <Authorized>
-                        <a>
-                            <span>@context.User.Identity!.Name</span>
-                        </a>
+                        <ProfilePageNav />
                     </Authorized>
                 </AuthorizeView>
-                <button type="button" class="btn btn-link" @onclick="@HandleLogin">@Message</button>
+                
             </div>
             <div class="container-fluid">
                 <AuthorizeView roles="Admin">
@@ -53,7 +52,7 @@
     [CascadingParameter]
     Task<AuthenticationState> AuthenticationState { get; set; } = default!;
 
-    // private ClaimsPrincipal User = default!;
+    private bool showProfilePageDropDown = false;
 
     String Message = "Login";
 
@@ -69,6 +68,11 @@
             Message = "Logout";
             StateHasChanged();
         }
+    }
+
+    private void ToggleProfilePageDropdown()
+    {
+        showProfilePageDropDown = !showProfilePageDropDown;
     }
 
     async Task HandleLogin()

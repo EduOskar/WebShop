@@ -4,29 +4,60 @@
 
 <PageTitle>Display Orders</PageTitle>
 
-@if (OrdersList == null)
+@if (OrderItemsList == null || OrderList == null)
 {
     <DisplaySpinner />
 }
 else
 {
-    <table>
+    <div class="form-group">
+        <input class="form-control" type="text" placeholder="filter" @bind="filterOrderAndOrderItems" @bind:event="oninput" />
+    </div>
+
+    <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Order placementdate</th>
-                <th>UserId</th>
-                <th>OrderItems</th>
+                <th>orderId</th>
+                <th>userId</th>
+                <th>order placementTime</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var order in OrdersList)
+            @foreach (var order in OrderList)
             {
+                @if (!ApplyFilterOrder(order))
+                {
+                    continue;
+                }
                 <tr>
                     <td>@order.Id</td>
-                    <td>@order.PlacementTime</td>
                     <td>@order.UserId</td>
+                    <td>@order.PlacementTime</td>
                 </tr>
+            }
+        </tbody>
+        <thead>
+            <tr>
+                <th>OrderId</th>
+                <th>productId</th>
+                <th>Productname</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var orderItem in OrderItemsList)
+            {
+                @if (!ApplyFilterOrderItems(orderItem))
+                {
+                    continue;
+                }
+                <tr>
+                    <td>@orderItem.OrderId</td>
+                    <td>@orderItem.ProductId</td>
+                    <td>@orderItem.ProductName</td>
+                    <td>@orderItem.Quantity</td>
+                </tr>
+               
             }
         </tbody>
     </table>
@@ -34,9 +65,17 @@ else
 
 @code {
     [Inject]
+    private IOrderItemsService OrderItemsService { get; set; } = default!;
+
+    [Inject]
     private IOrdersService OrderService { get; set; } = default!;
 
-    private List<OrderDto> OrdersList { get; set; } = default!;
+    private List<OrderDto> OrderList { get; set; } = default!;
+
+    private List<OrderItemDto> OrderItemsList { get; set; } = default!;
+
+    string? filterOrderAndOrderItems { get; set; }
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -45,6 +84,33 @@ else
 
     protected async Task FetchOrders()
     {
-        OrdersList = await OrderService.GetOrders();
+        OrderItemsList = await OrderItemsService.GetOrderItems();
+
+        OrderList = await OrderService.GetOrders();
+    }
+
+    private bool ApplyFilterOrder(OrderDto order)
+    {
+        if (string.IsNullOrEmpty(filterOrderAndOrderItems))
+            return true;
+
+        if (order.Id.ToString().StartsWith(filterOrderAndOrderItems) || order.Id.ToString().StartsWith(filterOrderAndOrderItems))
+            return true;
+
+        return false;
+    }
+
+    private bool ApplyFilterOrderItems(OrderItemDto orderItem)
+    {
+        if (string.IsNullOrEmpty(filterOrderAndOrderItems))
+            return true;
+
+        if (orderItem.OrderId.ToString().StartsWith(filterOrderAndOrderItems) || orderItem.OrderId.ToString().StartsWith(filterOrderAndOrderItems))
+            return true;
+
+        if (orderItem.ProductName!.Contains(filterOrderAndOrderItems, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        return false;
     }
 }

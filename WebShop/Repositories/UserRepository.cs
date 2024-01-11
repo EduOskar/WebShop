@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
@@ -13,19 +14,21 @@ public class UserRepository : IUserRepository
     private readonly UserManager<User> _userManager;
     private readonly ApplicationDbContext _dbContext;
     private readonly RoleManager<IdentityRole<int>> _roleManager;
+    private readonly IMapper _mapper;
 
-    public UserRepository(UserManager<User> userManager, ApplicationDbContext dbContext, RoleManager<IdentityRole<int>> roleManager)
+    public UserRepository(UserManager<User> userManager, ApplicationDbContext dbContext, RoleManager<IdentityRole<int>> roleManager, IMapper mapper)
     {
         _userManager = userManager;
         _dbContext = dbContext;
         _roleManager = roleManager;
+        _mapper = mapper;
     }
-    public async Task<IdentityResult> CreateUser(User user)
+    public async Task<IdentityResult> CreateUser(User user/*, string password*/)
     {
         var hashPassword = _userManager.PasswordHasher.HashPassword(user, user.Password);
         user.PasswordHash = hashPassword;
 
-        var result = await _userManager.CreateAsync(user);
+        var result = await _userManager.CreateAsync(user );
 
         if (result.Succeeded)
         {
@@ -39,7 +42,6 @@ public class UserRepository : IUserRepository
             await  _dbContext.Carts.AddAsync(newCart);
             await _dbContext.SaveChangesAsync();
         }
-
         return result;
     }
 

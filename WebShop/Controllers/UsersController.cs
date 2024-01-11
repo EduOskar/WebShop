@@ -1,13 +1,7 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.WebSockets;
-using WebShop.Api.Data;
 using WebShop.Api.Entity;
-using WebShop.Api.Repositories;
 using WebShop.Api.Repositories.Contracts;
 using WebShop.Models.DTOs;
 
@@ -69,7 +63,7 @@ public class UsersController : ControllerBase
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(400)]
-    public async Task<ActionResult> CreateUser([FromBody] UserDto userCreate)
+    public async Task<ActionResult> CreateUser(/*string password, */[FromBody] UserDto userCreate)
     {
         if (userCreate == null)
         {

@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebShop.Api.Entity;
-using WebShop.Api.Repositories;
 using WebShop.Api.Repositories.Contracts;
 using WebShop.Models.DTOs;
 

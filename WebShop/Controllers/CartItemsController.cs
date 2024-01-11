@@ -123,25 +123,18 @@ public class CartItemsController : ControllerBase
             return NotFound();
         }
 
-        if (!ModelState.IsValid)
-        {
-            return BadRequest();
-        }
-
         var cartExist = await _cartRepository.CartExist(updateCartItem.CartId);
 
         if (!cartExist)
         {
-            ModelState.AddModelError("", $"Cart with Id {updateCartItem.CartId} does not exist");
-            return BadRequest(ModelState);
+            return BadRequest();
         }
 
         var productExist = await _productRepository.ProductExist(updateCartItem.ProductId);
 
         if (!productExist)
         {
-            ModelState.AddModelError("", $"Product with Id {updateCartItem.ProductId} does not exist");
-            return BadRequest(ModelState);
+            return BadRequest($"Product with Id {updateCartItem.ProductId} does not exist");
         }
 
         var cartItemMap = _mapper.Map<CartItem>(updateCartItem);

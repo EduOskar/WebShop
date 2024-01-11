@@ -1,0 +1,63 @@
+﻿@page "/ProfilePage"
+@inject CustomStateProvider authenticationStateProvider
+@inject NavigationManager navigationManager
+
+<AuthorizeView Roles="Admin, User">
+    <Authorized>
+        @if (User == null)
+        {
+            <DisplaySpinner />
+        }
+        else
+        {
+            <section class="container-fluid">
+            </section>
+            <Card Style="width:18rem;">
+                <CardBody>
+                    <CardTitle>@User.FirstName @User.LastName</CardTitle  e>
+                        <CardSubTitle Class="mb-2 text-muted">@User.Email</CardSubTitle>
+                        <CardSubTitle Class="mb-2 text-muted">@User.Adress</CardSubTitle>
+                        <CardSubTitle Class="mb-2 text-muted">@User.Phonenumber</CardSubTitle>
+                    </CardBody>
+                </Card>
+        }
+    </Authorized>
+</AuthorizeView>
+
+
+@code {
+    private ClaimsPrincipal UserAuth = default!;
+    private int UserId;
+
+    private UserDto User = default!;
+
+    [Inject]
+    private IUsersService UserService { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+
+        UserAuth = authState.User;
+
+        if (UserAuth != null && UserAuth.Identity!.IsAuthenticated)
+        {
+            string userIdClaimValue = UserAuth.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+            if (int.TryParse(userIdClaimValue, out int userId))
+            {
+                UserId = userId;
+            }
+        }
+        else
+        {
+            RedirectToLogin();
+        }
+
+        User = await UserService.GetUser(UserId);
+    }
+
+    protected void RedirectToLogin()
+    {
+        navigationManager.NavigateTo("/");
+    }
+}
