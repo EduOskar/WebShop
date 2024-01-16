@@ -83,7 +83,7 @@ public class UsersController : ControllerBase
 
         var userMap = _mapper.Map<User>(userCreate);
 
-        await _userRepository.CreateUser(userMap);
+        await _userRepository.CreateUser(userMap, userCreate.Password);
 
         return CreatedAtAction("GetUser", new { userId = userMap.Id }, userMap);
 

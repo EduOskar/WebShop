@@ -11,7 +11,7 @@ public interface IUserRepository
 
     Task<bool> UserExist(int userId);
 
-    Task<IdentityResult> CreateUser(User user);
+    Task<IdentityResult> CreateUser(User user, string password);
 
     Task<IdentityResult> UpdateUser(User user);
 

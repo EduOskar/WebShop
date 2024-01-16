@@ -3,6 +3,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebShop.Api.Entity;
 
+public enum ProductStatus
+{
+    Active,
+    Inactive
+}
+
 public class Product
 {
     [Key]
@@ -23,6 +29,8 @@ public class Product
 
     [MaxLength(500)]
     public int Quantity { get; set; } = default!;
+
+    public ProductStatus Status { get; set; }
 
     public int CategoryId { get; set; }
 

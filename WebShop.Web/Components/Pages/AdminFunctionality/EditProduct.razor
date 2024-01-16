@@ -42,6 +42,15 @@ else
         <label for="quantity">quantity</label>
         <InputNumber id="quantity" @bind-Value="@CurrentProduct.Quantity" class="form-control" />
     </div>
+    <div>
+        <label for="status">Status</label>
+        <InputSelect id="status" @bind-Value="CurrentProduct.Status" class="form-control">
+            @foreach (var status in GetProductStatusValues())
+            {
+                <option value="@status">@status</option>
+            }
+        </InputSelect>
+    </div>
     <br />
     <button type="submit" class="btn btn-primary">@Message</button>
     <button type="button" class="btn btn-danger"
@@ -61,6 +70,8 @@ else
     private int maxAllowedFiles = 1;
     private List<string> errors = new();
     private readonly string _imageStoragePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Images", "Unsafe-uploads");
+
+    private ProductStatus[] GetProductStatusValues() => Enum.GetValues(typeof(ProductStatus)).Cast<ProductStatus>().ToArray();
 
     [Inject]
     private IProductsService ProductService { get; set; } = default!;
@@ -90,6 +101,7 @@ else
                 CurrentProduct.CategoryName ??= product.CategoryName;
                 CurrentProduct.Price = product.Price;
                 CurrentProduct.Quantity = product.Quantity;
+                CurrentProduct.Status = product.Status;
             }
         }
     }

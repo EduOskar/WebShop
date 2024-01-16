@@ -28,7 +28,7 @@
    
     <DataAnnotationsValidator />
     <label for="inputPhonenumber" class="sr-only">Phonenumber</label>
-    <InputText id="inputPhonenumber" class="form-control" placeholder="Phonenumber" autofocus @bind-Value="@registerRequest.Phonenumber" />
+    <InputText id="inputPhonenumber" class="form-control" placeholder="(+xx)-xxx xxx xxx" autofocus @bind-Value="@registerRequest.Phonenumber" />
     <ValidationMessage For="@(() => registerRequest.Phonenumber)" />
     
     <label for="inputUsername" class="sr-only">UserName</label>

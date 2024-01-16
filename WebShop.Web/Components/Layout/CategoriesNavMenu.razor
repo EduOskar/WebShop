@@ -48,7 +48,7 @@ else
         try
         {
             ProductCategory = await CategoryService.GetCategories();
-            // categoryStateService.NotifyCategoryStateChanged();
+            categoryStateService.NotifyCategoryStateChanged();
         }
         catch (Exception ex)
         {

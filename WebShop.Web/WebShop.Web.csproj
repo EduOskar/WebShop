@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Blazor.Bootstrap" Version="1.10.4" />
+    <PackageReference Include="libphonenumber-csharp" Version="8.13.27" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

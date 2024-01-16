@@ -32,7 +32,7 @@
 </div>
 
 @code {
-    private CategoriesNavMenu categoriesNavMenu;
+    private CategoriesNavMenu? categoriesNavMenu;
 
     protected override void OnInitialized()
     {
@@ -41,7 +41,7 @@
 
     private void RefreshCategories()
     {
-        var _ = categoriesNavMenu.RefreshCategoriesList();
+        // var _ = categoriesNavMenu.RefreshCategoriesList();
     }
 
     public void Dispose()

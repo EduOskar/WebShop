@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using WebShop.Models.Validation;
 
 namespace WebShop.Models.DTOs;
 
@@ -21,8 +17,12 @@ public class UserDto
 
     public string UserName { get; set; } = default!;
 
+    [Required(ErrorMessage = "Email address is required.")]
+    [RegularExpression(@"^[^@\s]+@[^@\s]+\.(com|se|net|org|edu|gov|uk|co|us|info|io)$", ErrorMessage = "Invalid Email Address")]
     public string Email { get; set; } = default!;
 
+    [Required(ErrorMessage = "Phone number is required.")]
+    [ValidPhoneNumber(ErrorMessage ="Invalid Phonenumber")]
     public string Phonenumber { get; set; } = default!;
 
     [DataType(DataType.Password)]

@@ -86,6 +86,7 @@ else
     protected IOrderedEnumerable<IGrouping<int, ProductDto>> GetGroupedProductsByCategory()
     {
         return from product in ProductList
+               where product.Status == ProductStatus.Active
                group product by product.CategoryId into prodByCatGroup
                orderby prodByCatGroup.Key
                select prodByCatGroup;
@@ -94,5 +95,6 @@ else
     protected string GetCategoryName(IGrouping<int, ProductDto> groupedProductDto)
     {
         return groupedProductDto?.FirstOrDefault(pg => pg.CategoryId == groupedProductDto.Key)!.CategoryName!;
+
     }
 }

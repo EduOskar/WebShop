@@ -23,9 +23,9 @@ public class UserRepository : IUserRepository
         _roleManager = roleManager;
         _mapper = mapper;
     }
-    public async Task<IdentityResult> CreateUser(User user/*, string password*/)
+    public async Task<IdentityResult> CreateUser(User user, string password)
     {
-        var hashPassword = _userManager.PasswordHasher.HashPassword(user, user.Password);
+        var hashPassword = _userManager.PasswordHasher.HashPassword(user, password);
         user.PasswordHash = hashPassword;
 
         var result = await _userManager.CreateAsync(user );

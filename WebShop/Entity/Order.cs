@@ -5,6 +5,14 @@ using WebShop.Api.Controllers;
 
 namespace WebShop.Api.Entity;
 
+public enum OrderStatus
+{
+    Packaging,
+    Sent,
+    Delivered,
+    Cancelled
+}
+
 public class Order
 {
     [Key]
@@ -13,6 +21,8 @@ public class Order
 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public DateTime PlacementTime { get; set; }
+
+    public OrderStatus Status { get; set; }
 
     //ForeignKey for Customer
     public int UserId { get; set; }

@@ -73,6 +73,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             ImageURL = "/Images/Beauty/Beauty1.png",
             Price = 1000,
             Quantity = 100,
+            Status = 0,
             CategoryId = 1
 
         });
@@ -84,6 +85,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             ImageURL = "/Images/Beauty/Beauty2.png",
             Price = 500,
             Quantity = 45,
+            Status = 0,
             CategoryId = 1
 
         });
@@ -95,6 +97,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             ImageURL = "/Images/Beauty/Beauty3.png",
             Price = 200,
             Quantity = 30,
+            Status = 0,
             CategoryId = 1
 
         });
@@ -106,6 +109,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             ImageURL = "/Images/Beauty/Beauty4.png",
             Price = 500,
             Quantity = 60,
+            Status = 0,
             CategoryId = 1
 
         });
@@ -117,6 +121,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             ImageURL = "/Images/Beauty/Beauty5.png",
             Price = 300,
             Quantity = 85,
+            Status = 0,
             CategoryId = 1
 
         });
@@ -129,6 +134,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             ImageURL = "/Images/Electronic/Electronics1.png",
             Price = 1000,
             Quantity = 120,
+            Status = 0,
             CategoryId = 3
 
         });
@@ -140,6 +146,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             ImageURL = "/Images/Electronic/Electronics2.png",
             Price = 499,
             Quantity = 200,
+            Status = 0,
             CategoryId = 3
 
         });
@@ -151,6 +158,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             ImageURL = "/Images/Electronic/Electronics3.png",
             Price = 499,
             Quantity = 300,
+            Status = 0,
             CategoryId = 3
 
         });
@@ -162,6 +170,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             ImageURL = "/Images/Electronic/Electronics4.png",
             Price = 5999,
             Quantity = 20,
+            Status = 0,
             CategoryId = 3
 
         });
@@ -173,6 +182,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             ImageURL = "/Images/Electronic/Electronics5.png",
             Price = 6999,
             Quantity = 15,
+            Status = 0,
             CategoryId = 3
 
         });
@@ -184,6 +194,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             ImageURL = "/Images/Electronic/Electronics6.png",
             Price = 1050,
             Quantity = 60,
+            Status = 0,
             CategoryId = 3
         });
         //Furniture Category
@@ -195,6 +206,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             ImageURL = "/Images/Furniture/Furniture1.png",
             Price = 550,
             Quantity = 212,
+            Status = 0,
             CategoryId = 2
         });
 
@@ -206,6 +218,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             ImageURL = "/Images/Furniture/Furniture2.png",
             Price = 500,
             Quantity = 112,
+            Status = 0,
             CategoryId = 2
         });
         modelBuilder.Entity<Product>().HasData(new Product
@@ -216,6 +229,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             ImageURL = "/Images/Furniture/Furniture3.png",
             Price = 700,
             Quantity = 90,
+            Status = 0,
             CategoryId = 2
         });
         modelBuilder.Entity<Product>().HasData(new Product
@@ -226,6 +240,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             ImageURL = "/Images/Furniture/Furniture4.png",
             Price = 1200,
             Quantity = 95,
+            Status = 0,
             CategoryId = 2
         });
         modelBuilder.Entity<Product>().HasData(new Product
@@ -236,6 +251,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             ImageURL = "/Images/Furniture/Furniture6.png",
             Price = 150,
             Quantity = 100,
+            Status = 0,
             CategoryId = 2
         });
         modelBuilder.Entity<Product>().HasData(new Product
@@ -246,6 +262,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             ImageURL = "/Images/Furniture/Furniture7.png",
             Price = 200,
             Quantity = 73,
+            Status = 0,
             CategoryId = 2
         });
         //Shoes Category
@@ -257,6 +274,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             ImageURL = "/Images/Shoes/Shoes1.png",
             Price = 1000,
             Quantity = 50,
+            Status = 0,
             CategoryId = 4
         });
         modelBuilder.Entity<Product>().HasData(new Product
@@ -267,6 +285,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             ImageURL = "/Images/Shoes/Shoes2.png",
             Price = 1500,
             Quantity = 60,
+            Status = 0,
             CategoryId = 4
         });
         modelBuilder.Entity<Product>().HasData(new Product
@@ -277,6 +296,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             ImageURL = "/Images/Shoes/Shoes3.png",
             Price = 2000,
             Quantity = 70,
+            Status = 0,
             CategoryId = 4
         });
         modelBuilder.Entity<Product>().HasData(new Product
@@ -287,6 +307,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             ImageURL = "/Images/Shoes/Shoes4.png",
             Price = 1200,
             Quantity = 120,
+            Status = 0,
             CategoryId = 4
         });
         modelBuilder.Entity<Product>().HasData(new Product
@@ -297,6 +318,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             ImageURL = "/Images/Shoes/Shoes5.png",
             Price = 2000,
             Quantity = 100,
+            Status = 0,
             CategoryId = 4
         });
         modelBuilder.Entity<Product>().HasData(new Product
@@ -307,6 +329,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             ImageURL = "/Images/Shoes/Shoes6.png",
             Price = 500,
             Quantity = 150,
+            Status = 0,
             CategoryId = 4
         });
 

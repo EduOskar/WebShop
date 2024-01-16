@@ -16,12 +16,6 @@ public class User :  IdentityUser<int>
 
     public string Adress { get; set; } = default!;
 
-    [DataType(DataType.Password)]
-    public string Password { get; set; } = default!;
-
-    [DataType(DataType.Password)]
-    public string ConfirmPassword { get; set; } = default!;
-
     public ICollection<Order>? Orders { get; set; }
 
     public ICollection<Review>? Reviews { get; set; }

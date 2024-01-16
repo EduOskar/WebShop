@@ -11,13 +11,14 @@ using WebShop.Api.Repositories.Contracts;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.ConfigureSwaggerGen(c => c.CustomSchemaIds(c => c.FullName));
 
 builder.Services.AddDbContextPool<ApplicationDbContext>(options =>
     options.UseSqlServer(builder
@@ -54,7 +55,6 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
-
 
 var app = builder.Build();
 
@@ -107,8 +107,6 @@ using (var scope = app.Services.CreateScope())
         user.Email = email;
         user.UserName = userName;
         user.PasswordHash = password;
-        user.ConfirmPassword = password;
-        user.Password = password;
         user.FirstName = "Adi";
         user.LastName = "Administratum";
         user.Adress = "Adminstreet";
