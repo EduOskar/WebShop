@@ -2,35 +2,41 @@
 @page "/edit-category/{Id:int}"
 @inject NavigationManager navigationManager
 
-@if (Id is null)
-{
-    <PageTitle>Add a new Category</PageTitle>
-    <h3>Add a new Category</h3>
-    Message = "Create Category";
-}
-else
-{
-    <PageTitle>Edit "@CurrentCategory.Name"</PageTitle>
-    <h3>Edit @CurrentCategory.Name</h3>
-    Message = "Update Product";
-}
+<AuthorizeView Roles="Admin">
+    <Authorized Context="yesyes">
+        @if (Id is null)
+        {
+            <PageTitle>Add a new Category</PageTitle>
+            <h3>Add a new Category</h3>
+            Message = "Create Category";
+        }
+        else
+        {
+            <PageTitle>Edit "@CurrentCategory.Name"</PageTitle>
+            <h3>Edit @CurrentCategory.Name</h3>
+            Message = "Update Product";
+        }
 
-<EditForm Model="CurrentCategory" OnValidSubmit="HandleSubmit" FormName="ProductForm">
-    <div>
-        <label for="name">name</label>
-        <InputText id="name" @bind-Value="@CurrentCategory.Name" class="form-control" />
-    </div>
-    <div>
-        <label for="iconcss">Icons</label>
-        <InputText id="iconcss" @bind-Value="@CurrentCategory.IconCSS" class="form-control" />
-    </div>
-    <br />
-    <button type="submit" class="btn btn-primary">@Message</button>
-    <button type="button" class="btn btn-danger fa fa-trash"
-            @onclick="DeleteCategory">
-    </button>
-</EditForm>
-
+        <EditForm Model="CurrentCategory" OnValidSubmit="HandleSubmit" FormName="ProductForm">
+            <div>
+                <label for="name">name</label>
+                <InputText id="name" @bind-Value="@CurrentCategory.Name" class="form-control" />
+            </div>
+            <div>
+                <label for="iconcss">Icons</label>
+                <InputText id="iconcss" @bind-Value="@CurrentCategory.IconCSS" class="form-control" />
+            </div>
+            <br />
+            <button type="submit" class="btn btn-primary">@Message</button>
+            <button type="button" class="btn btn-danger fa fa-trash"
+                    @onclick="DeleteCategory">
+            </button>
+        </EditForm>
+    </Authorized>
+    <NotAuthorized>
+        You must log in and be an admin to edit the user
+    </NotAuthorized>
+</AuthorizeView>
 <p>@Status</p>
 
 
