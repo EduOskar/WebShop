@@ -15,6 +15,8 @@ public interface IUserRolesRepository
 
     Task<bool> DeleteUserRoles(int UserId);
 
+    Task<IdentityResult> CreateRole(Role role);
+
     Task<bool> RoleExist(int RoleId);
 
     Task<bool> Save();

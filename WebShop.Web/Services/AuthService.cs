@@ -7,9 +7,9 @@ public class AuthService : IAuthService
 {
     private readonly HttpClient _httpClient;
 
-    public AuthService(HttpClient httpClient)
+    public AuthService(IHttpClientFactory httpClient)
     {
-        _httpClient = httpClient;
+        _httpClient = httpClient.CreateClient("WebShop.Api");
     }
 
     public async Task<CurrentUser> CurrentUserInformation()

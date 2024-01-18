@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Components\Pages\AdminFunctionality\EditRoles.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Blazor.Bootstrap" Version="1.10.4" />
     <PackageReference Include="libphonenumber-csharp" Version="8.13.27" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0" />
@@ -23,6 +27,18 @@
   <ItemGroup>
     <Folder Include="wwwroot\Images\Unsafe-uploads\" />
     <Folder Include="wwwroot\js\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Components\Pages\AdminFunctionality\EditRoles.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Components\Pages\AdminFunctionality\EditRoles.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Components\Pages\AdminFunctionality\EditRoles.razor" />
   </ItemGroup>
 
 </Project>

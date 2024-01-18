@@ -23,6 +23,7 @@ public class CustomStateProvider : AuthenticationStateProvider
             {
                 var claims = new[] { new Claim(ClaimTypes.Name, _currentUser.UserName)}.Concat(_currentUser.Claims.Select(c => new Claim(c.Key, c.Value)));
                 identity = new ClaimsIdentity(claims, "Server authentication");
+               
             }
         }
         catch (HttpRequestException ex)

@@ -1,4 +1,5 @@
-﻿<button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#addReviewModal">
+﻿
+<button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#addReviewModal">
     Add Review
 </button>
 
@@ -42,6 +43,9 @@
     public int UserId { get; set; }
 
     [Parameter]
+    public int? Id { get; set; }
+
+    [Parameter]
     public EventCallback OnReviewAdded { get; set; }
 
     [Inject]
@@ -52,7 +56,8 @@
 
     private ProductDto Product { get; set; } = default!;
 
-    private ReviewDto newReview = new ReviewDto();
+    private ReviewDto newReview = new();
+
     private string? submitStatus;
     private string? alertClass;
 

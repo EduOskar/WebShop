@@ -9,6 +9,7 @@ namespace WebShop.Models.DTOs;
 
 public enum OrderStatus
 {
+    New,
     Packaging,
     Sent,
     Delivered,

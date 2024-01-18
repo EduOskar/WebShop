@@ -1,4 +1,6 @@
 ﻿using System.Net.Http;
+using Newtonsoft.Json;
+using System.Text;
 using WebShop.Models.DTOs;
 using WebShop.Web.Services.Contracts;
 
@@ -94,8 +96,23 @@ public class ReviewService : IReviewServices
         throw new NotImplementedException();
     }
 
-    public Task<bool> UpdateReview(ReviewDto reviewUpdate)
+    public async Task<bool> UpdateReview(ReviewDto reviewUpdate)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var jsonRequest = JsonConvert.SerializeObject(reviewUpdate);
+
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json-patch+json");
+
+            var response = await _httpClient.PutAsync($"api/Reviews/{reviewUpdate.Id}", content);
+
+            return response.IsSuccessStatusCode;
+
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
     }
 }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Radzen;
 using WebShop.Models.DTOs;
 using WebShop.Web.Components;
@@ -22,7 +23,24 @@ builder.Services.AddAuthenticationCore();
 builder.Services.AddAuthorizationCore();
 
 
-builder.Services.AddHttpClient();
+var cookieContainer = new System.Net.CookieContainer();
+var handler = new HttpClientHandler
+{
+    UseCookies = true,
+    CookieContainer = cookieContainer
+   
+    
+};
+
+builder.Services.AddSingleton(cookieContainer);
+builder.Services.AddSingleton(handler);
+
+builder.Services.AddHttpClient("WebShop.Api", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7066/");
+})
+
+.ConfigurePrimaryHttpMessageHandler(() => handler);
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7066/") });
 builder.Services.AddHttpClient<IProductsService, ProductsService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
 builder.Services.AddHttpClient<IUsersAndRoleService, UsersAndRoleService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
@@ -57,7 +75,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
+app.UseAuthentication().UseCookiePolicy();
 app.UseAuthorization();
 
 app.UseStaticFiles();

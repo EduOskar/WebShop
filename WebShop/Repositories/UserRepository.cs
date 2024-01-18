@@ -13,14 +13,12 @@ public class UserRepository : IUserRepository
 {
     private readonly UserManager<User> _userManager;
     private readonly ApplicationDbContext _dbContext;
-    private readonly RoleManager<IdentityRole<int>> _roleManager;
     private readonly IMapper _mapper;
 
-    public UserRepository(UserManager<User> userManager, ApplicationDbContext dbContext, RoleManager<IdentityRole<int>> roleManager, IMapper mapper)
+    public UserRepository(UserManager<User> userManager, ApplicationDbContext dbContext, IMapper mapper)
     {
         _userManager = userManager;
         _dbContext = dbContext;
-        _roleManager = roleManager;
         _mapper = mapper;
     }
     public async Task<IdentityResult> CreateUser(User user, string password)

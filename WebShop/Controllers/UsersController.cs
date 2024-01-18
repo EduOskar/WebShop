@@ -67,7 +67,7 @@ public class UsersController : ControllerBase
     {
         if (userCreate == null)
         {
-            return BadRequest(ModelState);
+            return BadRequest();
         }
 
         var user = await _userRepository.GetUsers();

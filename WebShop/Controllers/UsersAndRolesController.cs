@@ -39,7 +39,7 @@ public class UsersAndRolesController : ControllerBase
         }
 
         var user = await _userRepository.GetUser(userId);
-       
+
         if (user == null)
         {
             return NotFound("UserId did not correlate to any existing users");
@@ -114,5 +114,30 @@ public class UsersAndRolesController : ControllerBase
         }
 
         return NoContent();
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<IdentityResult>> CreateRole(RolesDto roleCreate)
+    {
+        if (roleCreate == null)
+        {
+            return BadRequest();
+        }
+
+        var roles = await _rolesRepository.GetRoles();
+        var roleCheck = roles
+            .Where(u => u.Name!.Trim().Equals(roleCreate.Name.TrimEnd(), StringComparison.CurrentCultureIgnoreCase))
+            .Any();
+
+        if (roleCheck)
+        {
+            return BadRequest("Role already exist");
+        }
+
+        var roleMap = _mapper.Map<Role>(roleCreate);
+
+        await _rolesRepository.CreateRole(roleMap);
+
+        return Ok(roleMap);
     }
 }

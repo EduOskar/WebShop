@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
@@ -29,9 +31,27 @@ builder.Services.AddIdentity<User, IdentityRole<int>>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
+//builder.Services.Configure<CookiePolicyOptions>(options =>
+//{
+//    options.Secure = CookieSecurePolicy.Always;
+//    options.MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.None;
+//    options.HttpOnly = HttpOnlyPolicy.Always;
+//});
+
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.Cookie.HttpOnly = false;
+    options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+}).AddCookie();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.HttpOnly = true;
     options.Events.OnRedirectToLogin = context =>
     {
         context.Response.StatusCode = 401;
@@ -69,11 +89,12 @@ app.UseCors(policy =>
     policy.WithOrigins("http://localhost:7104", "https://localhost:7104")
     .AllowAnyMethod()
     .WithHeaders(HeaderNames.ContentType)
+    .AllowCredentials()
 );
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
+app.UseAuthentication().UseCookiePolicy();
 app.UseAuthorization();
 
 app.MapControllers();

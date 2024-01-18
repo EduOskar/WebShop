@@ -69,9 +69,9 @@ public class ReviewsController : ControllerBase
     {
         var userReview = _mapper.Map<List<ReviewDto>>(await _reviewRepository.GetReviewsFromUser(userId));
 
-        if (!ModelState.IsValid)
+        if (userReview == null)
         {
-            return BadRequest(ModelState);
+            return BadRequest();
         }
 
         return Ok(userReview);
@@ -99,12 +99,7 @@ public class ReviewsController : ControllerBase
     {
         if (reviewCreate == null)
         {
-            return BadRequest(ModelState);
-        }
-
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
+            return BadRequest();
         }
 
         var productExist = await _productRepository.ProductExist(reviewCreate.ProductId);
@@ -130,8 +125,7 @@ public class ReviewsController : ControllerBase
 
         if (!await _reviewRepository.CreateReview(reviewMap))
         {
-            ModelState.AddModelError("", "There was an error saving");
-            return BadRequest(ModelState);
+            return BadRequest("There was an error saving");
         }
 
         return CreatedAtAction("GetReview", new {reviewId = reviewCreate.Id}, reviewCreate);
@@ -141,16 +135,24 @@ public class ReviewsController : ControllerBase
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
+    [ProducesResponseType(403)]
     public async Task<ActionResult> UpdateReview(int reviewId, [FromBody] ReviewDto updateReview)
     {
         if (updateReview == null)
         {
-            return BadRequest(ModelState);
+            return BadRequest();
         }
 
         if (reviewId != updateReview.Id)
         {
-            return BadRequest(ModelState);
+            return BadRequest();
+        }
+
+        var user = _userRepository.GetUser(updateReview.UserId);
+
+        if (updateReview.UserId != user.Id)
+        {
+            return  Forbid();
         }
 
         if (!await _reviewRepository.ReviewExist(reviewId))
@@ -158,17 +160,11 @@ public class ReviewsController : ControllerBase
             return NotFound();
         }
 
-        if (!ModelState.IsValid)
-        {
-            return BadRequest();
-        }
-
         var reviewMap = _mapper.Map<Review>(updateReview);
 
         if (!await _reviewRepository.UpdateReview(reviewMap))
         {
-            ModelState.AddModelError("", "Something went wrong while updating");
-            return BadRequest(ModelState);
+            return BadRequest("Something went wrong while updating");
         }
 
         return NoContent();

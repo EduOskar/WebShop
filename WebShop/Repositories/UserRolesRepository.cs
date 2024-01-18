@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using WebShop.Api.Data;
 using WebShop.Api.Entity;
 using WebShop.Api.Repositories.Contracts;
+using WebShop.Models.DTOs;
 
 namespace WebShop.Api.Repositories;
 
@@ -88,5 +89,17 @@ public class UserRolesRepository : IUserRolesRepository
         await _dbContext.SaveChangesAsync();
 
         return true;
+    }
+
+    public async Task<IdentityResult> CreateRole(Role role)
+    {
+        var createRole = await _rolemanager.CreateAsync(role);
+
+        if (createRole != null)
+        {
+            return createRole;
+        }
+
+        throw new Exception();
     }
 }
