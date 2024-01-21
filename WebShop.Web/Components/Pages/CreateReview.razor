@@ -1,4 +1,5 @@
 ﻿
+
 <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#addReviewModal">
     Add Review
 </button>
@@ -11,14 +12,14 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <EditForm Model="newReview" OnValidSubmit="HandleReviewSubmit">
+                <EditForm Model="Review" OnValidSubmit="HandleReviewSubmit">
                     <div class="form-group">
                         <label for="reviewTitle">Title</label>
-                        <InputTextArea id="reviewTitle" class="form-control" @bind-Value="newReview.Title" />
+                        <InputTextArea id="reviewTitle" class="form-control" @bind-Value="Review.Title" />
                     </div>
                     <div class="form-group">
                         <label for="reviewContent">Content</label>
-                        <InputTextArea id="reviewContent" class="form-control" @bind-Value="newReview.Content" />
+                        <InputTextArea id="reviewContent" class="form-control" @bind-Value="Review.Content" />
                     </div>
                     <button type="submit" class="btn btn-primary">Submit Review</button>
                 </EditForm>
@@ -43,10 +44,7 @@
     public int UserId { get; set; }
 
     [Parameter]
-    public int? Id { get; set; }
-
-    [Parameter]
-    public EventCallback OnReviewAdded { get; set; }
+    public EventCallback<bool> OnReviewSaved { get; set; }
 
     [Inject]
     private IReviewServices ReviewService { get; set; } = default!;
@@ -56,33 +54,65 @@
 
     private ProductDto Product { get; set; } = default!;
 
-    private ReviewDto newReview = new();
+    [Parameter]
+    public ReviewDto Review { get; set; } = default!;
 
+    // public ReviewDto reviewCreate { get; set; } = new();
+
+    public bool IsEditMode => Review != null && Review.Id > 0;
     private string? submitStatus;
     private string? alertClass;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
         Product = await ProductService.GetProduct(ProductId);
+
+        if (Review == null || Review?.Id == 0)
+        {
+            Review!.ProductId = ProductId;
+            Review.UserId = UserId;
+            Review.CreatedAt = DateTime.UtcNow;
+            Review.Content = Review.Content;
+            Review.Title = Review.Title;
+        }
     }
 
     private async Task HandleReviewSubmit()
     {
-        newReview.ProductId = ProductId;
-        newReview.UserId = UserId;
-        var createdReview = await ReviewService.CreateReview(newReview);
+        Review.UserId = UserId;
 
-        if (createdReview != null)
+        if (IsEditMode)
         {
-            submitStatus = "Review added successfully!";
-            alertClass = "alert-success";
-            newReview = new ReviewDto();
-            await OnReviewAdded.InvokeAsync();
+            var successStatus = await ReviewService.UpdateReview(Review);
+
+            if (successStatus)
+            {
+                submitStatus = "Review updated successfully!";
+                alertClass = "alert-success";
+            }
+            else
+            {
+                submitStatus = "Review updated Failed!";
+                alertClass = "alert-danger";
+            }
+
         }
         else
         {
-            submitStatus = "Failed to add review. Please try again.";
-            alertClass = "alert-danger";
+            var createdReview = await ReviewService.CreateReview(Review);
+            if (createdReview != null)
+            {
+                submitStatus = "Review added successfully!";
+                alertClass = "alert-success";
+                Review = new ReviewDto { ProductId = ProductId, UserId = UserId };
+            }
+            else
+            {
+                submitStatus = "Failed to add review. Please try again.";
+                alertClass = "alert-danger";
+            }
         }
+
+        await OnReviewSaved.InvokeAsync(true);
     }
 }

@@ -1,5 +1,6 @@
 ﻿@page "/ProductDetails/{productId:int}"
 @inject CustomStateProvider authenticationStateProvider
+@inject IJSRuntime JSRuntime;
 
 @if (Product == null && ErrorMessage == null)
 {
@@ -39,7 +40,7 @@ else
 
     @if (User.Identity!.IsAuthenticated)
     {
-        <CreateReview ProductId="@productId" UserId="@UserId" OnReviewAdded="OnReviewAdded"/>
+        <CreateReview ProductId="@productId" UserId="@UserId" Review="@currentReview" OnReviewSaved="OnReviewSaved" />
     }
 
     <div class="row">
@@ -56,8 +57,8 @@ else
             {
                 @foreach (var review in ReviewList)
                 {
-                    <ReviewDisplay Review="review" />
-                }
+                    <ReviewDisplay Review="review" UserId="@UserId" OnEditRequested="HandleEditRequest" />
+                } 
             }
         </div>
     </div>
@@ -66,6 +67,7 @@ else
 
 
 @code {
+    private ReviewDto currentReview = new ReviewDto();
 
     [Parameter]
     public int productId { get; set; }
@@ -104,6 +106,7 @@ else
     private int UserId;
 
     private CartDto cart = default!;
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -148,9 +151,30 @@ else
 
     }
 
+    private async Task ShowEditModal()
+    {
+        await JSRuntime.InvokeVoidAsync("eval", "new bootstrap.Modal(document.getElementById('addReviewModal')).show()");
+    }
+
+    private async void HandleEditRequest(ReviewDto review)
+    {
+        currentReview = review;
+        await ShowEditModal();
+        
+    }
+
+    private async Task OnReviewSaved(bool isSuccess)
+    {
+        if (isSuccess)
+        {
+            await FetchReviews();
+        }
+    }
+
     private async Task OnReviewAdded()
     {
         await FetchReviews();
+  
     }
 
     protected async Task FetchReviews()

@@ -131,7 +131,7 @@ using (var scope = app.Services.CreateScope())
         user.FirstName = "Adi";
         user.LastName = "Administratum";
         user.Adress = "Adminstreet";
-        user.PhoneNumber = "0709998877";
+        user.PhoneNumber = "+46 - 333 333 33";
 
         await userManager.CreateAsync(user, password);
 

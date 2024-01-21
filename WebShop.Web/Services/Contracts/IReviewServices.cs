@@ -12,5 +12,7 @@ public interface IReviewServices
 
     Task<List<ReviewDto>> GetRreviews();
 
+    Task<ReviewDto> GetReview(int reviewId);
+
     Task<List<ReviewDto>> GetReviewsByProduct(int productId);
 }

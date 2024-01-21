@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using WebShop.Models.Validation;
 
 namespace WebShop.Models.DTOs;
 
@@ -22,13 +21,12 @@ public class UserDto
     public string Email { get; set; } = default!;
 
     [Required(ErrorMessage = "Phone number is required.")]
-    [ValidPhoneNumber(ErrorMessage ="Invalid Phonenumber")]
     public string Phonenumber { get; set; } = default!;
 
     [DataType(DataType.Password)]
-    public string Password { get; set; } = default!;
+    public string? Password { get; set; }
 
     [DataType(DataType.Password)]
-    public string ConfirmPassword { get; set; } = default!;
+    public string? ConfirmPassword { get; set; }
 
 }

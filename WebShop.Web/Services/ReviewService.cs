@@ -62,6 +62,29 @@ public class ReviewService : IReviewServices
         }
     }
 
+    public async Task<ReviewDto> GetReview(int reviewId)
+    {
+
+        var response = await _httpClient.GetAsync($"api/Reviews/{reviewId}");
+
+        if (response.IsSuccessStatusCode)
+        {
+            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+            {
+                return null!;
+            }
+
+            var review = await response.Content.ReadFromJsonAsync<ReviewDto>();
+            return review!;
+        }
+        else
+        {
+            var message = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Http status:{response.StatusCode} Message -{message}");
+        }
+
+    }
+
     public async Task<List<ReviewDto>> GetReviewsByProduct(int productId)
     {
         try
@@ -101,17 +124,27 @@ public class ReviewService : IReviewServices
         try
         {
             var jsonRequest = JsonConvert.SerializeObject(reviewUpdate);
-
             var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json-patch+json");
 
             var response = await _httpClient.PutAsync($"api/Reviews/{reviewUpdate.Id}", content);
 
-            return response.IsSuccessStatusCode;
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Error updating review. Status code: {response.StatusCode}. Response content: {errorContent}");
+                return false;
+            }
 
+            return true;
         }
-        catch (Exception)
+        catch (HttpRequestException ex)
         {
-
+            Console.WriteLine($"HTTP Request Error: {ex.Message}");
+            throw;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"General Error: {ex.Message}");
             throw;
         }
     }

@@ -12,7 +12,7 @@ namespace WebShop.Models.DTOs
 
         public string? Title { get; set; }
 
-        public DateTime CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
 
         public string Content { get; set; } = default!;
 

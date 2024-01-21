@@ -79,6 +79,11 @@ public class AuthController : ControllerBase
             return BadRequest($"{userMap.Email} or {userMap.UserName} already exist");
         }
 
+        if (parameters.Password is null)
+        {
+            return BadRequest("You need to input password");
+        }
+
         if (parameters.Password != parameters.ConfirmPassword)
         {
             return BadRequest($"password is not eqals to the confirmed password");

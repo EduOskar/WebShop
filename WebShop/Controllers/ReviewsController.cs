@@ -55,9 +55,9 @@ public class ReviewsController : ControllerBase
 
         var review = _mapper.Map<ReviewDto>(await _reviewRepository.GetReview(reviewId));
 
-        if (!ModelState.IsValid)
+        if (review == null)
         {
-            return BadRequest(ModelState);
+            return BadRequest();
         }
 
         return Ok(review);
@@ -136,7 +136,7 @@ public class ReviewsController : ControllerBase
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
     [ProducesResponseType(403)]
-    public async Task<ActionResult> UpdateReview(int reviewId, [FromBody] ReviewDto updateReview)
+    public async Task<ActionResult> UpdateReview(int reviewId, ReviewDto updateReview)
     {
         if (updateReview == null)
         {
@@ -148,7 +148,9 @@ public class ReviewsController : ControllerBase
             return BadRequest();
         }
 
-        var user = _userRepository.GetUser(updateReview.UserId);
+        var user = await _userRepository.GetUser(updateReview.UserId);
+
+        var product = await _productRepository.GetProduct(updateReview.ProductId);
 
         if (updateReview.UserId != user.Id)
         {
@@ -161,6 +163,8 @@ public class ReviewsController : ControllerBase
         }
 
         var reviewMap = _mapper.Map<Review>(updateReview);
+        reviewMap.User = user;
+        reviewMap.Product = product;
 
         if (!await _reviewRepository.UpdateReview(reviewMap))
         {
