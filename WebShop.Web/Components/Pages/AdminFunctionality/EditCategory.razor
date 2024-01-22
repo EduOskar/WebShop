@@ -1,5 +1,6 @@
 ﻿@page "/edit-category"
 @page "/edit-category/{Id:int}"
+@inject IJSRuntime JsRuntime
 @inject NavigationManager navigationManager
 
 <AuthorizeView Roles="Admin">
@@ -100,24 +101,33 @@
 
     async Task UpdateCategory()
     {
-        var result = await CategoryService.UpdateCategory(CurrentCategory);
+        bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure?");
 
-        if (result)
+        if (confirmed)
         {
-            Status = "Category Updated Successfully!";
-            categoryStateservice.NotifyCategoryStateChanged();
-            navigationManager.NavigateTo("AdminProducts");
-        }
-        else
-        {
-            Status = "Something went wrong";
+            var result = await CategoryService.UpdateCategory(CurrentCategory);
+
+            if (result)
+            {
+                Status = "Category Updated Successfully!";
+                categoryStateservice.NotifyCategoryStateChanged();
+                navigationManager.NavigateTo("AdminProducts");
+            }
+            else
+            {
+                Status = "Something went wrong";
+            }
         }
     }
 
     async Task DeleteCategory()
     {
-        await CategoryService.DeleteCategory(CurrentCategory.Id);
-        navigationManager.NavigateTo("AdminProducts");
-        categoryStateservice.NotifyCategoryStateChanged();
+        bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure?");
+        if (confirmed)
+        {
+            await CategoryService.DeleteCategory(CurrentCategory.Id);
+            navigationManager.NavigateTo("AdminProducts");
+            categoryStateservice.NotifyCategoryStateChanged();
+        }
     }
 }

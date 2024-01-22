@@ -41,18 +41,27 @@
 
     LoginRequest loginRequest { get; set; } = new LoginRequest();
 
+    private ClaimsPrincipal UserClaims { get; set; } = default!;
+
     string? error { get; set; }
 
     async Task OnSubmit()
     {
-        error = null!;
+        error = null;
         try
         {
-
             await authStateProvider.Login(loginRequest);
-            navigationManager.NavigateTo("/products");
 
+            var authResult = await authStateProvider.GetAuthenticationStateAsync();
 
+            if (authResult.User.IsInRole("Warehouse Worker"))
+            {
+                navigationManager.NavigateTo("/warehouse");
+            }
+            else
+            {
+                navigationManager.NavigateTo("/products");
+            }
         }
         catch (Exception ex)
         {

@@ -57,7 +57,7 @@ else
             {
                 @foreach (var review in ReviewList)
                 {
-                    <ReviewDisplay Review="review" UserId="@UserId" OnEditRequested="HandleEditRequest" />
+                    <ReviewDisplay Review="review" UserId="@UserId" OnEditRequested="HandleEditRequest" OnReviewDeleted="OnReviewDeleted"/>
                 } 
             }
         </div>
@@ -160,7 +160,7 @@ else
     {
         currentReview = review;
         await ShowEditModal();
-        
+
     }
 
     private async Task OnReviewSaved(bool isSuccess)
@@ -174,7 +174,15 @@ else
     private async Task OnReviewAdded()
     {
         await FetchReviews();
-  
+
+    }
+
+    private async Task OnReviewDeleted(bool isSuccess)
+    {
+        if (isSuccess)
+        {
+            await FetchReviews();
+        }
     }
 
     protected async Task FetchReviews()

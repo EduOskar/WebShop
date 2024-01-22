@@ -30,6 +30,18 @@ public class UserRolesRepository : IUserRolesRepository
         throw new Exception($"Role {userId} does not exists.");
     }
 
+    public async Task<IdentityRole<int>> GetRole(int roleId)
+    {
+        var role = await _dbContext.Roles.FirstOrDefaultAsync(r => r.Id == roleId);
+
+        if (role != null)
+        {
+            return role;
+        }
+
+        throw new Exception($"Role {roleId} does not exists.");
+    }
+
     public async Task<List<IdentityRole<int>>> GetRoles()
     {
         var roles = await _rolemanager.Roles.ToListAsync();

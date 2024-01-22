@@ -174,11 +174,12 @@ public class ReviewsController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{reviewId:int}")]
+    [HttpDelete("{reviewId:int}-{userId:int}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
+    [ProducesResponseType(403)]
     [ProducesResponseType(404)]
-    public async Task<ActionResult> DeleteReview(int reviewId)
+    public async Task<ActionResult> DeleteReview(int reviewId, int userId)
     {
         if (!await _reviewRepository.ReviewExist(reviewId))
         {
@@ -186,6 +187,11 @@ public class ReviewsController : ControllerBase
         }
 
         var reviewDelete = await _reviewRepository.GetReview(reviewId);
+
+        if (reviewDelete.UserId != userId)
+        {
+            return Forbid();
+        }
 
         if (!await _reviewRepository.DeleteReview(reviewDelete))
         {

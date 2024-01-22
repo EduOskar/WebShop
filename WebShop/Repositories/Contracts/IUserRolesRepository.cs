@@ -13,6 +13,8 @@ public interface IUserRolesRepository
 
     Task<bool> UpdateUserToRole(UserRole userRole);
 
+    Task<IdentityRole<int>> GetRole(int roleId);
+
     Task<bool> DeleteUserRoles(int UserId);
 
     Task<IdentityResult> CreateRole(Role role);

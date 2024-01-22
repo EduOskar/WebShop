@@ -1,4 +1,6 @@
-﻿@if (Review != null)
+﻿@inject IJSRuntime JsRuntime
+
+@if (Review != null)
 {
     <div class="review-container col-md-6">
         <div class="review-header">
@@ -13,13 +15,23 @@
         @if (CanEdit)
         {
             <button @onclick="ShowEditModal" class="btn btn-primary">Edit</button>
+            
+            <button @onclick="DeleteReview" class="btn btn-danger">Delete</button>
         }
     </div>
 }
 
-
+@if (submitStatus != null)
+{
+    <div class="alert @alertClass" role="alert">
+        @submitStatus
+    </div>
+}
 
 @code {
+    [Inject]
+    private IReviewServices reviewServices { get; set; } = default!;
+
     [Parameter]
     public ReviewDto Review { get; set; } = default!;
 
@@ -27,12 +39,40 @@
     public EventCallback<ReviewDto> OnEditRequested { get; set; }
 
     [Parameter]
+    public EventCallback<bool> OnReviewDeleted { get; set; }
+
+    [Parameter]
     public int UserId { get; set; }
 
     private bool CanEdit => Review.UserId == UserId;
 
+    private string? submitStatus;
+    private string? alertClass;
+
     private void ShowEditModal()
     {
         OnEditRequested.InvokeAsync(Review);
+    }
+
+    private async Task DeleteReview()
+    {
+        bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure?");
+
+        if (confirmed)
+        {
+            var successStatus = await reviewServices.DeleteReview(Review.Id, UserId);
+
+            if (successStatus)
+            {
+                submitStatus = "Review deleted successfully!";
+                alertClass = "alert-success";
+            }
+            else
+            {
+                submitStatus = "Review deleted failed!";
+                alertClass = "alert-danger";
+            }
+        }
+        await OnReviewDeleted.InvokeAsync(true);
     }
 }

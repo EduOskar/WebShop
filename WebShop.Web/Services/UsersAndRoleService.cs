@@ -32,6 +32,35 @@ public class UsersAndRoleService : IUsersAndRoleService
         }
     }
 
+    public async Task<RolesDto> GetRole(int roleId)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"api/UsersAndRoles/GetRole/{roleId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                {
+                    return null!;
+                }
+
+                var Role = await response.Content.ReadFromJsonAsync<RolesDto>();
+                return Role!;
+            }
+            else
+            {
+                var message = await response.Content.ReadAsStringAsync();
+                throw new Exception(message);
+            }
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
     public async Task<List<RolesDto>> GetRoles()
     {
         try

@@ -46,18 +46,30 @@ public class ReviewService : IReviewServices
         }
     }
 
-    public async Task<bool> DeleteReview(int reviewId)
+    public async Task<bool> DeleteReview(int reviewId, int userId)
     {
         try
         {
-            var response = await _httpClient.DeleteAsync($"api/Reviews/{reviewId}");
+            var response = await _httpClient.DeleteAsync($"api/Reviews/{reviewId}-{userId}");
 
-            return response.IsSuccessStatusCode;
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Error updating review. Status code: {response.StatusCode}. Response content: {errorContent}");
+                return false;
+            }
+
+            return true;
 
         }
-        catch (Exception)
+        catch (HttpRequestException ex)
         {
-
+            Console.WriteLine($"HTTP Request Error: {ex.Message}");
+            throw;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"General Error: {ex.Message}");
             throw;
         }
     }

@@ -30,14 +30,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <UpToDateCheckInput Remove="Components\Pages\AdminFunctionality\EditRoles.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Components\Pages\AdminFunctionality\EditRoles.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="Components\Pages\AdminFunctionality\EditRoles.razor" />
   </ItemGroup>
 

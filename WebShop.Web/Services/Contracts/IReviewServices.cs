@@ -6,7 +6,7 @@ public interface IReviewServices
 {
     Task<ReviewDto> CreateReview(ReviewDto reviewCreate);
 
-    Task<bool> DeleteReview(int reviewId);
+    Task<bool> DeleteReview(int reviewId, int userId);
 
     Task<bool> UpdateReview(ReviewDto reviewUpdate);
 

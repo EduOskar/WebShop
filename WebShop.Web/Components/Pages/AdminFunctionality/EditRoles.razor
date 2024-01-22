@@ -1,11 +1,11 @@
 ﻿@page "/edit-roles"
-@page "/edit-roles/{UserId:int}"
+@page "/edit-roles/{roleId:int}"
 @inject NavigationManager navigationManager
 
 
 @if (UserId is null)
 {
-    <PageTitle>Add a new UserRole</PageTitle>
+    <PageTitle>Add a new Role</PageTitle>
     <h3>Add a new Role</h3>
     Message = "Create roles";
 }
@@ -77,52 +77,4 @@ else
         }
 
     }
-
-//     async Task HandleSubmit()
-//     {
-//         if (UserId is not null)
-//         {
-//             await UpdateUserRole();
-//         }
-//         else
-//         {
-//             await CreateUserRole();
-//         }
-//     }
-
-//     async Task CreateUserRole()
-//     {
-//         var result = await UserRoleService.UpdateUserToRole();
-
-//         if (result)
-//         {
-//             Status = "User added successfully!";
-//             navigationManager.NavigateTo("DisplayUsersAndRoles");
-//         }
-//         else
-//         {
-//             Status = "Something went wrong";
-//         }
-//     }
-
-//     async Task UpdateUserRole()
-//     {
-//         var result = await UserRoleService.UpdateUserToRole();
-
-//         if (result)
-//         {
-//             Status = "User Updated Successfully!";
-//             navigationManager.NavigateTo("DisplayUsersAndRoles");
-//         }
-//         else
-//         {
-//             Status = "Something went wrong";
-//         }
-//     }
-
-//     async Task DeleteUsersRoles()
-//     {
-//         await UserRoleService.DeleteUserRoles(CurrentRole.Id);
-//         navigationManager.NavigateTo("DisplayUsersAndRoles");
-//     }
-// }
+}

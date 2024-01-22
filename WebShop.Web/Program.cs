@@ -1,9 +1,6 @@
-using Microsoft.AspNetCore.Authentication;
+
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using Radzen;
-using WebShop.Models.DTOs;
 using WebShop.Web.Components;
 using WebShop.Web.Services;
 using WebShop.Web.Services.Contracts;

@@ -1,4 +1,4 @@
-﻿
+﻿@inject IJSRuntime JsRuntime
 
 <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#addReviewModal">
     Add Review
@@ -83,19 +83,23 @@
 
         if (IsEditMode)
         {
-            var successStatus = await ReviewService.UpdateReview(Review);
+            bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure?");
 
-            if (successStatus)
+            if (confirmed)
             {
-                submitStatus = "Review updated successfully!";
-                alertClass = "alert-success";
-            }
-            else
-            {
-                submitStatus = "Review updated Failed!";
-                alertClass = "alert-danger";
-            }
+                var successStatus = await ReviewService.UpdateReview(Review);
 
+                if (successStatus)
+                {
+                    submitStatus = "Review updated successfully!";
+                    alertClass = "alert-success";
+                }
+                else
+                {
+                    submitStatus = "Review updated Failed!";
+                    alertClass = "alert-danger";
+                }
+            }
         }
         else
         {

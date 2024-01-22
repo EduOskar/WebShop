@@ -1,7 +1,7 @@
 ﻿@page "/userCheck"
 @inject CustomStateProvider authenticationStateProvider
 
-@attribute [Authorize(Roles = "User, Admin")]
+@attribute [Authorize(Roles = "User, Admin, WareHouse Worker")]
 
 <AuthorizeView>
     <Authorized>
@@ -22,7 +22,10 @@
             <h5>@cart.Id</h5>
             <h5>@cart.UserId</h5>
         }
- 
+        <br />
+        <br />
+        <br />
+        <br />
         @foreach (var item in context.User.Claims)
         {
             <h5>@item.Value</h5>
@@ -30,6 +33,7 @@
             <h5>@item.Properties</h5>
             <h5>@item.Issuer</h5>
             <h5>@item.Subject</h5>
+            <h5>@item.Type</h5>
         }
         <p>Welcome to Blazor Learner.</p>
     </Authorized>

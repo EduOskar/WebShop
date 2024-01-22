@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using WebShop.Api.Entity;
 using WebShop.Api.Repositories.Contracts;
 using WebShop.Models.DTOs;
@@ -87,6 +85,24 @@ public class UsersAndRolesController : ControllerBase
         }
 
         return Ok(userAndRoles);
+    }
+
+    [HttpGet("GetRole/{roleId}")]
+    public async Task<ActionResult<IdentityRole>> GetRole(int roleId)
+    {
+        var role = await _rolesRepository.GetRole(roleId);
+
+        if (role.Id != roleId)
+        {
+            return BadRequest();
+        }
+
+        if (!await _rolesRepository.RoleExist(role.Id))
+        {
+            return NotFound();
+        }
+
+        return Ok(role);
     }
 
     [HttpGet("Roles")]
