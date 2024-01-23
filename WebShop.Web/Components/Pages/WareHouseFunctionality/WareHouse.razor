@@ -2,8 +2,40 @@
 
 @page "/Warehouse"
 
-<h3>WareHouse</h3>
+@if (OrdersList == null)
+{
+    <DisplaySpinner />
+}
+else if (OrdersList.Count == 0)
+{
+    <h2>You have no orders that can be displayed</h2>
+}
+else
+{
+    <ol>
+        @foreach (var orderItem in OrdersList!)
+        {
+            <li>@orderItem.Id</li>
+            <li>@orderItem.OrderStatus</li>
+            <li>@orderItem.UserId</li>
+        }
+    </ol>
+}
+
 
 @code {
+    [Inject]
+    private IOrdersService ordersService { get; set; } = default!;
 
+    List<OrderDto> OrdersList { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchItems();
+    }
+
+    private async Task FetchItems()
+    {
+        OrdersList = await ordersService.GetOrders();
+    }
 }

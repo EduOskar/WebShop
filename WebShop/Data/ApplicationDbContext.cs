@@ -63,6 +63,14 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             orderItem.HasOne(oi => oi.Product).WithMany().HasForeignKey(oi => oi.ProductId);
         });
 
+        modelBuilder.Entity<Order>(order =>
+        {
+            order
+            .HasOne(os => os.OrderStatus)
+            .WithMany()
+            .HasForeignKey(os => os.OrderStatusId);
+        });
+
         //Products
         //Beauty Category
         modelBuilder.Entity<Product>().HasData(new Product
@@ -368,5 +376,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
     public DbSet<ProductCategory> ProductCategories { get; set; }
     new public DbSet<User> Users { get; set; }
     public DbSet<Review> Reviews { get; set; }
+
+    public DbSet<OrderStatus> OrderStatus { get; set; }
 
 }

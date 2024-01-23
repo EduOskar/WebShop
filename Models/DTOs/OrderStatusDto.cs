@@ -1,8 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace WebShop.Api.Entity;
-
+namespace WebShop.Models.DTOs;
 public enum OrderStatusType
 {
     New,
@@ -10,13 +14,13 @@ public enum OrderStatusType
     Delivered,
     Cancelled
 }
-public class OrderStatus
+public class OrderStatusDto
 {
     public int Id { get; set; }
     public OrderStatusType CurrentStatus { get; set; }
     public DateTime StatusDate { get; set; }
 
-    public OrderStatus()
+    public OrderStatusDto()
     {
         CurrentStatus = OrderStatusType.New;
         StatusDate = DateTime.UtcNow;
@@ -28,3 +32,4 @@ public class OrderStatus
         StatusDate = DateTime.UtcNow;
     }
 }
+

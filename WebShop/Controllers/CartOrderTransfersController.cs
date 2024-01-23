@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using WebShop.Api.Entity;
+using WebShop.Api.Repositories;
 using WebShop.Api.Repositories.Contracts;
 using WebShop.Models.DTOs;
+using OrderStatusType = WebShop.Api.Entity.OrderStatusType;
 
 namespace WebShop.Api.Controllers;
 [Route("api/[controller]")]
@@ -18,6 +20,7 @@ public class CartOrderTransfersController : ControllerBase
     private readonly ICartItemRepository _cartItemRepository;
     private readonly IOrderRepository _orderRepository;
     private readonly IOrderItemRepository _orderItemRepository;
+    private readonly IOrderStatusRepository _orderStatusRepository;
     private readonly IMapper _mapper;
 
     public CartOrderTransfersController(IProductRepository productRepository,
@@ -27,6 +30,7 @@ public class CartOrderTransfersController : ControllerBase
         ICartItemRepository cartItemRepository,
         IOrderRepository orderRepository,
         IOrderItemRepository orderItemRepository,
+        IOrderStatusRepository orderStatusRepository,
         IMapper mapper)
     {
         _productRepository = productRepository;
@@ -36,6 +40,7 @@ public class CartOrderTransfersController : ControllerBase
         _cartItemRepository = cartItemRepository;
         _orderRepository = orderRepository;
         _orderItemRepository = orderItemRepository;
+        _orderStatusRepository = orderStatusRepository;
         _mapper = mapper;
     }
 
@@ -74,11 +79,6 @@ public class CartOrderTransfersController : ControllerBase
 
         var cartItemsCheck = cartItems.Where(ci => ci.CartId == usersCart.Id);
 
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(false);
-        }
-
         if (cartItemsCheck.IsNullOrEmpty())
         {
             return BadRequest(false);
@@ -109,8 +109,20 @@ public class CartOrderTransfersController : ControllerBase
             PlacementTime = DateTime.Now,
         };
 
-        var orderMap = _mapper.Map<Order>(orderCreate);
+        OrderStatus orderStatus = new OrderStatus
+        {};
+
+        if (!await _orderStatusRepository.CreateOrderStatus(orderStatus))
+        {
+            return BadRequest();
+        }
+
+    var orderMap = _mapper.Map<Order>(orderCreate);
         orderMap.UserId = usersCart.UserId;
+        orderMap.OrderStatusId = orderStatus.Id;
+        orderMap.OrderStatus = orderStatus;
+
+
 
         await _orderRepository.CreateOrder(orderMap);
 

@@ -3,7 +3,7 @@
     <div class="order-container">
         <div class="order">
             <div @onclick="ToggleDetails">
-                <Button Class="centered-button">Order ID: @Order.Id - Placed: @Order.PlacementTime</Button>
+                <Button Class="centered-button">Order ID: @Order.Id - Placed: @Order.OrderStatus.StatusDate - OrderStatus: @Order.OrderStatus.CurrentStatus</Button>
                 </div>
                 @if (showDetails)
             {
@@ -16,7 +16,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var orderItems in Order.OrderItems) // Access OrderItems from Order
+                        @foreach (var orderItems in Order.OrderItems) 
                         {
                             <tr>
                                 <td>@orderItems.Product.Name</td>

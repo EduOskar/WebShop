@@ -13,14 +13,17 @@ public class OrdersController : ControllerBase
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IUserRepository _userRepository;
+    private readonly IOrderStatusRepository _orderStatusRepository;
     private readonly IMapper _mapper;
 
     public OrdersController(IOrderRepository orderRepository,
         IUserRepository userRepository,
+        IOrderStatusRepository orderStatusRepository,
         IMapper mapper)
     {
         _orderRepository = orderRepository;
         _userRepository = userRepository;
+        _orderStatusRepository = orderStatusRepository;
         _mapper = mapper;
     }
 
@@ -83,6 +86,9 @@ public class OrdersController : ControllerBase
 
         var order = _mapper.Map<OrderDto>(await _orderRepository.GetOrder(orderId));
 
+        var orderStatus = _mapper.Map<OrderStatusDto>(await _orderStatusRepository.GetOrderStatus(order.OrderStatusId));
+        order.OrderStatus = orderStatus;
+
         if (order != null)
         {
             return Ok(order);
@@ -92,7 +98,6 @@ public class OrdersController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(201)]
     [ProducesResponseType(201)]
     [ProducesResponseType(400)]
     public async Task<ActionResult> CreateOrder([FromBody]OrderDto orderCreate)
@@ -114,7 +119,11 @@ public class OrdersController : ControllerBase
             return BadRequest(ModelState);
         }
 
+
+        var status = await _orderStatusRepository.GetOrderStatus(orderCreate.OrderStatusId);
+
         var orderMap = _mapper.Map<Order>(orderCreate);
+        orderMap.OrderStatus = status;
 
         if (!await _orderRepository.CreateOrder(orderMap))
         {

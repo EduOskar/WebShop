@@ -22,6 +22,7 @@
                         <th>orderId</th>
                         <th>userId</th>
                         <th>order placementTime</th>
+                        <th>OrderStatus</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -35,6 +36,7 @@
                             <td>@order.Id</td>
                             <td>@order.UserId</td>
                             <td>@order.PlacementTime</td>
+                            <td>@order.OrderStatus.CurrentStatus</td>
                         </tr>
                     }
                 </tbody>

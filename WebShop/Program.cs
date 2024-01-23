@@ -31,12 +31,6 @@ builder.Services.AddIdentity<User, IdentityRole<int>>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-//builder.Services.Configure<CookiePolicyOptions>(options =>
-//{
-//    options.Secure = CookieSecurePolicy.Always;
-//    options.MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.None;
-//    options.HttpOnly = HttpOnlyPolicy.Always;
-//});
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -75,6 +69,7 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
+builder.Services.AddScoped<IOrderStatusRepository, OrderStatusRepository>();
 
 var app = builder.Build();
 

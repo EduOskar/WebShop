@@ -17,7 +17,7 @@ else
 
         <div class="col-md-6"> 
             <h4 class="mb-2">Order Summary</h4>
-            <h8 class="mb-2">Order Serialnumber: @Order.Id</h8>
+            <h8 class="mb-2">Order Serialnumber: @Order.Id - Date: @Order.OrderStatus.StatusDate - OrderStatus : @Order.OrderStatus.CurrentStatus</h8>
             @if (OrderItems.Count() > 0)
             {
                 <table class="table">
@@ -35,6 +35,7 @@ else
                                 <td>@item.Product.Name</td>
                                 <th>@item.Quantity</th>
                                 <td>@item.Product.Description</td>
+                                <td>@item.Quantity</td>
                             </tr>
                         }
                     </tbody>

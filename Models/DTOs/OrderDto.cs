@@ -7,14 +7,6 @@ using System.Threading.Tasks;
 
 namespace WebShop.Models.DTOs;
 
-public enum OrderStatus
-{
-    New,
-    Packaging,
-    Sent,
-    Delivered,
-    Cancelled
-}
 
 public class OrderDto
 {
@@ -22,7 +14,9 @@ public class OrderDto
     
     public DateTime PlacementTime { get; set; }
 
-    public OrderStatus Status { get; set; }
+    public int OrderStatusId { get; set; }
+
+    public OrderStatusDto OrderStatus { get; set; } = default!;
 
     public int UserId { get; set; }
 

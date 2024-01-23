@@ -16,7 +16,7 @@ public class OrderItemDto
 
     public int Quantity { get; set; }
 
-    //public int? QuantityCheck { get; set; }
+    public int? QuantityCheck { get; set; }
    
     public ProductDto Product { get; set; } = new();
 }

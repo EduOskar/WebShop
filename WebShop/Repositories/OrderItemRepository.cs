@@ -32,7 +32,7 @@ public class OrderItemRepository : IOrderItemRepository
     {
         var orderItem = await _dbContext.OrderItems
             .Include(p => p.Product)
-            .Include(p => p.Order)
+            .Include(p => p.Order).ThenInclude(os => os!.OrderStatus)
             .Where(oi => oi.Id == orderItemId)
             .FirstOrDefaultAsync();
 
@@ -48,6 +48,7 @@ public class OrderItemRepository : IOrderItemRepository
     {
         var orderItem = await _dbContext.OrderItems
             .Include(p => p.Product)
+            .Include(p => p.Order).ThenInclude(os => os!.OrderStatus)
             .ToListAsync();
 
         return orderItem;
@@ -57,7 +58,7 @@ public class OrderItemRepository : IOrderItemRepository
     {
         var orderItem = await _dbContext.OrderItems
             .Include(p => p.Product) 
-            .Include(oi => oi.Order)
+            .Include(oi => oi.Order).ThenInclude(os => os!.OrderStatus)
             .Where(o=>o.OrderId == orderId)
             .ToListAsync();
 

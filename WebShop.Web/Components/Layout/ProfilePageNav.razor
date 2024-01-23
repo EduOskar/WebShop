@@ -1,5 +1,4 @@
-﻿
-<AuthorizeView Roles="Admin, User">
+﻿<AuthorizeView Roles="Admin, User">
     <Authorized>
         <Dropdown>
             <DropdownToggleButton style="background-color:transparent;">@context.User.Identity!.Name</DropdownToggleButton>
@@ -10,3 +9,4 @@
         </Dropdown>
     </Authorized>
 </AuthorizeView>
+

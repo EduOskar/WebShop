@@ -16,8 +16,8 @@ public class Order
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public DateTime PlacementTime { get; set; }
 
-    public virtual int OrderStatusId { get; set; }
-    public OrderStatus Status { get; set; } = default!;
+    public int OrderStatusId { get; set; }
+    public virtual OrderStatus OrderStatus { get; set; } = default!;
 
     //ForeignKey for Customer
     public int UserId { get; set; }

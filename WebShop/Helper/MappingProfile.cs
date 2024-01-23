@@ -23,6 +23,6 @@ public class MappingProfile : Profile
         CreateMap<Review, ReviewDto>().ReverseMap()
             .ForMember(dest => dest.Product, opt => opt.MapFrom(src => src.Product));
         CreateMap<UserRole, UserRoleDto>().ReverseMap();
-
+        CreateMap<OrderStatus, OrderStatusDto>().ReverseMap();
     }
 }
