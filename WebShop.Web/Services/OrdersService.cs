@@ -206,4 +206,15 @@ public class OrdersService : IOrdersService
             throw;
         }
     }
+
+    public async Task<bool> UpdateOrderStatus(int orderId, OrderStatusType newStatus)
+    {
+        var jsonRequest = JsonConvert.SerializeObject(newStatus);
+
+        var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+        var response = await _httpClient.PutAsync($"api/Orders/OrderStatus/{orderId}", content);
+
+        return response.IsSuccessStatusCode;
+    }
 }

@@ -58,7 +58,7 @@ public class OrderStatusController : ControllerBase
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
-    public async Task<ActionResult> UpdateOrderStatus(int orderStatusId, [FromBody] OrderStatusDto orderStatus)
+    public async Task<ActionResult<OrderStatusDto>> UpdateOrderStatus(int orderStatusId, [FromBody] OrderStatusDto orderStatus)
     {
         if (orderStatusId == orderStatus.Id)
         {

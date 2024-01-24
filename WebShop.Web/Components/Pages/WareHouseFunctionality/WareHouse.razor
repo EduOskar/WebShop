@@ -12,14 +12,75 @@ else if (OrdersList.Count == 0)
 }
 else
 {
-    <ol>
-        @foreach (var orderItem in OrdersList!)
-        {
-            <li>@orderItem.Id</li>
-            <li>@orderItem.OrderStatus</li>
-            <li>@orderItem.UserId</li>
-        }
-    </ol>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Order ID</th>
+                    <th>Placement Time</th>
+                    <th>User ID</th>
+                    <th>Order Status</th>
+                    <th>Status Date</th>
+                    <th>Update Status</th>
+                    <th>Products</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in OrdersList)
+                {
+                    <tr>
+                        <td>@order.Id</td>
+                        <td>@order.PlacementTime</td>
+                        <td>@order.UserId</td>
+                        <td>@order.OrderStatus.CurrentStatus</td>
+                        <td>@order.OrderStatus.StatusDate</td>
+                        <td>
+                            <select @bind="order.OrderStatus.CurrentStatus" class="form-control">
+                                @foreach (var status in Enum.GetValues<OrderStatusType>())
+                                {
+                                    <option value="@status">@status</option>
+                                }
+                            </select>
+                            <button class="btn btn-primary mt-2" @onclick="() => UpdateOrderStatus(order.Id, order.OrderStatus.CurrentStatus)">Update Status</button>
+                        </td>
+                        <td>
+                            @if (order.OrderItems.Any())
+                            {
+                                <table class="table">
+                                    @foreach (var item in order.OrderItems)
+                                    {
+                                        <tr>
+                                            <td>@item.Product.Name</td>
+                                            <td>@item.Quantity</td>
+                                            <td>
+                                                <input type="number" @bind="item.QuantityCheck" class="form-control" />
+                                            </td>
+                                        </tr>
+                                    }
+                                @*     <tr>
+                                        <td colspan="3">
+                                            <button class="btn btn-success" @onclick="() => UpdateOrderItems(order)">Update Items</button>
+                                        </td>
+                                    </tr> *@
+                                </table>
+                            }
+                            else
+                            {
+                                <p>No items</p>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (submitStatus != null)
+    {
+        <div class="alert @alertClass" role="alert">
+            @submitStatus
+        </div>
+    }
 }
 
 
@@ -27,7 +88,17 @@ else
     [Inject]
     private IOrdersService ordersService { get; set; } = default!;
 
+    [Inject]
+    private IOrderItemsService orderItemService { get; set; } = default!;
+
     List<OrderDto> OrdersList { get; set; } = default!;
+
+    List<OrderItemDto> OrderItemList { get; set; } = default!;
+
+    int OrderId;
+
+    private string? submitStatus;
+    private string? alertClass;
 
     protected override async Task OnInitializedAsync()
     {
@@ -37,5 +108,34 @@ else
     private async Task FetchItems()
     {
         OrdersList = await ordersService.GetOrders();
+
+    }
+
+
+    private async Task UpdateOrderStatus(int orderId, OrderStatusType newStatus)
+    {
+        bool successResponse = await ordersService.UpdateOrderStatus(orderId, newStatus);
+
+        if (successResponse)
+        {
+            submitStatus = "Review updated successfully!";
+            alertClass = "alert-success";
+            await FetchItems();
+        }
+        else
+        {
+            submitStatus = "Review updated Failed!";
+            alertClass = "alert-danger";
+        }
+    }
+
+    private async Task QuantityCheck(int orderId)
+    {
+        var orderToUpdate = OrdersList.FirstOrDefault(o => o.Id == orderId);
+        // if (orderToUpdate != null)
+        // {
+        //     await orderItemService.UpdateOrderItems(orderToUpdate.OrderItems);
+        //     // Handle the response, such as showing a success message or refreshing the list
+        // }
     }
 }

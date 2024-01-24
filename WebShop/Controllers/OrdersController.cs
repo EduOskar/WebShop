@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using WebShop.Api.Entity;
 using WebShop.Api.Repositories.Contracts;
 using WebShop.Models.DTOs;
-                
+using OrderStatusType = WebShop.Models.DTOs.OrderStatusType;
+
 namespace WebShop.Api.Controllers;
 
 [Route("api/[controller]")]
@@ -87,7 +88,8 @@ public class OrdersController : ControllerBase
         var order = _mapper.Map<OrderDto>(await _orderRepository.GetOrder(orderId));
 
         var orderStatus = _mapper.Map<OrderStatusDto>(await _orderStatusRepository.GetOrderStatus(order.OrderStatusId));
-        order.OrderStatus = orderStatus;
+        order.OrderStatus.CurrentStatus = orderStatus.CurrentStatus;
+        order.OrderStatus.StatusDate = orderStatus.StatusDate;
 
         if (order != null)
         {
@@ -168,7 +170,6 @@ public class OrdersController : ControllerBase
         }
 
         var orderMap = _mapper.Map<Order>(updateOrder);
-        //orderMap.User = await _userRepository.GetUser(updateOrder.UserId);
 
         if (!await _orderRepository.UpdateOrder(orderMap))
         {
@@ -178,6 +179,31 @@ public class OrdersController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpPut("OrderStatus/{orderId:int}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public async Task<ActionResult> UpdateOrderStatus(int orderId, [FromBody]OrderStatusType newStatus)
+    {
+        var order = await _orderRepository.GetOrder(orderId);
+
+        var updatedStatus = _mapper.Map<Entity.OrderStatusType>(newStatus);
+
+        if (order != null)
+        {
+            order.OrderStatus.UpdateStatus(updatedStatus);
+            order.OrderStatus.StatusDate = DateTime.UtcNow;
+
+            if (await _orderRepository.UpdateOrder(order))
+            {
+                return NoContent();
+            }
+        }
+
+        return BadRequest();
+    }
+
 
     [HttpDelete("{orderId:int}")]
     [ProducesResponseType(204)]

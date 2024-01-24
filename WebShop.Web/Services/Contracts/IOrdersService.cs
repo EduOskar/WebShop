@@ -12,5 +12,7 @@ public interface IOrdersService
     Task<OrderDto> GetLastOrderFromUser(int userId);
     Task<OrderDto> CreateOrder(OrderDto orderCreate);
     Task<OrderDto> UpdateOrder(OrderDto orderUpdate);
+
+    Task<bool> UpdateOrderStatus(int orderId, OrderStatusType newStatus);
     Task<OrderDto> DeleteOrder(int orderId);
 }

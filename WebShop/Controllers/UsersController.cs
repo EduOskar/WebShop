@@ -83,7 +83,7 @@ public class UsersController : ControllerBase
 
         var userMap = _mapper.Map<User>(userCreate);
 
-        await _userRepository.CreateUser(userMap, userCreate.Password);
+        await _userRepository.CreateUser(userMap, userCreate.Password!);
 
         return CreatedAtAction("GetUser", new { userId = userMap.Id }, userMap);
 
@@ -113,7 +113,7 @@ public class UsersController : ControllerBase
 
             _mapper.Map(updatedUser, user);
 
-            var hashedPasswod = _userManager.PasswordHasher.HashPassword(user, updatedUser.Password);
+            var hashedPasswod = _userManager.PasswordHasher.HashPassword(user, updatedUser.Password!);
 
             user.PasswordHash = hashedPasswod;
 
