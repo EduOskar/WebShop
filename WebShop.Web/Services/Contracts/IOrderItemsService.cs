@@ -9,5 +9,8 @@ public interface IOrderItemsService
     Task<List<OrderItemDto>> GetOrderItemsFromOrder(int orderId);
     Task<OrderItemDto> CreateOrderItem(OrderItemDto orderItemCreate);
     Task<OrderItemDto> UpdateOrderItem(OrderItemDto orderItemUpdate);
+
+    Task<bool> QuantityCheck(int orderItemId, QuantityCheckDto quantityCheck);
+
     Task<OrderItemDto> DeleteOrderItem(int orderItemId);
 }

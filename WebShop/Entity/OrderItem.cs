@@ -20,4 +20,6 @@ public class OrderItem
     public string? ProductDescription;
 
     public int Quantity { get; set; }
+
+    public int QuantityCheck { get; set; }
 }

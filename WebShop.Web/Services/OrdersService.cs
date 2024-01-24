@@ -9,9 +9,9 @@ public class OrdersService : IOrdersService
 {
     private readonly HttpClient _httpClient;
 
-    public OrdersService(HttpClient httpClient)
+    public OrdersService(IHttpClientFactory clientFactory)
     {
-        _httpClient = httpClient;
+        _httpClient = clientFactory.CreateClient("WebShop.Api");
     }
     public async Task<OrderDto> CreateOrder(OrderDto orderCreate)
     {

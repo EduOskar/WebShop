@@ -13,7 +13,7 @@ else
 {
     @foreach (var order in OrdersList)
     {
-        <OrderDisplay Order="@order" />
+        <OrderDisplay Order="@order" OnOrdercancelled="OnOrderCanclled" />
     }
 }
 
@@ -57,5 +57,10 @@ else
     protected async Task FetchOrderInformation()
     {
         OrdersList = await OrderService.GetOrdersFromUser(UserId);
+    }
+
+    protected async Task OnOrderCanclled()
+    {
+        await FetchOrderInformation();
     }
 }

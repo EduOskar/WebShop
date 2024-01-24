@@ -10,9 +10,9 @@ public class ReviewService : IReviewServices
 {
     private readonly HttpClient _httpClient;
 
-    public ReviewService(HttpClient httpClient)
+    public ReviewService(IHttpClientFactory clientFactory)
     {
-        _httpClient = httpClient;
+        _httpClient = clientFactory.CreateClient("WebShop.Api");
     }
 
     public async Task<ReviewDto> CreateReview(ReviewDto reviewCreate)

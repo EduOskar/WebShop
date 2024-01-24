@@ -1,6 +1,11 @@
-﻿namespace WebShop.Api.Entity;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-public class Discount
+namespace WebShop.Models.DTOs;
+public class DiscountDto
 {
     public int Id { get; set; }
 
@@ -9,7 +14,4 @@ public class Discount
     public decimal discountPercentage { get; set; } = default!;
 
     public int DiscountQuantity { get; set; } = default!;
-
-    public bool DiscountIsStatus { get; set; } = default!;
-
 }

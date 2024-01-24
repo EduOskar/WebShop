@@ -7,9 +7,9 @@ public class CartOrderTransferService : ICartOrderTransferService
 {
     private readonly HttpClient _httpClient;
 
-    public CartOrderTransferService(HttpClient httpClient)
+    public CartOrderTransferService(IHttpClientFactory clientFactory)
     {
-        _httpClient = httpClient;
+        _httpClient = clientFactory.CreateClient("WebShop.Api");
     }
     public async Task<bool> CartOrderTransfer(int userId)
     {

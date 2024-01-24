@@ -1,4 +1,6 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager navigationManager
+@inject CustomStateProvider authenticationStateProvider
 
 <AuthorizeView Roles="Warehouse Worker">
     <Authorized>
@@ -9,6 +11,7 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
+                        <button type="button" class="btn btn-link" @onclick="@HandleLogin">@Message</button>
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page" href="WareHouse">Warehouse</a>
                         </li>
@@ -23,3 +26,43 @@
         <p>You are not authorized to view this page</p>
     </NotAuthorized>
 </AuthorizeView>
+
+@code {
+    [CascadingParameter]
+    Task<AuthenticationState> AuthenticationState { get; set; } = default!;
+
+    private bool showProfilePageDropDown = false;
+
+    String Message = "Login";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!(await AuthenticationState).User.Identity!.IsAuthenticated)
+        {
+            Message = "Login";
+        }
+        else
+        {
+            Message = "Logout";
+        }
+    }
+
+    private void ToggleProfilePageDropdown()
+    {
+        showProfilePageDropDown = !showProfilePageDropDown;
+    }
+
+    async Task HandleLogin()
+    {
+        if ((await AuthenticationState).User.Identity!.IsAuthenticated)
+        {
+            await authenticationStateProvider.Logout();
+            navigationManager.NavigateTo("/");
+        }
+        else
+        {
+            navigationManager.NavigateTo("/");
+        }
+
+    }
+}

@@ -9,9 +9,9 @@ public class UsersServices : IUsersService
 {
     private readonly HttpClient _httpClient;
 
-    public UsersServices(HttpClient httpClient)
+    public UsersServices(IHttpClientFactory clientFactory)
     {
-        _httpClient = httpClient;
+        _httpClient = clientFactory.CreateClient("WebShop.Api");
     }
 
     public async Task<UserDto> CreateUser(UserDto userCreate)

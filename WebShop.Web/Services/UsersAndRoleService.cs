@@ -11,9 +11,9 @@ public class UsersAndRoleService : IUsersAndRoleService
 {
     private readonly HttpClient _httpClient;
 
-    public UsersAndRoleService(HttpClient httpClient)
+    public UsersAndRoleService(IHttpClientFactory clientFactory)
     {
-        _httpClient = httpClient;
+        _httpClient = clientFactory.CreateClient("WebShop.Api");
     }
 
     public async Task<bool> DeleteUserRoles(int userId)

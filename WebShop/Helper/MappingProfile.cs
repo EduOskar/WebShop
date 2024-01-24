@@ -24,5 +24,6 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Product, opt => opt.MapFrom(src => src.Product));
         CreateMap<UserRole, UserRoleDto>().ReverseMap();
         CreateMap<OrderStatus, OrderStatusDto>().ReverseMap();
+        CreateMap<Discount,  DiscountDto>().ReverseMap();
     }
 }

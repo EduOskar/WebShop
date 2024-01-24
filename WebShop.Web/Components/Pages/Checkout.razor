@@ -2,26 +2,31 @@
 @inject NavigationManager navigationManager
 @inject CustomStateProvider authenticationStateProvider
 
+@if (UserInfo == null)
+{
+    <DisplaySpinner />
+}
+else
+{
+    <EditForm class="form-signin col-md-4" OnValidSubmit="OnSubmit" Model="Command">
+        <DataAnnotationsValidator />
+        <label for="inputAdressLine" class="sr-only">@UserInfo.Adress</label>
+        <InputText id="inputAdressLine" class="form-control" aria-required="true" @bind-Value="Command!.BillingAdress.AddressLine" autofocus placeholder="@UserInfo.Adress" />
+        <ValidationMessage For="@(() => Command.BillingAdress.AddressLine)" />
+
+        <label for="inputCity" class="sr-only">City</label>
+        <InputText id="inputCity" class="form-control" aria-required="true" @bind-Value="Command.BillingAdress.City" autofocus placeholder="City" />
+        <ValidationMessage For="@(() => Command.BillingAdress.City)" />
+
+        <label for="inputPostCode" class="sr-only">PostCode</label>
+        <InputText id="inputPostCode" class="form-control" aria-required="true" @bind-Value="Command.BillingAdress.PostCode" autofocus placeholder="PostCode" />
+        <ValidationMessage For="@(() => Command.BillingAdress.PostCode)" />
+        <label class="text-danger">@error</label>
+
+    </EditForm>
+}
 
 
-<EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="Command">
-    <DataAnnotationsValidator/>
-    <label for="inputAdressLine" class="sr-only">Adressline</label>
-    <InputText id="inputAdressLine" class="form-control" aria-required="true" @bind-Value="Command!.BillingAdress.AddressLine" autofocus placeholder="Adressline"/>
-    <ValidationMessage For="@(() => Command.BillingAdress.AddressLine)" />
-
-    <label for="inputCity" class="sr-only">City</label>
-    <InputText id="inputCity" class="form-control" aria-required="true" @bind-Value="Command.BillingAdress.City" autofocus placeholder="City" />
-    <ValidationMessage For="@(() => Command.BillingAdress.City)" />
-
-    <label for="inputPostCode" class="sr-only">PostCode</label>
-    <InputText id="inputPostCode" class="form-control" aria-required="true" @bind-Value="Command.BillingAdress.PostCode" autofocus placeholder="PostCode" />
-    <ValidationMessage For="@(() => Command.BillingAdress.PostCode)" />
-
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Purchase</button>
-    <label class="text-danger">@error</label>
-
-</EditForm>
 
 
 @if (ShoppingCartItems == null)
@@ -56,6 +61,7 @@ else
                         </tr>
                     </tbody>
                 </table>
+                <button class="btn btn-lg btn-primary btn-block" type="submit" @onclick="OnSubmit">Purchase</button>
             }
             else
             {
@@ -68,7 +74,10 @@ else
 @code {
     [Inject]
     ICartOrderTransferService CartOrderTransferService { get; set; } = default!;
-        
+
+    [Inject]
+    IUsersService userService { get; set; } = default!;
+
     [Inject]
     ICartItemsService CartItemService { get; set; } = default!;
 
@@ -78,6 +87,8 @@ else
     protected List<CartItemDto> ShoppingCartItems { get; set; } = default!;
 
     private ClaimsPrincipal User = default!;
+
+    private UserDto UserInfo = default!;
 
     private CartDto cart = default!;
 
@@ -136,6 +147,7 @@ else
         if (User.Identity!.IsAuthenticated)
         {
             cart = await CartsService.GetCartByUser(UserId);
+            UserInfo = await userService.GetUser(UserId);
         }
     }
 

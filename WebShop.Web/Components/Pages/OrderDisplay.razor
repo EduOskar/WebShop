@@ -5,6 +5,16 @@
             <div @onclick="ToggleDetails">
                 <Button Class="centered-button">Order ID: @Order.Id - Placed: @Order.OrderStatus.StatusDate - OrderStatus: @Order.OrderStatus.CurrentStatus</Button>
                 </div>
+                @if (Order.OrderStatus.CurrentStatus == OrderStatusType.New)
+            {
+                <Button @onclick="CancelOrder" class="cancel-button">Cancel Order</Button>
+                @if (submitStatus != null)
+                {
+                    <div class="alert @alertClass" role="alert">
+                        @submitStatus
+                    </div>
+                }
+            }
                 @if (showDetails)
             {
                 <table class="table">
@@ -16,7 +26,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var orderItems in Order.OrderItems) 
+                        @foreach (var orderItems in Order.OrderItems)
                         {
                             <tr>
                                 <td>@orderItems.Product.Name</td>
@@ -32,10 +42,40 @@
 }
 
 @code {
+    [Inject]
+    public IOrdersService orderService { get; set; } = default!;
+
     [Parameter]
     public OrderDto Order { get; set; } = default!;
+
+    [Parameter]
+    public EventCallback<bool> OnOrdercancelled { get; set; }
 
     private bool showDetails = false;
 
     private void ToggleDetails() => showDetails = !showDetails;
+
+    private string? submitStatus;
+    private string? alertClass;
+
+
+    private async Task CancelOrder()
+    {
+        if (Order.OrderStatus.CurrentStatus == OrderStatusType.New)
+        {
+            bool success = await orderService.UpdateOrderStatus(Order.Id, OrderStatusType.Cancelled);
+
+            if (success)
+            {
+                submitStatus = "Order cancelled successfully!";
+                alertClass = "alert-success";
+                await OnOrdercancelled.InvokeAsync(true);
+            }
+            else
+            {
+                submitStatus = "Order cancelled Failed!";
+                alertClass = "alert-danger";
+            }
+        }
+    }
 }

@@ -25,30 +25,22 @@ var handler = new HttpClientHandler
 {
     UseCookies = true,
     CookieContainer = cookieContainer
-   
-    
 };
 
-builder.Services.AddSingleton(cookieContainer);
-builder.Services.AddSingleton(handler);
+builder.Services.AddHttpClient("WebShop.Api", x => x.BaseAddress = new Uri("https://localhost:7066/"))
+    .ConfigurePrimaryHttpMessageHandler(() => handler); 
 
-builder.Services.AddHttpClient("WebShop.Api", client =>
-{
-    client.BaseAddress = new Uri("https://localhost:7066/");
-})
-
-.ConfigurePrimaryHttpMessageHandler(() => handler);
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7066/") });
-builder.Services.AddHttpClient<IProductsService, ProductsService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
-builder.Services.AddHttpClient<IUsersAndRoleService, UsersAndRoleService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
-builder.Services.AddHttpClient<IProductsCategoryService, ProductCategoryService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
-builder.Services.AddHttpClient<ICartsService, CartsService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
-builder.Services.AddHttpClient<ICartItemsService, CartItemsService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
-builder.Services.AddHttpClient<IUsersService, UsersServices>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
-builder.Services.AddHttpClient<IOrdersService, OrdersService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
-builder.Services.AddHttpClient<IOrderItemsService, OrderItemsService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
-builder.Services.AddHttpClient<ICartOrderTransferService, CartOrderTransferService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
-builder.Services.AddHttpClient<IReviewServices, ReviewService>().ConfigureHttpClient(x => x.BaseAddress = new Uri("https://localhost:7066/"));
+builder.Services.AddScoped<IProductsService, ProductsService>();
+builder.Services.AddScoped<IProductsService, ProductsService>();
+builder.Services.AddScoped<IUsersAndRoleService, UsersAndRoleService>();
+builder.Services.AddScoped<IProductsCategoryService, ProductCategoryService>();
+builder.Services.AddScoped<ICartsService, CartsService>();
+builder.Services.AddScoped<ICartItemsService, CartItemsService>();
+builder.Services.AddScoped<IUsersService, UsersServices>();
+builder.Services.AddScoped<IOrdersService, OrdersService>();
+builder.Services.AddScoped<IOrderItemsService, OrderItemsService>();
+builder.Services.AddScoped<ICartOrderTransferService, CartOrderTransferService>();
+builder.Services.AddScoped<IReviewServices, ReviewService>();
 builder.Services.AddSingleton<CategoryStateService>();
 
 builder.Services.AddScoped<CustomStateProvider>(); 

@@ -13,7 +13,7 @@ public class CustomStateProvider : AuthenticationStateProvider
     {
         this.api = api;
     }
-    public override async Task<AuthenticationState> GetAuthenticationStateAsync()
+    public override async Task<AuthenticationState> GetAuthenticationStateAsync() 
     {
         var identity = new ClaimsIdentity();
         try

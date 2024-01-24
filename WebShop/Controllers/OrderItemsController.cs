@@ -175,6 +175,37 @@ public class OrderItemsController : ControllerBase
         return NoContent();
     }
 
+    [HttpPut("QuantityCheck/{orderItemId:int}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(500)]
+    public async Task<ActionResult> QuantityCheck(int orderItemId, [FromBody]QuantityCheckDto quantityCheck)
+    {
+        if (orderItemId == quantityCheck.OrderItemId)
+        {
+            var orderItem = await _orderItemRepository.GetOrderItem(orderItemId);
+
+            if (orderItem != null)
+            {
+
+                orderItem.QuantityCheck = quantityCheck.QuantityCheck;
+
+                if (orderItem.Quantity == orderItem.QuantityCheck)
+                { 
+
+                    if (await _orderItemRepository.UpdateOrderItem(orderItem))
+                    {
+                        return NoContent();
+                    }
+                }
+
+                return BadRequest("Quantity does not equal the amount u added");
+            }
+        }
+
+        return BadRequest();
+    }
+
     [HttpDelete("{orderItemId}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]

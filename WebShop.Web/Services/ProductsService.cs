@@ -11,9 +11,9 @@ public class ProductsService : IProductsService
 {
     private readonly HttpClient _httpClient;
 
-    public ProductsService(HttpClient httpClient)
+    public ProductsService(IHttpClientFactory clientFactory)
     {
-        _httpClient = httpClient;
+        _httpClient = clientFactory.CreateClient("WebShop.Api");
     }
 
     public async Task<ProductDto> CreateProduct(ProductDto productCreate)

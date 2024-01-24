@@ -10,9 +10,9 @@ public class CartItemsService : ICartItemsService
 {
     private readonly HttpClient _httpClient;
 
-    public CartItemsService(HttpClient httpClient)
+    public CartItemsService(IHttpClientFactory clientFactory)
     {
-        _httpClient = httpClient;
+        _httpClient = clientFactory.CreateClient("WebShop.Api");
     }
 
     public event Action<int>? OnShoppingCartChanged;

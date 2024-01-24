@@ -9,9 +9,9 @@ public class OrderItemsService : IOrderItemsService
 {
     private readonly HttpClient _httpClient;
 
-    public OrderItemsService(HttpClient httpClient)
+    public OrderItemsService(IHttpClientFactory clientFactory)
     {
-        _httpClient = httpClient;
+        _httpClient = clientFactory.CreateClient("WebShop.Api");
     }
 
     public async Task<OrderItemDto> CreateOrderItem(OrderItemDto orderItemCreate)
@@ -184,5 +184,16 @@ public class OrderItemsService : IOrderItemsService
 
             throw;
         }
+    }
+
+    public async Task<bool> QuantityCheck(int orderItemId, QuantityCheckDto quantityCheck)
+    {
+        var jsonRequest = JsonConvert.SerializeObject(quantityCheck);
+
+        var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+        var response = await _httpClient.PutAsync($"api/OrderItems/QuantityCheck/{orderItemId}", content);
+
+        return response.IsSuccessStatusCode;
     }
 }

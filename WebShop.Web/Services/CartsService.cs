@@ -8,9 +8,9 @@ public class CartsService : ICartsService
 {
     private readonly HttpClient _httpClient;
 
-    public CartsService(HttpClient httpClient)
+    public CartsService(IHttpClientFactory clientFactory)
     {
-        _httpClient = httpClient;
+        _httpClient = clientFactory.CreateClient("WebShop.Api");
     }
 
     public Task<CartDto> CreateCart(CartDto cart)

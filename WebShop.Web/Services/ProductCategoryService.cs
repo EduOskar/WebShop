@@ -10,9 +10,9 @@ public class ProductCategoryService : IProductsCategoryService
 {
     private readonly HttpClient _httpClient;
 
-    public ProductCategoryService(HttpClient httpclient)
+    public ProductCategoryService(IHttpClientFactory clientFactory)
     {
-        _httpClient = httpclient;
+        _httpClient = clientFactory.CreateClient("WebShop.Api");
     }
 
     public async Task<ProductCategoryDto> CreateCategory(ProductCategoryDto categoryCreate)
