@@ -25,5 +25,6 @@ public class MappingProfile : Profile
         CreateMap<UserRole, UserRoleDto>().ReverseMap();
         CreateMap<OrderStatus, OrderStatusDto>().ReverseMap();
         CreateMap<Discount,  DiscountDto>().ReverseMap();
+        CreateMap<DiscountUsage, DiscountUsageDto>().ReverseMap();
     }
 }

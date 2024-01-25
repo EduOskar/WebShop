@@ -201,6 +201,8 @@ public class OrderItemsController : ControllerBase
 
                 return BadRequest("Quantity does not equal the amount u added");
             }
+
+            return NotFound();
         }
 
         return BadRequest();

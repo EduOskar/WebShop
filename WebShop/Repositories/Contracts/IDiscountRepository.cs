@@ -4,8 +4,23 @@ namespace WebShop.Api.Repositories.Contracts;
 
 public interface IDiscountRepository
 {
-    Task<Discount> CreateDiscount(Discount discount);
-    Task<bool> DeleteDiscount(int discountId);
+    string GenerateUniqueCode(int length = 7, string prefix = "DISC-");
 
-    Task<bool> UpdateDiscountStatus(int discountId, Discount discount, bool discountOff); 
+    Task RecordDiscountUsage(int userId, string discountCode);
+
+    Task<bool> CanUserUseDiscount(int userId, string DiscountCode);
+
+    Task<List<Discount>> GetDiscounts();
+
+    Task<Discount> GetDiscount(int discountId);
+
+    Task<bool> CreateDiscount(Discount discountCreate);
+
+    Task<bool> DeleteDiscount(Discount discountDelete);
+
+    Task<bool> UpdateDiscount(Discount discount);
+
+    Task<bool> UpdateDiscountStatus(Discount discount);
+
+    Task<bool> Save();
 }

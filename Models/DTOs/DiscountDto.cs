@@ -9,9 +9,11 @@ public class DiscountDto
 {
     public int Id { get; set; }
 
-    public string discountCode { get; set; } = default!;
+    public string DiscountCode { get; set; } = default!;
 
-    public decimal discountPercentage { get; set; } = default!;
+    public decimal DiscountPercentage { get; set; } = default!;
 
     public int DiscountQuantity { get; set; } = default!;
+
+    public bool DiscountIsActive { get; set; } = false!;
 }

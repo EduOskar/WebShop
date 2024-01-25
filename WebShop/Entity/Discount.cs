@@ -1,15 +1,18 @@
-﻿namespace WebShop.Api.Entity;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace WebShop.Api.Entity;
 
 public class Discount
 {
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
 
-    public string discountCode { get; set; } = default!;
+    public string DiscountCode { get; set; } = default!;
 
-    public decimal discountPercentage { get; set; } = default!;
+    public decimal DiscountPercentage { get; set; } = default!;
 
     public int DiscountQuantity { get; set; } = default!;
 
-    public bool DiscountIsStatus { get; set; } = default!;
+    public bool DiscountIsActive { get; set; } = false!;
 
 }

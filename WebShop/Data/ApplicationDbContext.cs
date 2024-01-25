@@ -11,8 +11,17 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
     { 
         
     }
-
-
+    public DbSet<Cart> Carts { get; set; }
+    public DbSet<CartItem> CartItems { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<Product> Products { get; set; }
+    public DbSet<ProductCategory> ProductCategories { get; set; }
+    new public DbSet<User> Users { get; set; }
+    public DbSet<Review> Reviews { get; set; }
+    public DbSet<OrderStatus> OrderStatus { get; set; }
+    public DbSet<Discount> Discounts { get; set; }
+    public DbSet<DiscountUsage> DiscountUsages { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -368,15 +377,6 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             IconCSS = "fas fa-shoe-prints"
         });
                                }
-    public DbSet<Cart> Carts { get; set; }
-    public DbSet<CartItem> CartItems { get; set; }
-    public DbSet<Order> Orders { get; set; }
-    public DbSet<OrderItem> OrderItems { get; set; }
-    public DbSet<Product> Products { get; set; }
-    public DbSet<ProductCategory> ProductCategories { get; set; }
-    new public DbSet<User> Users { get; set; }
-    public DbSet<Review> Reviews { get; set; }
-
-    public DbSet<OrderStatus> OrderStatus { get; set; }
+ 
 
 }
