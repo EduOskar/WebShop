@@ -41,6 +41,7 @@ builder.Services.AddScoped<IOrdersService, OrdersService>();
 builder.Services.AddScoped<IOrderItemsService, OrderItemsService>();
 builder.Services.AddScoped<ICartOrderTransferService, CartOrderTransferService>();
 builder.Services.AddScoped<IReviewServices, ReviewService>();
+builder.Services.AddScoped<IDiscountService, DiscountService>();
 builder.Services.AddSingleton<CategoryStateService>();
 
 builder.Services.AddScoped<CustomStateProvider>(); 

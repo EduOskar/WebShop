@@ -101,7 +101,7 @@ public class UserRolesRepository : IUserRolesRepository
         await _dbContext.SaveChangesAsync();
 
         return true;
-    } 
+    }   
 
     public async Task<IdentityResult> CreateRole(Role role)
     {
