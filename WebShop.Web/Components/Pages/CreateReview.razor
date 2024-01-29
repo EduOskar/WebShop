@@ -57,8 +57,6 @@
     [Parameter]
     public ReviewDto Review { get; set; } = default!;
 
-    // public ReviewDto reviewCreate { get; set; } = new();
-
     public bool IsEditMode => Review != null && Review.Id > 0;
     private string? submitStatus;
     private string? alertClass;

@@ -2,6 +2,11 @@
 
 namespace WebShop.Api.Entity;
 
+public enum DiscountStatus
+{
+    Active = 0,
+    InActive = 1
+}
 public class Discount
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -13,6 +18,6 @@ public class Discount
 
     public int DiscountQuantity { get; set; } = default!;
 
-    public bool DiscountIsActive { get; set; } = false!;
+    public DiscountStatus IsActive { get; set; } = default!;
 
 }

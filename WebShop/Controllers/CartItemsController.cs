@@ -30,7 +30,7 @@ public class CartItemsController : ControllerBase
     [HttpGet("Get-Users-CartItems/{userId}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
-    public async Task<ActionResult<List<CartItem>>> GetCartItems(int userId)
+    public async Task<ActionResult<List<CartItemDto>>> GetCartItems(int userId)
     {
         var cartItems = _mapper.Map<List<CartItemDto>>(await _cartItemRepository.GetCartItems(userId));
 
@@ -46,7 +46,7 @@ public class CartItemsController : ControllerBase
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
-    public async Task<ActionResult<CartItem>> GetCartItem(int cartItemId)
+    public async Task<ActionResult<CartItemDto>> GetCartItem(int cartItemId)
     {
         if (!await _cartItemRepository.CartItemExist(cartItemId))
         {

@@ -50,9 +50,9 @@ public class DiscountRepository : IDiscountRepository
         return await Save();
     }
 
-    public async Task<Discount> GetDiscount(int discountId)
+    public async Task<Discount> GetDiscount(string discountCode)
     {
-        var discount = await _dbContext.Discounts.FindAsync(discountId);
+        var discount = await _dbContext.Discounts.FirstOrDefaultAsync(dc => dc.DiscountCode == discountCode);
 
         if (discount != null)
         {

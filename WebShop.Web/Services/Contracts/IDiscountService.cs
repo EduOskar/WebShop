@@ -5,13 +5,13 @@ namespace WebShop.Web.Services.Contracts;
 
 public interface IDiscountService
 {
-    Task<ActionResult<DiscountDto>> GetDiscount(int discountId);
+    Task<DiscountDto> GetDiscount(string discountCode);
 
-    Task<ActionResult<List<DiscountDto>>> GetDiscounts();
+    Task<List<DiscountDto>> GetDiscounts();
 
-    Task<ActionResult<DiscountDto>> CreateDiscount(DiscountDto discountCreate);
+    Task<DiscountDto> CreateDiscount(DiscountDto discountCreate);
 
-    Task<DiscountDto> ApplyDiscount(int userId, string discountCode);
+    Task<bool> ApplyDiscount(int userId, string discountCode);
 
-    Task<ActionResult<bool>> UpdateDiscount(DiscountDto discountUpdate);
+    Task<bool> UpdateDiscount(DiscountDto discountUpdate);
 }

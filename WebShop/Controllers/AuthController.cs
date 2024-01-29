@@ -48,24 +48,6 @@ public class AuthController : ControllerBase
         }
 
         return BadRequest("Invalid password or username");
-        /*
-
-        if (user == null)
-        {
-            return BadRequest("User does not exist");
-        }
-
-        var signInResult = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
-
-        if (!signInResult.Succeeded)
-        {
-            return BadRequest("Invalid password or username");
-        }
-
-        await _signInManager.SignInAsync(user, request.RememberMe);
-
-        return Ok();
-        */
     }
 
     [HttpPost("register")]
@@ -119,6 +101,18 @@ public class AuthController : ControllerBase
     {
         await _signInManager.SignOutAsync();
         return Ok();
+    }
+
+    [HttpPost("Resett-Password")]
+    public async Task<ActionResult<IdentityResult>> ResetPassword(User user, string token, string newPassword)
+    {
+        var resetPassword = await _userManager.ResetPasswordAsync(user, token, newPassword);
+
+        if (resetPassword.Succeeded)
+        {
+            return Ok(resetPassword);
+        }
+        return BadRequest(resetPassword.Errors);
     }
 
     [HttpGet("CurrentUserInformation")]

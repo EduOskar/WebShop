@@ -16,14 +16,23 @@ public class DiscountService : IDiscountService
     {
         _httpClient = clientFactory.CreateClient("WebShop.Api"); 
     }
-    public async Task<DiscountDto> ApplyDiscount(int userId, string discountCode)
+    public async Task<bool> ApplyDiscount(int userId, string discountCode)
     {
-        var response = await _httpClient.PostAsJsonAsync<DiscountDto>($"api/Discounts/apply-discount/{userId}-{discountCode}");
+        string requestUrl = $"api/Discounts/apply-discount/{userId}-{discountCode}";
 
+        var response = await _httpClient.PostAsync(requestUrl, null);
 
+        if (response.IsSuccessStatusCode)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
-    public async Task<ActionResult<DiscountDto>> CreateDiscount(DiscountDto discountCreate)
+    public async Task<DiscountDto> CreateDiscount(DiscountDto discountCreate)
     {
         var response = await _httpClient.PostAsJsonAsync<DiscountDto>("api/Discounts", discountCreate);
 
@@ -45,9 +54,9 @@ public class DiscountService : IDiscountService
         }
     }
 
-    public async Task<ActionResult<DiscountDto>> GetDiscount(int discountId)
+    public async Task<DiscountDto> GetDiscount(string discountCode)
     {
-        var response = await _httpClient.GetAsync($"api/Discounts/{discountId}");
+        var response = await _httpClient.GetAsync($"api/Discounts/{discountCode}");
 
         if (response.IsSuccessStatusCode)
         {
@@ -66,7 +75,7 @@ public class DiscountService : IDiscountService
         }
     }
 
-    public async Task<ActionResult<List<DiscountDto>>> GetDiscounts()
+    public async Task<List<DiscountDto>> GetDiscounts()
     {
         var response = await _httpClient.GetAsync("api/Discounts");
 
@@ -92,7 +101,7 @@ public class DiscountService : IDiscountService
         }
     }
 
-    public async Task<ActionResult<bool>> UpdateDiscount(DiscountDto discountUpdate)
+    public async Task<bool> UpdateDiscount(DiscountDto discountUpdate)
     {
         var jsonRequest = JsonConvert.SerializeObject(discountUpdate);
 

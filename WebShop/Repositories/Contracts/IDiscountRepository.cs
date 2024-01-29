@@ -12,7 +12,7 @@ public interface IDiscountRepository
 
     Task<List<Discount>> GetDiscounts();
 
-    Task<Discount> GetDiscount(int discountId);
+    Task<Discount> GetDiscount(string discountCode);
 
     Task<bool> CreateDiscount(Discount discountCreate);
 

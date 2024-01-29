@@ -8,7 +8,7 @@
 }
 else
 {
-    <EditForm class="form-signin col-md-4" OnValidSubmit="OnSubmit" Model="Command">
+    <EditForm class="form-signin md-4" OnValidSubmit="OnSubmit" Model="Command">
         <DataAnnotationsValidator />
         <label for="inputAdressLine" class="sr-only">@UserInfo.Adress</label>
         <InputText id="inputAdressLine" class="form-control" aria-required="true" @bind-Value="Command!.BillingAdress.AddressLine" autofocus placeholder="@UserInfo.Adress" />
@@ -35,6 +35,18 @@ else
 }
 else
 {
+    <div class="container">
+        <span class="discount-box">
+            <EditForm Model="this" OnValidSubmit="HandleApplyDiscount">
+                <div class="form-group">
+                    <label for="discountCode">Discount Code:</label>
+                    <InputText id="discountCode" @bind-Value="discountCode" class="form-control" />
+                </div>
+                <button type="submit" class="btn btn-primary">Apply Discount</button>
+            </EditForm>
+        </span>
+    </div>
+
     <section class="container-fluid">
         <div class="col-md-6">
             <h4 class="mb-2">Payment Summary</h4>
@@ -82,6 +94,9 @@ else
     ICartItemsService CartItemService { get; set; } = default!;
 
     [Inject]
+    IDiscountService DiscountService { get; set; } = default!;
+
+    [Inject]
     private ICartsService CartsService { get; set; } = default!;
 
     protected List<CartItemDto> ShoppingCartItems { get; set; } = default!;
@@ -96,6 +111,8 @@ else
     PlaceOrderCommand? Command { get; set; } = new();
 
     string? error { get; set; }
+
+    private string discountCode = default!; 
 
     private int UserId;
 
@@ -152,13 +169,36 @@ else
     }
 
     private List<CartItemDto> GetCartItems(int userId)
-    {
+    { 
 
         var cartItems = ShoppingCartItems
         .Where(ci => ci.Id == cart.UserId)
         .ToList();
 
         return cartItems!;
+    }
+
+    private async Task HandleApplyDiscount()
+    {
+        if (!string.IsNullOrWhiteSpace(discountCode))
+        {
+            var result = await DiscountService.ApplyDiscount(UserId, discountCode);
+
+            if (result)
+            {
+                var discount = await DiscountService.GetDiscount(discountCode);
+
+                PaymentAmount = PaymentAmount * discount.DiscountPercentage;
+
+                Console.WriteLine("Discount applied successfully.");
+                StateHasChanged();
+            }
+            else
+            {
+                Console.WriteLine("Failed to apply discount.");
+                // Optionally, show an error message to the user
+            }
+        }
     }
 
     private void CartChanged()

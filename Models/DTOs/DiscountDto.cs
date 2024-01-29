@@ -5,6 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace WebShop.Models.DTOs;
+
+public enum DiscountStatus
+{
+    Active = 0,
+    InActive = 1
+}
+
 public class DiscountDto
 {
     public int Id { get; set; }
@@ -15,5 +22,5 @@ public class DiscountDto
 
     public int DiscountQuantity { get; set; } = default!;
 
-    public bool DiscountIsActive { get; set; } = false!;
+    public DiscountStatus IsActive { get; set; } = default!;
 }

@@ -1,0 +1,101 @@
+﻿@page "/DisplayDiscounts"
+
+<h3>DisplayDiscounts</h3>
+
+<PageTitle>Admin Discount</PageTitle>
+
+<AuthorizeView Roles="Admin">
+    <Authorized>
+        @if (DiscountList == null)
+        {
+            <DisplaySpinner />
+        }
+        else
+        {
+
+            <h3>Discounts</h3>
+
+            <div class="form-group">
+                <input class="form-control" type="text" placeholder="filter" @bind="filterDiscount" @bind:event="oninput" />
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>discount code</th>
+                        <th>Active Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var discount in DiscountList)
+                    {
+
+                        if (!ApplyFilter(discount))
+                        {
+                            continue;
+                        }
+                        <tr>
+                            <td>@discount.Id</td>
+                            <td>@discount.DiscountCode</td>
+                            <td>
+                               <select @bind="discount.IsActive" class="form-control">
+                                    @foreach (var status in Enum.GetValues<DiscountStatus>())
+                                    {
+                                        <option value="@status">@status</option>
+                                    }
+                                </select>
+                                <button class="btn btn-primary mt-2" @onclick="()=>UpdateDiscountStatus(discount)">Update status</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <a href="edit-discount">Add Discount</a>
+            <br />
+            <br />
+        }
+    </Authorized>
+</AuthorizeView>
+
+
+@code {
+    [Inject]
+    protected IDiscountService DiscountSevice { get; set; } = default!;
+
+    protected List<DiscountDto> DiscountList { get; set; } = default!;
+
+    string? filterDiscount { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchDiscounts();
+
+    }
+
+
+
+    private async Task FetchDiscounts()
+    {
+        DiscountList = await DiscountSevice.GetDiscounts();
+    }
+
+    private async Task UpdateDiscountStatus(DiscountDto discount)
+    {
+        bool successResponse = await DiscountSevice.UpdateDiscount(discount);
+    }
+
+    private bool ApplyFilter(DiscountDto discount)
+    {
+        if (string.IsNullOrEmpty(filterDiscount))
+            return true;
+
+        if (discount.DiscountCode!.Contains(filterDiscount, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (discount.Id.ToString().StartsWith(filterDiscount) || discount.Id.ToString().StartsWith(filterDiscount))
+            return true;
+
+        return false;
+    }
+}

@@ -14,24 +14,27 @@ public class DiscountsController : ControllerBase
     private readonly IDiscountRepository _discountRepository;
     private readonly IUserRepository _userRepository;
     private readonly IUserRolesRepository _userRolesRepository;
+    private readonly ICartItemRepository _cartItemRepository;
 
     public DiscountsController(IMapper mapper,
         IDiscountRepository discountRepository,
         IUserRepository userRepository,
-        IUserRolesRepository userRolesRepository)
+        IUserRolesRepository userRolesRepository,
+        ICartItemRepository cartItemRepository)
     {
         _mapper = mapper;
         _discountRepository = discountRepository;
         _userRepository = userRepository;
         _userRolesRepository = userRolesRepository;
+        _cartItemRepository = cartItemRepository;
     }
 
-    [HttpGet("{discountId:int}")]
+    [HttpGet("{discountCode}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
-    public async Task<ActionResult<DiscountDto>> GetDiscount(int discountId)
+    public async Task<ActionResult<DiscountDto>> GetDiscount(string discountCode)
     {
-        var discount = _mapper.Map<DiscountDto>(await _discountRepository.GetDiscount(discountId));
+        var discount = _mapper.Map<DiscountDto>(await _discountRepository.GetDiscount(discountCode));
 
         if (discount != null)
         {
@@ -60,7 +63,7 @@ public class DiscountsController : ControllerBase
     [ProducesResponseType(201)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult> CreateDiscount(DiscountDto discountCreate)
+    public async Task<ActionResult> CreateDiscount([FromBody] DiscountDto discountCreate)
     {
         if (discountCreate != null)
         {
@@ -68,11 +71,13 @@ public class DiscountsController : ControllerBase
 
             var discountMap = _mapper.Map<Discount>(discountCreate);
             discountMap.DiscountCode = newCode;
+            discountMap.IsActive = 0;
 
             if (await _discountRepository.CreateDiscount(discountMap))
             {
-                return CreatedAtAction("GetDiscount", new { discountId = discountMap.Id }, discountMap);
-            }
+                return CreatedAtAction("GetDiscount", new { discountCode = discountMap.DiscountCode }, discountMap);
+            } 
+
         }
         return BadRequest();
     }
@@ -82,20 +87,23 @@ public class DiscountsController : ControllerBase
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
-    public async Task<IActionResult> ApplyDiscount(int userId, string discountCode)
+    public async Task<ActionResult> ApplyDiscount(int userId, string discountCode)
     {
 
         bool canUseDiscount = await _discountRepository.CanUserUseDiscount(userId, discountCode);
 
-        if (!canUseDiscount)
+        if (canUseDiscount)
         {
-            return BadRequest("Discount cannot be applied: either it's invalid, expired, or already used.");
+            var discountIsActive = await _discountRepository.GetDiscount(discountCode);
+            if (discountIsActive.IsActive == Entity.DiscountStatus.Active)
+            {
+                await _discountRepository.RecordDiscountUsage(userId, discountCode);
+
+                return Ok("Discount applied successfully.");
+            }
+
         }
-
-        await _discountRepository.RecordDiscountUsage(userId, discountCode);
-
-        return Ok("Discount applied successfully.");
-
+        return BadRequest("Discount cannot be applied: either it's invalid, expired, or already used.");
     }
 
     [HttpPut("{discountId:int}")]
@@ -106,10 +114,7 @@ public class DiscountsController : ControllerBase
     {
         if (discountId == discountUpdate.Id)
         {
-            var newCode = _discountRepository.GenerateUniqueCode(7, discountUpdate.DiscountCode);
-
             var discountMap = _mapper.Map<Discount>(discountUpdate);
-            discountMap.DiscountCode = newCode;
 
             if (discountMap != null)
             {

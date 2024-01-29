@@ -55,6 +55,7 @@ public class CartItemRepository : ICartItemRepository
     public async Task<ICollection<CartItem>> GetCartItems(int userId)
     {
         var cartItems = await _dbContext.CartItems
+            .AsNoTracking()
             .Include(ci => ci.Cart)
             .Include(p => p.Product)
             .Where(ci => ci.Cart!.UserId == userId)
