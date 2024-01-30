@@ -1,6 +1,100 @@
 ﻿@page "/edit-discount"
 @page "/edit-discount/{discountCode}"
+@inject NavigationManager navigationManager
+
+@if (string.IsNullOrEmpty(discountCode))
+{
+    <PageTitle>Add a new DiscountCode</PageTitle>
+    <h4>Add new Discount</h4>
+    Message = "Create Discount";
+}
+else
+{
+    <PageTitle>Edit "@currentDiscount.Id"</PageTitle>
+    <h3>Edit @currentDiscount.Id</h3>
+    Message = "Update Discount";
+}
+
+<EditForm Model="currentDiscount" OnValidSubmit="HandleSubmit" FormName="DiscountForm">
+    <div>
+        <label for="discountCode">discountCode</label>
+        <InputText id="discountCode" @bind-Value="@currentDiscount.DiscountCode" class="form-control" />
+    </div>
+    <div>
+
+    </div>
+</EditForm>
+
+<p>@Status</p>
+<br />
+<p>@ErrorMessage</p>
 
 @code {
+    [Inject]
+    private IDiscountService DiscountService { get; set; } = default!;
 
+    [Parameter]
+    public string? discountCode { get; set; } = null!;
+
+    [SupplyParameterFromForm]
+    public DiscountDto currentDiscount { get; set; } = new();
+
+    private string Status = string.Empty;
+    private string Message = string.Empty;
+    private string ErrorMessage = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (discountCode is not null)
+        {
+            var discount = await DiscountService.GetDiscount(discountCode);
+
+            if (discount is not null)
+            {
+                currentDiscount.Id = discount.Id;
+            }
+        }
+    }
+
+    async Task HandleSubmit()
+    {
+        if (string.IsNullOrEmpty(discountCode))
+        {
+            await UpdateDiscount();
+        }
+        else
+        {
+            await CreateDiscount();
+        }
+    }
+
+    async Task UpdateDiscount()
+    {
+        var result = await DiscountService.UpdateDiscount(currentDiscount);
+
+        if (result)
+        {
+            Status = "Discount has updated successfully!";
+            navigationManager.NavigateTo("DisplayDiscounts");
+        }
+        else
+        {
+            Status = "Something went wrong updating discounts";
+        }
+    }
+
+    async Task CreateDiscount()
+    {
+        var result = await DiscountService.CreateDiscount(currentDiscount);
+
+        if (result != null)
+        {
+            Status = "Discount added successfully!";
+            navigationManager.NavigateTo("DisplayDiscounts");
+        }
+        else
+        {
+            Status = "Something went wrong creating a discount";
+        }
+    }
 }

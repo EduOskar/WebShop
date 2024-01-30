@@ -43,7 +43,7 @@ builder.Services.AddScoped<ICartOrderTransferService, CartOrderTransferService>(
 builder.Services.AddScoped<IReviewServices, ReviewService>();
 builder.Services.AddScoped<IDiscountService, DiscountService>();
 builder.Services.AddSingleton<CategoryStateService>();
-builder.Services.AddTransient<IEmailSenderService, EmailSender>
+builder.Services.AddTransient<IEmailSenderService, EmailSenderService>();
 
 builder.Services.AddScoped<CustomStateProvider>(); 
 builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<CustomStateProvider>());
