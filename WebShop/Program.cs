@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
 using Microsoft.Net.Http.Headers;
 using System.Text.Json.Serialization;
 using WebShop.Api.Data;
@@ -11,6 +9,8 @@ using WebShop.Api.Repositories;
 using WebShop.Api.Repositories.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddTransient<IEmailSenderRepository, EmailSenderRepository>();
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -71,6 +71,7 @@ builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
 builder.Services.AddScoped<IOrderStatusRepository, OrderStatusRepository>();
 builder.Services.AddScoped<IDiscountRepository, DiscountRepository>();
+
 
 var app = builder.Build();
 
