@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using WebShop.Api.Entity;
 using WebShop.Api.Repositories;
 using WebShop.Api.Repositories.Contracts;
+using WebShop.Api.Services;
 using WebShop.Models.DTOs;
 using OrderStatusType = WebShop.Api.Entity.OrderStatusType;
 
@@ -13,35 +14,11 @@ namespace WebShop.Api.Controllers;
 [ApiController]
 public class CartOrderTransfersController : ControllerBase
 {
-    private readonly IProductRepository _productRepository;
-    private readonly UserManager<User> _userManager;
-    private readonly IUserRepository _userRepository;
-    private readonly ICartRepository _cartRepository;
-    private readonly ICartItemRepository _cartItemRepository;
-    private readonly IOrderRepository _orderRepository;
-    private readonly IOrderItemRepository _orderItemRepository;
-    private readonly IOrderStatusRepository _orderStatusRepository;
-    private readonly IMapper _mapper;
+    private readonly CartOrderTransferService _cartOrderTransferService;
 
-    public CartOrderTransfersController(IProductRepository productRepository,
-        UserManager<User> userManager,
-        IUserRepository userRepository,
-        ICartRepository cartRepository,
-        ICartItemRepository cartItemRepository,
-        IOrderRepository orderRepository,
-        IOrderItemRepository orderItemRepository,
-        IOrderStatusRepository orderStatusRepository,
-        IMapper mapper)
+    public CartOrderTransfersController(CartOrderTransferService cartOrderTransferService)
     {
-        _productRepository = productRepository;
-        _userManager = userManager;
-        _userRepository = userRepository;
-        _cartRepository = cartRepository;
-        _cartItemRepository = cartItemRepository;
-        _orderRepository = orderRepository;
-        _orderItemRepository = orderItemRepository;
-        _orderStatusRepository = orderStatusRepository;
-        _mapper = mapper;
+        _cartOrderTransferService = cartOrderTransferService;
     }
 
     [HttpGet("{userId:int}")]
@@ -50,107 +27,14 @@ public class CartOrderTransfersController : ControllerBase
     [ProducesResponseType(500)]
     public async Task<ActionResult<bool>> CartOrderTransfer(int userId)
     {
-        decimal priceCheck = 0;
-
-        string userIdentity = userId.ToString();
-
-        var userManager = await _userManager.FindByIdAsync(userIdentity);
-
-        var user = await _userRepository.GetUser(userManager!.Id);
-
-        if (! await _userRepository.UserExist(userId))
+        bool result = await _cartOrderTransferService.CartOrderTransfer(userId);
+        if (result)
         {
-            return NotFound(false);
+            return Ok("Order successfully created.");
         }
-
-        var usersCart = await _cartRepository.GetCartByUser(user.Id);
-
-        if (! await _cartRepository.CartExist(usersCart.Id))
+        else
         {
-            return NotFound(false);
+            return NotFound("User or cart not found, or insufficient credit.");
         }
-
-        if (!user.Id.Equals(usersCart.UserId))
-        {
-            return BadRequest(false);
-        }
-
-        var cartItems = await _cartItemRepository.GetCartItems(userId);
-
-        var cartItemsCheck = cartItems.Where(ci => ci.CartId == usersCart.Id);
-
-        if (cartItemsCheck.IsNullOrEmpty())
-        {
-            return BadRequest(false);
-        }
-
-        var products = await _productRepository.GetProducts();
-
-        if (products.IsNullOrEmpty())
-        {
-            return NotFound(false);
-        }
-
-        foreach (var cartItem in cartItems)
-        {
-            priceCheck += cartItem.Product!.Price * cartItem.Quantity;
-        }
-
-        if (user.Credit <= priceCheck)
-        {
-            return BadRequest(false);
-        }
-
-        user.Credit -= priceCheck;
-
-        var orderCreate = new OrderDto
-        {
-            UserId = usersCart.UserId,
-            PlacementTime = DateTime.Now,
-        };
-
-        OrderStatus orderStatus = new OrderStatus
-        {};
-
-        if (!await _orderStatusRepository.CreateOrderStatus(orderStatus))
-        {
-            return BadRequest();
-        }
-
-    var orderMap = _mapper.Map<Order>(orderCreate);
-        orderMap.UserId = usersCart.UserId;
-        orderMap.OrderStatusId = orderStatus.Id;
-        orderMap.OrderStatus = orderStatus;
-
-
-
-        await _orderRepository.CreateOrder(orderMap);
-
-        foreach (var cartItem in cartItems)
-        {
-            var orderItems = new OrderItemDto
-            {
-            };
-
-            var orderItemMap = _mapper.Map<OrderItem>(orderItems);
-            orderItemMap.Order = await _orderRepository.GetOrder(orderMap.Id);
-            orderItemMap.Product = await _productRepository.GetProduct(cartItem.ProductId);
-            orderItemMap.Quantity = cartItem.Quantity;
-
-            await _orderItemRepository.CreateOrderItem(orderItemMap);
-
-            var productCondition = products.Where(p => p.Id == cartItem.ProductId);
-
-            foreach (var item in productCondition)
-            {
-                item.Quantity -= cartItem.Quantity;
-
-            }
-
-            await _cartItemRepository.DeleteCartItem(cartItem);
-        }
-
-        return Ok();
-       
     }
 }

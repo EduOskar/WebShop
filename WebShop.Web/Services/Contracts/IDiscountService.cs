@@ -14,4 +14,6 @@ public interface IDiscountService
     Task<bool> ApplyDiscount(int userId, string discountCode);
 
     Task<bool> UpdateDiscount(DiscountDto discountUpdate);
+
+    Task<bool> EmailDiscounts(string discountCode);
 }

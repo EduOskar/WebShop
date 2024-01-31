@@ -54,6 +54,25 @@ public class DiscountService : IDiscountService
         }
     }
 
+    public async Task<bool> EmailDiscounts(string discountCode)
+    {
+        var response = await _httpClient.GetAsync($"api/Discounts/Email-discounts/{discountCode}");
+
+        if (response.IsSuccessStatusCode)
+        {
+            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+            {
+                return false!;
+            }
+            return true;
+        }
+        else
+        {
+            var message = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Http status:{response.StatusCode} Message -{message}");
+        }
+    }
+
     public async Task<DiscountDto> GetDiscount(string discountCode)
     {
         var response = await _httpClient.GetAsync($"api/Discounts/{discountCode}");

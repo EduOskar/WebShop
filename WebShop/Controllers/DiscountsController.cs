@@ -13,20 +13,17 @@ public class DiscountsController : ControllerBase
     private readonly IMapper _mapper;
     private readonly IDiscountRepository _discountRepository;
     private readonly IUserRepository _userRepository;
-    private readonly IUserRolesRepository _userRolesRepository;
-    private readonly ICartItemRepository _cartItemRepository;
+    private readonly IEmailSenderRepository _emailSenderRepository;
 
     public DiscountsController(IMapper mapper,
         IDiscountRepository discountRepository,
         IUserRepository userRepository,
-        IUserRolesRepository userRolesRepository,
-        ICartItemRepository cartItemRepository)
+        IEmailSenderRepository emailSenderRepository)
     {
         _mapper = mapper;
         _discountRepository = discountRepository;
         _userRepository = userRepository;
-        _userRolesRepository = userRolesRepository;
-        _cartItemRepository = cartItemRepository;
+        _emailSenderRepository = emailSenderRepository;
     }
 
     [HttpGet("{discountCode}")]
@@ -71,12 +68,13 @@ public class DiscountsController : ControllerBase
 
             var discountMap = _mapper.Map<Discount>(discountCreate);
             discountMap.DiscountCode = newCode;
-            discountMap.IsActive = 0;
+            discountMap.IsActive = (Entity.DiscountStatus)1;
+            discountMap.DiscountsUsed = 0;
 
             if (await _discountRepository.CreateDiscount(discountMap))
             {
                 return CreatedAtAction("GetDiscount", new { discountCode = discountMap.DiscountCode }, discountMap);
-            } 
+            }
 
         }
         return BadRequest();
@@ -95,6 +93,8 @@ public class DiscountsController : ControllerBase
         if (canUseDiscount)
         {
             var discountIsActive = await _discountRepository.GetDiscount(discountCode);
+            discountIsActive.DiscountsUsed++;
+
             if (discountIsActive.IsActive == Entity.DiscountStatus.Active)
             {
                 await _discountRepository.RecordDiscountUsage(userId, discountCode);
@@ -129,4 +129,38 @@ public class DiscountsController : ControllerBase
 
         return BadRequest();
     }
+
+    [HttpGet("Email-discounts/{discountCode}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(500)]
+    public async Task<ActionResult> EmailDiscounts(string discountCode)
+    {
+        var discount = await _discountRepository.GetDiscount(discountCode);
+
+        if (discount != null)
+        {
+            var userList = await _userRepository.GetUsers();
+
+            if (userList.Any())
+            {
+                EmailDto email = new EmailDto();
+
+                foreach (var user in userList)
+                {
+                    email.To = user.Email!;
+                    email.From = "";
+                    email.Body = $"DiscountCode for consid_WebShop: {discount.DiscountCode}";
+                    email.Subject = "Discount at Consids Webbshop! ConsidWebbshop@Consid.com";
+                    await _emailSenderRepository.SendEmailAsync(email);
+                }
+
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+        return NotFound();
+    }
+
 }

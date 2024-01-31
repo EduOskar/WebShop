@@ -12,5 +12,6 @@ public interface ICartItemRepository
     Task<bool> UpdateCartItem(CartItem cartItem);
     Task<bool> UpdateCartItemQty(int cartItemId, CartItemQtyUpdateDto updatedQty);
     Task<bool> DeleteCartItem(CartItem cartItem);
+    Task<bool> DeleteCartItems(ICollection<CartItem> cartItems);
     Task<bool> Save();
 }

@@ -1,4 +1,5 @@
 ﻿using WebShop.Models.DTOs;
+using WebShop.Models.DTOs.PasswordManagement;
 using WebShop.Web.Services.Contracts;
 
 namespace WebShop.Web.Services;
@@ -33,6 +34,18 @@ public class AuthService : IAuthService
         }
     }
 
+    public async Task ForgotPassword(ForgotPasswordDto forgotPassword)
+    {
+        var result = await _httpClient.PostAsJsonAsync("api/Auth/Forgot-Password", forgotPassword);
+
+        if (result.StatusCode == System.Net.HttpStatusCode.BadRequest)
+        {
+            throw new Exception(await result.Content.ReadAsStringAsync());
+        }
+
+        result.EnsureSuccessStatusCode();
+    }
+
     public async Task Login(LoginRequest loginRequest)
     {
         var result = await _httpClient.PostAsJsonAsync("/api/Auth/login", loginRequest);
@@ -64,32 +77,16 @@ public class AuthService : IAuthService
         result.EnsureSuccessStatusCode();
     }
 
-    //public async Task<UserDto> GetUserInformation(int userId)
-    //{
-    //    try
-    //    {
-    //        var response = await _httpClient.GetAsync($"api/Auth/GetUser");
+    public async Task ResetPassword(ResetPasswordDto resetPassword)
+    {
+        var result = await _httpClient.PostAsJsonAsync("/api/Auth/Reset-Password", resetPassword);
 
-    //        if (response.IsSuccessStatusCode)
-    //        {
-    //            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
-    //            {
-    //                return null!;
-    //            }
+        if (result.StatusCode == System.Net.HttpStatusCode.BadRequest)
+        {
+            throw new Exception(await result.Content.ReadAsStringAsync());
+        }
 
-    //            var user = await response.Content.ReadFromJsonAsync<UserDto>();
-    //            return user!;
-    //        }
-    //        else
-    //        {
-    //            var message = await response.Content.ReadAsStringAsync();
-    //            throw new Exception(message);
-    //        }
-    //    }
-    //    catch (Exception)
-    //    {
+        result.EnsureSuccessStatusCode();
+    }
 
-    //        throw;
-    //    }
-    //}
 }

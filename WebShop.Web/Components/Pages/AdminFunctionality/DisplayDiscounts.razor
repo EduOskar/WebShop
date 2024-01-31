@@ -6,7 +6,7 @@
 
 <AuthorizeView Roles="Admin">
     <Authorized>
-        @if (DiscountList == null)
+        @if (discountList == null)
         {
             <DisplaySpinner />
         }
@@ -28,7 +28,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var discount in DiscountList)
+                    @foreach (var discount in discountList)
                     {
 
                         if (!ApplyFilter(discount))
@@ -39,7 +39,7 @@
                             <td>@discount.Id</td>
                             <td>@discount.DiscountCode</td>
                             <td>
-                               <select @bind="discount.IsActive" class="form-control">
+                                <select @bind="discount.IsActive" class="form-control">
                                     @foreach (var status in Enum.GetValues<DiscountStatus>())
                                     {
                                         <option value="@status">@status</option>
@@ -61,11 +61,13 @@
 
 @code {
     [Inject]
-    protected IDiscountService DiscountSevice { get; set; } = default!;
+    protected IDiscountService discountSevice { get; set; } = default!;
 
-    protected List<DiscountDto> DiscountList { get; set; } = default!;
+    protected List<DiscountDto> discountList { get; set; } = default!;
 
     string? filterDiscount { get; set; }
+
+    string? status { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -73,16 +75,35 @@
 
     }
 
-
-
     private async Task FetchDiscounts()
     {
-        DiscountList = await DiscountSevice.GetDiscounts();
+        discountList = await discountSevice.GetDiscounts();
+    }
+
+    private async Task SendDiscountMail(string discountCode)
+    {
+        var result = await discountSevice.EmailDiscounts(discountCode);
+
+        if (result)
+        {
+            status = "Discounts Email Successfully";
+        }
+        else
+        {
+            status = "Discounts Email Failed";
+        }
     }
 
     private async Task UpdateDiscountStatus(DiscountDto discount)
     {
-        bool successResponse = await DiscountSevice.UpdateDiscount(discount);
+        bool successResponse = await discountSevice.UpdateDiscount(discount);
+        if (successResponse)
+        {
+            if (discount.IsActive == DiscountStatus.Active)
+            {
+                await SendDiscountMail(discount.DiscountCode);
+            }
+        }
     }
 
     private bool ApplyFilter(DiscountDto discount)

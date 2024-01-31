@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Web;
 using WebShop.Api.Entity;
 using WebShop.Api.Repositories.Contracts;
 using WebShop.Models.DTOs;
+using WebShop.Models.DTOs.PasswordManagement;
 
 namespace WebShop.Api.Controllers;
 [Route("api/[controller]")]
@@ -18,16 +20,19 @@ public class AuthController : ControllerBase
     private readonly SignInManager<User> _signInManager;
     private readonly IMapper _mapper;
     private readonly ICartRepository _cartRepository;
+    private readonly IEmailSenderRepository _emailSenderRepository;
 
     public AuthController(UserManager<User> userManager, 
         SignInManager<User> signInManager, 
         IMapper mapper, 
-        ICartRepository cartRepository)
+        ICartRepository cartRepository,
+        IEmailSenderRepository emailSenderRepository)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _mapper = mapper;
         _cartRepository = cartRepository;
+        _emailSenderRepository = emailSenderRepository;
     }
 
     [HttpPost("login")]
@@ -103,16 +108,67 @@ public class AuthController : ControllerBase
         return Ok();
     }
 
-    [HttpPost("Resett-Password")]
-    public async Task<ActionResult<IdentityResult>> ResetPassword(User user, string token, string newPassword)
+    [HttpPost("Forgot-Password")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(500)]
+    public async Task<ActionResult<IdentityResult>> ForgotPassword(ForgotPasswordDto forgotPassword)
     {
-        var resetPassword = await _userManager.ResetPasswordAsync(user, token, newPassword);
-
-        if (resetPassword.Succeeded)
+        if (forgotPassword != null)
         {
-            return Ok(resetPassword);
+            var user = await _userManager.FindByEmailAsync(forgotPassword.Email);
+
+            if (user != null)
+            {
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var encodedToken = HttpUtility.UrlEncode(token);
+
+                var resetPasswordUrl = $"https://localhost:7252/reset-password?token={encodedToken}&email={HttpUtility.UrlEncode(user.Email)}";
+
+                EmailDto email = new EmailDto
+                {
+                    To = user.Email!,
+                    From = "",
+                    Body = resetPasswordUrl,
+                    Subject = "Password reset for ConsidWebbshop",
+                };
+
+                await _emailSenderRepository.SendEmailAsync(email);
+
+                return NoContent();
+            }
+
+            return NotFound();
         }
-        return BadRequest(resetPassword.Errors);
+
+        return BadRequest();
+    }
+
+    [HttpPost("Reset-Password")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(500)]
+    public async Task<ActionResult<IdentityResult>> ResetPassword([FromBody]   ResetPasswordDto resetPassword)
+    {
+        if (resetPassword != null)
+        {
+            var user = await _userManager.FindByEmailAsync(resetPassword.Email);
+
+            if (user != null)
+            {
+                var result = await _userManager.ResetPasswordAsync(user, resetPassword.Token, resetPassword.Password);
+
+                if (result.Succeeded)
+                {
+                    return NoContent(); 
+                }
+
+                return BadRequest(new { Errors = result.Errors.Select(e => e.Description) });
+            }
+
+            return NotFound();
+        }
+        return BadRequest();
     }
 
     [HttpGet("CurrentUserInformation")]

@@ -20,7 +20,7 @@ public class DiscountDto
 
     public decimal DiscountPercentage { get; set; } = default!;
 
-    public int DiscountQuantity { get; set; } = default!;
+    public int DiscountsUsed { get; set; } = default!;
 
     public DiscountStatus IsActive { get; set; } = default!;
 }

@@ -36,9 +36,17 @@ public class CartItemRepository : ICartItemRepository
         return await Save();
     }
 
+    public async Task<bool> DeleteCartItems(ICollection<CartItem> cartItems)
+    {
+        _dbContext.RemoveRange(cartItems);
+
+        return await Save();
+    }
+
     public async Task<CartItem> GetCartItem(int cartItemId)
     {
         var cartItem = await _dbContext.CartItems
+            .AsNoTracking()
             .Include(ci => ci.Cart)
             .Include(p => p.Product)
             .Where(ci => ci.Id == cartItemId)
@@ -55,12 +63,11 @@ public class CartItemRepository : ICartItemRepository
     public async Task<ICollection<CartItem>> GetCartItems(int userId)
     {
         var cartItems = await _dbContext.CartItems
-            .AsNoTracking()
             .Include(ci => ci.Cart)
             .Include(p => p.Product)
             .Where(ci => ci.Cart!.UserId == userId)
+            .AsNoTracking()
             .ToListAsync();
-
         return cartItems;
     }
 
