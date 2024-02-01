@@ -8,14 +8,10 @@ namespace WebShop.Api.Services;
 public class CartOrderTransferService
 {
     private readonly ApplicationDbContext _dbContext;
-    private readonly IMapper _mapper;
-    // Other necessary services
 
-    public CartOrderTransferService(ApplicationDbContext dbContext, IMapper mapper /* other dependencies */)
+    public CartOrderTransferService(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
-        _mapper = mapper;
-        // Initialize other services
     }
 
     public async Task<bool> CartOrderTransfer(int userId)
@@ -27,45 +23,53 @@ public class CartOrderTransferService
             var user = await _dbContext.Users.FindAsync(userId);
             if (user == null) return false;
 
-            var cart = await _dbContext.Carts.Include(c => c.CartItems!).ThenInclude(ci => ci.Product)
+            var cart = await _dbContext.Carts.Include(c => c.CartItems!)
+                .ThenInclude(ci => ci.Product)
                 .FirstOrDefaultAsync(c => c.UserId == userId);
             if (cart == null || !cart.CartItems!.Any()) return false;
 
             decimal totalCost = cart.CartItems!.Sum(item => item.Product.Price * item.Quantity);
             if (user.Credit < totalCost) return false;
 
+            var orderItem = new OrderItem
+            {
+                //OrderId = order.Id,
+                //ProductId = item.ProductId,
+                //Quantity = item.Quantity
+            };
+
             user.Credit -= totalCost;
             var order = new Order
             {
                 UserId = userId,
                 PlacementTime = DateTime.Now,
-                OrderStatus = new OrderStatus() // Assuming you set up OrderStatus
+                OrderStatus = new OrderStatus() 
             };
             await _dbContext.Orders.AddAsync(order);
 
-            foreach (var item in cart.CartItems)
+            foreach (var item in cart.CartItems!)
             {
-                var orderItem = new OrderItem
-                {
-                    OrderId = order.Id,
-                    ProductId = item.ProductId,
-                    Quantity = item.Quantity
-                };
+                orderItem.Order = order;
+                orderItem.ProductId = item.ProductId;
+                orderItem.Product = item.Product;
+                orderItem.Quantity = item.Quantity;
+                orderItem.OrderId = order.Id;
+                orderItem.ProductDescription = item.Product.Description;
+
                 await _dbContext.OrderItems.AddAsync(orderItem);
 
-                item.Product.Quantity -= item.Quantity; // Update product stock
+                item.Product.Quantity -= item.Quantity; 
             }
 
-            _dbContext.CartItems.RemoveRange(cart.CartItems); // Clear the cart
+            _dbContext.CartItems.RemoveRange(cart.CartItems); 
             await _dbContext.SaveChangesAsync();
             await transaction.CommitAsync();
 
             return true;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             await transaction.RollbackAsync();
-            // Log exception
             return false;
         }
     }

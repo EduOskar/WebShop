@@ -19,13 +19,13 @@ public class CartOrderTransferService : ICartOrderTransferService
 
             if (response.IsSuccessStatusCode)
             {
-                if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 {
                     var result = await response.Content.ReadAsAsync<bool>();
-                    return result;
+                    return response.IsSuccessStatusCode;
                 }
 
-                return false;
+                return response.IsSuccessStatusCode;
             }
             else
             {

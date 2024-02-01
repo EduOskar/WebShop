@@ -13,8 +13,7 @@ public class Order
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
 
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public DateTime PlacementTime { get; set; }
+    public DateTime PlacementTime { get; set; } = DateTime.UtcNow;
 
     public int OrderStatusId { get; set; }
     public virtual OrderStatus OrderStatus { get; set; } = default!;

@@ -22,7 +22,7 @@ public class CartOrderTransfersController : ControllerBase
     }
 
     [HttpGet("{userId:int}")]
-    [ProducesResponseType(200)]
+    [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
     public async Task<ActionResult<bool>> CartOrderTransfer(int userId)
@@ -30,11 +30,11 @@ public class CartOrderTransfersController : ControllerBase
         bool result = await _cartOrderTransferService.CartOrderTransfer(userId);
         if (result)
         {
-            return Ok("Order successfully created.");
+            return NoContent();
         }
         else
         {
-            return NotFound("User or cart not found, or insufficient credit.");
+            return NotFound(result);
         }
     }
 }

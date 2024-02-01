@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebShop.Api.Entity;
 
@@ -10,6 +11,7 @@ public enum DiscountStatus
 public class Discount
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    [Key]
     public int Id { get; set; }
 
     public string DiscountCode { get; set; } = default!;
