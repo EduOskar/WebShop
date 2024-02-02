@@ -1,0 +1,58 @@
+﻿@page "/ManageOrder/{orderId:int}"
+
+<AuthorizeView Roles="Admin">
+    <Authorized>
+        <EditForm Model="currentOrder" OnValidSubmit="UpdateOrder" FormName="updateOrder">
+            <div>
+                <p>OrderId: @currentOrder.Id</p>
+                <p>Date placed: @currentOrder.PlacementTime</p>
+                <p>@currentOrder.OrderStatus</p>
+            </div>
+
+            @foreach (var orderItem in currentOrder.OrderItems)
+            {
+                <div>
+                    <p>OrderItemId: @orderItem.Id</p>
+                    <p>Product: @orderItem.Product.Name</p>
+                    <p>Quantity: @orderItem.Quantity</p>
+                </div>
+            }
+
+        </EditForm>
+    </Authorized>
+    <NotAuthorized>
+        You dont have access to this page
+    </NotAuthorized>
+</AuthorizeView>
+
+<PageTitle>Stock Order</PageTitle>
+<h4>Stock items in the Order</h4>
+
+
+
+@code {
+    [Inject]
+    protected IOrdersService orderService { get; set; } = default!;
+
+    [SupplyParameterFromForm]
+    public OrderDto currentOrder { get; set; } = new();
+
+    [Parameter]
+    public int orderId { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var order = await orderService.GetOrder(orderId);
+
+        currentOrder.Id = order.Id;
+        currentOrder.UserId = order.UserId;
+        currentOrder.OrderItems = order.OrderItems;
+        currentOrder.OrderStatus = order.OrderStatus;
+        currentOrder.OrderStatusId = order.OrderStatusId;
+    }
+
+    async Task UpdateOrder()
+    {
+        var result = await orderService.UpdateOrder(currentOrder);
+    }
+}

@@ -24,6 +24,7 @@
                     <tr>
                         <th>Id</th>
                         <th>discount code</th>
+                        <th>discount percentage</th>
                         <th>Active Status</th>
                     </tr>
                 </thead>
@@ -38,6 +39,7 @@
                         <tr>
                             <td>@discount.Id</td>
                             <td>@discount.DiscountCode</td>
+                            <td>@discount.DiscountPercentage</td>
                             <td>
                                 <select @bind="discount.IsActive" class="form-control">
                                     @foreach (var status in Enum.GetValues<DiscountStatus>())

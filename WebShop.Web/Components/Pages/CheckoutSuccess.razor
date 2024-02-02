@@ -8,47 +8,10 @@
 }
 else
 {
-    @if(OrderItems == null)
-    {
-        <DisplaySpinner />
-    }
-    else if(OrderItems.Count > 0)
-    {
-
-        <div class="col-md-6"> 
-            <h4 class="mb-2">Order Summary</h4>
-            <h8 class="mb-2">Order Serialnumber: @Order.Id - Date: @Order.OrderStatus.StatusDate - OrderStatus : @Order.OrderStatus.CurrentStatus</h8>
-            @if (OrderItems.Count() > 0)
-            {
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Quantity</th>
-                            <th>Product Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in OrderItems)
-                        {
-                            <tr>
-                                <td>@item.Product.Name</td>
-                                <th>@item.Quantity</th>
-                                <td>@item.Product.Description</td>
-                                <td>@item.Quantity</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-
-        </div>
-    }
-    else
-    {
-        <h5>There was no orders to be retrieved</h5>
-    }
-
+    <div class="col-md-6">
+        <h2>Thank you for your purchase!</h2>
+        <h5>You will have recieved a email about your order information</h5>
+    </div>
 }
 
 @code {
@@ -57,12 +20,6 @@ else
 
     [Inject]
     ICartItemsService CartItemService { get; set; } = default!;
-
-    [Inject]
-    IOrderItemsService OrderItemService { get; set; } = default!;
-
-    [Inject]
-    IOrdersService OrderService { get; set; } = default!;
 
     [Inject]
     IDiscountService DiscountService { get; set; } = default!;
@@ -75,10 +32,6 @@ else
     protected List<CartItemDto> ShoppingCartItems { get; set; } = default!;
 
     private ClaimsPrincipal User = default!;
-
-    protected List<OrderItemDto> OrderItems { get; set; } = default!;
-
-    protected OrderDto Order { get; set; } = default!;
 
     private int UserId;
 
@@ -97,10 +50,6 @@ else
                 {
                     await CartOrderTransfer(UserId);
                 }
-
-                Order = await OrderService.GetLastOrderFromUser(UserId);
-
-                OrderItems = await OrderItemService.GetOrderItemsFromOrder(Order.Id);
             }
             else
             {
@@ -134,5 +83,6 @@ else
         discountCode = discountCodeState.DiscountCode;
 
         await CartOrderTransferService.CartOrderTransfer(userId, discountCode);
+     
     }
 }

@@ -8,8 +8,8 @@ namespace WebShop.Api.Data;
 public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, int>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-    { 
-        
+    {
+
     }
     public DbSet<Cart> Carts { get; set; }
     public DbSet<CartItem> CartItems { get; set; }
@@ -55,7 +55,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
 
         modelBuilder.Entity<CartItem>(cartItem =>
         {
-            
+
             cartItem
                 .HasOne(ci => ci.Cart)
                 .WithMany(ca => ca.CartItems)
@@ -356,7 +356,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
         {
             Id = 1,
             Name = "Beauty",
-            IconCSS = "fas fa-spa" 
+            IconCSS = "fas fa-spa"
         });
         modelBuilder.Entity<ProductCategory>().HasData(new ProductCategory
         {
@@ -376,7 +376,6 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             Name = "Shoes",
             IconCSS = "fas fa-shoe-prints"
         });
-                               }
- 
 
+    }
 }

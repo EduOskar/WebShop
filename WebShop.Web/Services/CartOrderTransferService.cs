@@ -15,7 +15,14 @@ public class CartOrderTransferService : ICartOrderTransferService
     {
         try
         {
-            var response = await _httpClient.GetAsync($"api/CartOrderTransfers/{userId}-{discountCode}");
+            var url = $"api/CartOrderTransfers/{userId}";
+
+            if (!string.IsNullOrEmpty(discountCode))
+            {
+                url += $"/{discountCode}";
+            }
+
+            var response = await _httpClient.GetAsync(url);
 
             if (response.IsSuccessStatusCode)
             {

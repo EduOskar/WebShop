@@ -17,12 +17,18 @@ else
 
 <EditForm Model="currentDiscount" OnValidSubmit="HandleSubmit" FormName="DiscountForm">
     <div>
-        <label for="discountCode">discountCode</label>
-        <InputText id="discountCode" @bind-Value="@currentDiscount.DiscountCode" class="form-control" />
+        <label for="discountCode"></label>
+        <InputText id="discountCode" placeholder="If no discountName is provided, it will generate with random letters" @bind-Value="@currentDiscount.DiscountCode" class="form-control" />
     </div>
     <div>
-
+        <label for="discountPercentage"></label>
+        <InputNumber id="discountPercentage" placeholder="discountPercentage" @bind-Value=@currentDiscount.DiscountPercentage class="form-control"></InputNumber>
     </div>
+    <div>
+        <label for="discountStatus">Discount Status:</label>
+        <InputNumber id="discountStatus" @bind-Value="discountStatus" class="form-control"></InputNumber>
+    </div>
+    <button type="submit" class="btn btn-primary">@Message</button>
 </EditForm>
 
 <p>@Status</p>
@@ -52,13 +58,21 @@ else
             if (discount is not null)
             {
                 currentDiscount.Id = discount.Id;
+                currentDiscount.DiscountCode = discount.DiscountCode;
+                currentDiscount.DiscountPercentage = discount.DiscountPercentage;
             }
         }
     }
 
+    private int discountStatus
+    {
+        get => (int)currentDiscount.IsActive;
+        set => currentDiscount.IsActive = (DiscountStatus)value;
+    }
+
     async Task HandleSubmit()
     {
-        if (string.IsNullOrEmpty(discountCode))
+        if (!string.IsNullOrEmpty(discountCode))
         {
             await UpdateDiscount();
         }

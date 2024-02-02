@@ -16,7 +16,7 @@ public class DiscountDto
 {
     public int Id { get; set; }
 
-    public string DiscountCode { get; set; } = default!;
+    public string? DiscountCode { get; set; }
 
     public decimal DiscountPercentage { get; set; } = default!;
 

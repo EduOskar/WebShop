@@ -115,7 +115,7 @@ using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
 
-    var roles = new[] { "Admin", "User", "Warehouse Worker"};
+    var roles = new[] { "Admin", "User", "Warehouse Worker" };
 
     foreach (var role in roles)
     {
@@ -128,15 +128,34 @@ using (var scope = app.Services.CreateScope())
 
 using (var scope = app.Services.CreateScope())
 {
+    var services = scope.ServiceProvider;
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
+    var dbContext = services.GetRequiredService<ApplicationDbContext>();
+
+    dbContext.Database.EnsureDeleted();
+
+    dbContext.Database.EnsureCreated();
+
+    var roles = new[] { "Admin", "User", "Warehouse Worker" };
+
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole<int>(role));
+        }
+    }
 
     string email = "admin@admin.com";
     string userName = "Admin";
     string password = "Admin123!";
 
+    var user = new User();
+
     if (await userManager.FindByNameAsync(userName) == null)
     {
-        var user = new User();
+
         user.Email = email;
         user.UserName = userName;
         user.PasswordHash = password;
@@ -149,6 +168,40 @@ using (var scope = app.Services.CreateScope())
 
         await userManager.AddToRoleAsync(user, "Admin");
     }
-}
 
-app.Run();
+    string userName2 = "Oskar";
+    string password2 = "Hejsan123!";
+    string email2 = "Oskar@Mail.com";
+
+    var user2 = await userManager.FindByNameAsync(userName2);
+    if (user2 == null)
+    {
+        user2 = new User
+        {
+            Email = email2,
+            UserName = userName2,
+            FirstName = "Oskar",
+            LastName = "Ahling",
+            Adress = "Warehouse Street 1",
+            PhoneNumber = "+46 - 333 333 33"
+        };
+
+        var createUserResult = await userManager.CreateAsync(user2, password2);
+
+        await userManager.AddToRoleAsync(user2, "Warehouse Worker");
+
+
+        if (!dbContext.Carts.Any(c => c.UserId == user.Id))
+        {
+            var cart = new Cart
+            {
+                UserId = user.Id
+            };
+
+            dbContext.Carts.Add(cart);
+            await dbContext.SaveChangesAsync();
+        }
+    }
+   
+}
+    app.Run();

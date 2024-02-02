@@ -15,26 +15,37 @@ namespace WebShop.Api.Controllers;
 public class CartOrderTransfersController : ControllerBase
 {
     private readonly CartOrderTransferService _cartOrderTransferService;
+    private readonly IEmailSenderRepository _emailSenderRepository;
 
-    public CartOrderTransfersController(CartOrderTransferService cartOrderTransferService)
+    public CartOrderTransfersController(CartOrderTransferService cartOrderTransferService, IEmailSenderRepository emailSenderRepository)
     {
         _cartOrderTransferService = cartOrderTransferService;
+        _emailSenderRepository = emailSenderRepository;
     }
 
-    [HttpGet("{userId:int}-{discountCode}")]
+    [HttpGet("{userId:int}/{discountCode?}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
     public async Task<ActionResult<bool>> CartOrderTransfer(int userId, string? discountCode)
     {
-        bool result = await _cartOrderTransferService.CartOrderTransfer(userId, discountCode);
-        if (result)
+        try
         {
-            return NoContent();
+            bool result = await _cartOrderTransferService.CartOrderTransfer(userId, discountCode);
+            if (result)
+            {
+                return NoContent();
+            }
+            else
+            {
+                return NotFound(result);
+            }
         }
-        else
+        catch (Exception ex)
         {
-            return NotFound(result);
+
+            return StatusCode(500, ex.Message);
         }
+
     }
 }
