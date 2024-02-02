@@ -64,6 +64,14 @@ else
     [Inject]
     IOrdersService OrderService { get; set; } = default!;
 
+    [Inject]
+    IDiscountService DiscountService { get; set; } = default!;
+
+    [Inject]
+    DiscountCodeState discountCodeState { get; set; } = default!;
+
+    public string? discountCode { get; set; }
+
     protected List<CartItemDto> ShoppingCartItems { get; set; } = default!;
 
     private ClaimsPrincipal User = default!;
@@ -123,6 +131,8 @@ else
 
     protected async Task CartOrderTransfer(int userId)
     {
-        await CartOrderTransferService.CartOrderTransfer(userId);
+        discountCode = discountCodeState.DiscountCode;
+
+        await CartOrderTransferService.CartOrderTransfer(userId, discountCode);
     }
 }

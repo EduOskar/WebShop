@@ -21,13 +21,13 @@ public class CartOrderTransfersController : ControllerBase
         _cartOrderTransferService = cartOrderTransferService;
     }
 
-    [HttpGet("{userId:int}")]
-    [ProducesResponseType(204)]
+    [HttpGet("{userId:int}-{discountCode}")]
+    [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<bool>> CartOrderTransfer(int userId)
+    public async Task<ActionResult<bool>> CartOrderTransfer(int userId, string? discountCode)
     {
-        bool result = await _cartOrderTransferService.CartOrderTransfer(userId);
+        bool result = await _cartOrderTransferService.CartOrderTransfer(userId, discountCode);
         if (result)
         {
             return NoContent();

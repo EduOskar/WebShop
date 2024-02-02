@@ -2,5 +2,5 @@
 
 public interface ICartOrderTransferService
 {
-    Task<bool> CartOrderTransfer(int userId);
+    Task<bool> CartOrderTransfer(int userId, string discountCode);
 }

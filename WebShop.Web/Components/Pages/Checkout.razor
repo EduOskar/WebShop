@@ -99,6 +99,9 @@ else
     [Inject]
     private ICartsService CartsService { get; set; } = default!;
 
+    [Inject]
+    DiscountCodeState discountCodeState { get; set; } = default!;
+
     protected List<CartItemDto> ShoppingCartItems { get; set; } = default!;
 
     private ClaimsPrincipal User = default!;
@@ -112,7 +115,7 @@ else
 
     string? error { get; set; }
 
-    private string discountCode = default!; 
+    public string discountCode = default!; 
 
     private int UserId;
 
@@ -188,6 +191,8 @@ else
             {
                 var discount = await DiscountService.GetDiscount(discountCode);
 
+                discountCodeState.DiscountCode = discount.DiscountCode;
+
                 PaymentAmount = PaymentAmount * discount.DiscountPercentage;
 
                 Console.WriteLine("Discount applied successfully.");
@@ -196,7 +201,7 @@ else
             else
             {
                 Console.WriteLine("Failed to apply discount.");
-                // Optionally, show an error message to the user
+                // show an error message to the user
             }
         }
     }

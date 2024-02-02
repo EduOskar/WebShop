@@ -11,11 +11,11 @@ public class CartOrderTransferService : ICartOrderTransferService
     {
         _httpClient = clientFactory.CreateClient("WebShop.Api");
     }
-    public async Task<bool> CartOrderTransfer(int userId)
+    public async Task<bool> CartOrderTransfer(int userId, string? discountCode)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"api/CartOrderTransfers/{userId}");
+            var response = await _httpClient.GetAsync($"api/CartOrderTransfers/{userId}-{discountCode}");
 
             if (response.IsSuccessStatusCode)
             {

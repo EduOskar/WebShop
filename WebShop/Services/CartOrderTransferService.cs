@@ -14,7 +14,7 @@ public class CartOrderTransferService
         _dbContext = dbContext;
     }
 
-    public async Task<bool> CartOrderTransfer(int userId)
+    public async Task<bool> CartOrderTransfer(int userId, string? discountCode)
     {
         using var transaction = await _dbContext.Database.BeginTransactionAsync();
 
