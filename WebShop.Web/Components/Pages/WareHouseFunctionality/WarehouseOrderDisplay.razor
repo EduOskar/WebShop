@@ -1,5 +1,4 @@
-﻿
-@if (OrdersList == null)
+﻿@if (OrdersList == null)
 {
     <DisplaySpinner />
 }
@@ -80,7 +79,7 @@ else
         </table>
     </div>
 
-   
+
 }
 
 @code {
@@ -127,6 +126,7 @@ else
             };
 
         var successResponse = await orderItemService.QuantityCheck(orderItemId, quantitybool);
+
         if (successResponse)
         {
             submitStatus = "QuantityCheck was Succesfull!";

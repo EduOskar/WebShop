@@ -64,7 +64,7 @@ public class DiscountsController : ControllerBase
     {
         if (discountCreate != null)
         {
-            var newCode = _discountRepository.GenerateUniqueCode(7, discountCreate.DiscountCode);
+            var newCode = _discountRepository.GenerateUniqueCode(7, discountCreate.DiscountCode!);
 
             var discountMap = _mapper.Map<Discount>(discountCreate);
             discountMap.DiscountCode = newCode;

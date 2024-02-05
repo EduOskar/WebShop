@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebShop.Api.Entity;
 using WebShop.Api.Repositories.Contracts;
+using WebShop.Api.Services;
 using WebShop.Models.DTOs;
 using OrderStatusType = WebShop.Models.DTOs.OrderStatusType;
 
@@ -16,16 +17,20 @@ public class OrdersController : ControllerBase
     private readonly IUserRepository _userRepository;
     private readonly IOrderStatusRepository _orderStatusRepository;
     private readonly IMapper _mapper;
+    private readonly OrderWorkerService _orderWorkerService;
 
     public OrdersController(IOrderRepository orderRepository,
         IUserRepository userRepository,
         IOrderStatusRepository orderStatusRepository,
-        IMapper mapper)
+        IMapper mapper,
+        OrderWorkerService orderWorkerService)
+        
     {
         _orderRepository = orderRepository;
         _userRepository = userRepository;
         _orderStatusRepository = orderStatusRepository;
         _mapper = mapper;
+        _orderWorkerService = orderWorkerService;
     }
 
     [HttpGet]
@@ -224,5 +229,21 @@ public class OrdersController : ControllerBase
         }
 
         return NoContent();
+    }
+
+    [HttpPost("{orderId:int}/{userId:int}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(500)]
+    public async Task<ActionResult<bool>> AssignOrderToWorker(int orderId, int userId)
+    {
+        var response = await _orderWorkerService.AssignOrderToWarehouseWorker(orderId, userId);
+
+        if (response)
+        {
+            return Ok(response);
+        }
+
+        return BadRequest();
     }
 }

@@ -20,6 +20,8 @@ public class OrderDto
 
     public int UserId { get; set; }
 
+    public int? WareHouseWorkerId { get; set; }
+
     public List<OrderItemDto> OrderItems { get; set; } = default!;
 
 }

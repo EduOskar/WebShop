@@ -191,7 +191,7 @@ else
             {
                 var discount = await DiscountService.GetDiscount(discountCode);
 
-                discountCodeState.DiscountCode = discount.DiscountCode;
+                discountCodeState.DiscountCode = discount.DiscountCode!;
 
                 PaymentAmount = PaymentAmount * discount.DiscountPercentage;
 

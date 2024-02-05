@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net.Http;
+using System.Text;
 using Newtonsoft.Json;
 using WebShop.Models.DTOs;
 using WebShop.Web.Services.Contracts;
@@ -216,5 +217,21 @@ public class OrdersService : IOrdersService
         var response = await _httpClient.PutAsync($"api/Orders/OrderStatus/{orderId}", content);
 
         return response.IsSuccessStatusCode;
+    }
+
+    public async Task<bool> AssignWorkerToOrder(int userId, int orderId)
+    {
+        var response = await _httpClient.PostAsync($"api/Orders/{orderId}/{userId}", null);
+        
+        if (response.IsSuccessStatusCode)
+        {
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            return bool.Parse(responseContent);
+        }
+        else
+        {
+            return response.IsSuccessStatusCode;
+        }
     }
 }

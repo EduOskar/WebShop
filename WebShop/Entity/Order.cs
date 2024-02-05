@@ -22,6 +22,10 @@ public class Order
     public int UserId { get; set; }
     public User? User { get; set; }
 
+    //foreginKey for warehouseWorkers
+    public int? WareHouseWorkerId { get; set; }
+    public virtual User? WarehouseWorker { get; set; }
+
     public List<OrderItem> OrderItems { get; set; } = default!;
 
 }

@@ -1,29 +1,23 @@
 ﻿@page "/ManageOrder/{orderId:int}"
 
-<AuthorizeView Roles="Admin">
-    <Authorized>
-        <EditForm Model="currentOrder" OnValidSubmit="UpdateOrder" FormName="updateOrder">
-            <div>
-                <p>OrderId: @currentOrder.Id</p>
-                <p>Date placed: @currentOrder.PlacementTime</p>
-                <p>@currentOrder.OrderStatus</p>
-            </div>
 
-            @foreach (var orderItem in currentOrder.OrderItems)
-            {
-                <div>
-                    <p>OrderItemId: @orderItem.Id</p>
-                    <p>Product: @orderItem.Product.Name</p>
-                    <p>Quantity: @orderItem.Quantity</p>
-                </div>
-            }
+<EditForm Model="currentOrder" OnValidSubmit="UpdateOrder" FormName="updateOrder">
+    <div>
+        <p>OrderId: @currentOrder.Id</p>
+        <p>Date placed: @currentOrder.PlacementTime</p>
+        <p>@currentOrder.OrderStatus</p>
+    </div>
 
-        </EditForm>
-    </Authorized>
-    <NotAuthorized>
-        You dont have access to this page
-    </NotAuthorized>
-</AuthorizeView>
+    @foreach (var orderItem in currentOrder.OrderItems)
+    {
+        <div>
+            <p>OrderItemId: @orderItem.Id</p>
+            <p>Product: @orderItem.Product.Name</p>
+            <p>Quantity: @orderItem.Quantity</p>
+        </div>
+    }
+
+</EditForm>
 
 <PageTitle>Stock Order</PageTitle>
 <h4>Stock items in the Order</h4>
@@ -40,6 +34,9 @@
     [Parameter]
     public int orderId { get; set; } = default!;
 
+    [Parameter]
+    public int userId { get; set; } = default!;
+
     protected override async Task OnInitializedAsync()
     {
         var order = await orderService.GetOrder(orderId);
@@ -55,4 +52,23 @@
     {
         var result = await orderService.UpdateOrder(currentOrder);
     }
+
+
+    // private async Task UpdateOrderStatus(int orderId, OrderStatusType newStatus)
+    // {
+    //     bool successResponse = await ordersService.UpdateOrderStatus(orderId, newStatus);
+
+    //     if (successResponse)
+    //     {
+    //         submitStatus = "status updated successfully!";
+    //         alertClass = "alert-success";
+    //         await OnStatusUpdated.InvokeAsync(true);
+    //     }
+    //     else
+    //     {
+    //         submitStatus = "status updated Failed!";
+    //         alertClass = "alert-danger";
+    //     }
+    // }
+
 }

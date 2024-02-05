@@ -11,6 +11,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
     {
 
     }
+
     public DbSet<Cart> Carts { get; set; }
     public DbSet<CartItem> CartItems { get; set; }
     public DbSet<Order> Orders { get; set; }
@@ -22,6 +23,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
     public DbSet<OrderStatus> OrderStatus { get; set; }
     public DbSet<Discount> Discounts { get; set; }
     public DbSet<DiscountUsage> DiscountUsages { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

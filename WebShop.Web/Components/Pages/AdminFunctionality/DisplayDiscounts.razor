@@ -103,7 +103,7 @@
         {
             if (discount.IsActive == DiscountStatus.Active)
             {
-                await SendDiscountMail(discount.DiscountCode);
+                await SendDiscountMail(discount.DiscountCode!);
             }
         }
     }
