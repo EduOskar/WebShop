@@ -1,4 +1,7 @@
-﻿@if (OrdersList == null)
+﻿@inject NavigationManager navigationManager
+@inject AuthenticationStateProvider authStateProvider
+
+@if (OrdersList == null)
 {
     <DisplaySpinner />
 }
@@ -14,8 +17,8 @@ else
                     <th>Order Status</th>
                     <th>Status Date</th>
                     <th>Update Status</th>
+                    <th>Pick Order</th>
                     <th>Products</th>
-
                 </tr>
             </thead>
             <tbody>
@@ -28,13 +31,21 @@ else
                         <td>@order.OrderStatus.CurrentStatus</td>
                         <td>@order.OrderStatus.StatusDate</td>
                         <td>
-                            <select @bind="order.OrderStatus.CurrentStatus" class="form-control">
-                                @foreach (var status in Enum.GetValues<OrderStatusType>())
-                                {
-                                    <option value="@status">@status</option>
-                                }
-                            </select>
-                            <button class="btn btn-primary mt-2" @onclick="() => UpdateOrderStatus(order.Id, order.OrderStatus.CurrentStatus)">Update Status</button>
+                            <a href="HandleOrder/@order.Id" class="btn btn-primary mt-2" @onclick="() => AssinOrderToWorker(order.Id)">
+                                Pick Order to handle
+                            </a>
+                        </td>
+                        <td>
+                            @if (order.OrderStatus.CurrentStatus != OrderStatusType.New)
+                            {
+                                <select @bind="order.OrderStatus.CurrentStatus" class="form-control">
+                                    @foreach (var status in Enum.GetValues<OrderStatusType>())
+                                    {
+                                        <option value="@status">@status</option>
+                                    }
+                                </select>
+                                <button class="btn btn-primary mt-2" @onclick="() => UpdateOrderStatus(order.Id, order.OrderStatus.CurrentStatus)">Update Status</button>
+                            }
                         </td>
                         <td>
                             @if (order.OrderItems.Any())
@@ -51,13 +62,6 @@ else
                                         <tr>
                                             <td>@item.Product.Name</td>
                                             <td>@item.Quantity</td>
-                                            <td>
-                                                <input type="number" @bind="item.QuantityCheck" class="form-control" />
-                                                @if (order.OrderStatus.CurrentStatus == OrderStatusType.New)
-                                                {
-                                                    <button class="btn btn-primary btn-solid mt-2" @onclick="() => QuantityCheck(item.Id, item.QuantityCheck)">Update Quantity</button>
-                                                }
-                                            </td>
                                         </tr>
                                     </table>
                                 }
@@ -95,6 +99,10 @@ else
     [Parameter]
     public EventCallback<bool> OnStatusUpdated { get; set; }
 
+
+    ClaimsPrincipal User = default!;
+    public int UserId { get; set; }
+
     private string? submitStatus;
     private string? alertClass;
 
@@ -116,26 +124,32 @@ else
         }
     }
 
-    private async Task QuantityCheck(int orderItemId, int quantityCheck)
+    private async Task AssinOrderToWorker(int orderId)
     {
+        var authstate = await authStateProvider.GetAuthenticationStateAsync();
 
-        QuantityCheckDto quantitybool = new()
-            {
-                OrderItemId = orderItemId,
-                QuantityCheck = quantityCheck
-            };
+        User = authstate.User;
 
-        var successResponse = await orderItemService.QuantityCheck(orderItemId, quantitybool);
-
-        if (successResponse)
+        string userIdClaimValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+        if (int.TryParse(userIdClaimValue, out int userId))
         {
-            submitStatus = "QuantityCheck was Succesfull!";
-            alertClass = "alert-success";
+            UserId = userId;
         }
-        else
+
+        if (User != null && User.Identity!.IsAuthenticated)
         {
-            submitStatus = "QuantityCheck has Failed!";
-            alertClass = "alert-danger";
+            var successResponse = await ordersService.AssignWorkerToOrder(UserId, orderId);
+
+            if (successResponse)
+            {
+                submitStatus = "orderAssignment was Succesfull!";
+                alertClass = "alert-success";
+            }
+            else
+            {
+                submitStatus = "Assignment of order has Failed. Contact support for help";
+                alertClass = "alert-danger";
+            }
         }
 
     }

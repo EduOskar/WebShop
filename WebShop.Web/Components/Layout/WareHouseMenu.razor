@@ -3,8 +3,12 @@
 
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-row">
-      
-        <WareHouseLayout></WareHouseLayout>
+        <AuthorizeView Roles="Warehouse Worker">
+            <Authorized>
+                <WareHouseLayout></WareHouseLayout>
+            </Authorized>
+        </AuthorizeView>
+       
     </nav>
 </div>
 

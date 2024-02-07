@@ -27,6 +27,7 @@
     </NotAuthorized>
 </AuthorizeView>
 
+
 @code {
     [CascadingParameter]
     Task<AuthenticationState> AuthenticationState { get; set; } = default!;
@@ -45,11 +46,6 @@
         {
             Message = "Logout";
         }
-    }
-
-    private void ToggleProfilePageDropdown()
-    {
-        showProfilePageDropDown = !showProfilePageDropDown;
     }
 
     async Task HandleLogin()

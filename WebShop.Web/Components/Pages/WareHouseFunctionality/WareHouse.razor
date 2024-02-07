@@ -1,17 +1,16 @@
 ﻿@layout WareHouseLayout
 @page "/Warehouse"
 
-
-<WarehouseOrderDisplay OrdersList="@OrderListNew" OnStatusUpdated="OnStatusUpdated" />
+<WarehouseOrderDisplay  OrdersList="@OrderListNew" OnStatusUpdated="OnStatusUpdated" />
 <br />
 <br />
-<WarehouseOrderDisplay OrdersList="@OrderListSent" OnStatusUpdated="OnStatusUpdated" />
+<WarehouseOrderDisplay  OrdersList="@OrderListSent" OnStatusUpdated="OnStatusUpdated" />
 <br />
 <br />
-<WarehouseOrderDisplay OrdersList="@OrderListDelivered" OnStatusUpdated="OnStatusUpdated" />
+<WarehouseOrderDisplay  OrdersList="@OrderListDelivered" OnStatusUpdated="OnStatusUpdated" />
 <br />
 <br />
-<WarehouseOrderDisplay OrdersList="@OrderListCancelled" OnStatusUpdated="OnStatusUpdated" />
+<WarehouseOrderDisplay  OrdersList="@OrderListCancelled" OnStatusUpdated="OnStatusUpdated" />
 
 
 
@@ -33,7 +32,6 @@
     private OrderStatusType orderStatus { get; set; } = default!;
 
     string? error { get; set; }
-
 
     protected override async Task OnInitializedAsync()
     {

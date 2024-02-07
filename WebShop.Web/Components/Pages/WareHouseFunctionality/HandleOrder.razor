@@ -1,0 +1,81 @@
+﻿@page "/HandleOrder/{orderId:int}"
+
+<AuthorizeView Roles="Warehouse Worker">
+    <Authorized>
+        @if (currentOrder == null)
+        {
+            <DisplaySpinner/>
+        }
+        <EditForm Context="Blargh" Model="currentOrder" OnValidSubmit="UpdateOrder" FormName="updateOrder">
+            <div>
+                <p>OrderId: @currentOrder!.Id</p>
+                <p>Date placed: @currentOrder.PlacementTime</p>
+                <p>@currentOrder.OrderStatus</p>
+                <p>@currentOrder.Id</p>
+                <p>@currentOrder.OrderItems</p>
+            </div>
+
+            @if (currentOrder.OrderItems == null)
+            {
+              <DisplaySpinner/>
+            }
+            else
+            {
+                @foreach (var orderItem in currentOrder.OrderItems)
+                {
+
+                    <div>
+                        <p>OrderItemId: @orderItem!.Id</p>
+                        <p>Product: @orderItem.Product.Name</p>
+                        <p>Quantity: @orderItem.Quantity</p>
+                    </div>
+                }
+            }
+
+
+        </EditForm>
+
+        <PageTitle>Stock Order</PageTitle>
+        <h4>Stock items in the Order</h4>
+    </Authorized>
+</AuthorizeView>
+
+
+
+
+@code {
+    [Inject]
+    protected IOrdersService orderService { get; set; } = default!;
+
+    [SupplyParameterFromForm]
+    public OrderDto currentOrder { get; set; } = new();
+
+    [Parameter]
+    public int? orderId { get; set; } = default!;
+
+    [Parameter]
+    public int userId { get; set; } = default!;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (orderId is not null)
+        {
+            var order = await orderService.GetOrder(orderId.Value);
+
+            if (order is not null)
+            {
+                currentOrder.Id = order.Id;
+                currentOrder.UserId = order.UserId;
+                currentOrder.OrderItems = order.OrderItems;
+                currentOrder.OrderStatus = order.OrderStatus;
+                currentOrder.OrderStatusId = order.OrderStatusId;
+                currentOrder.OrderItems = order.OrderItems;
+            }
+        }
+    }
+
+    async Task UpdateOrder()
+    {
+        var result = await orderService.UpdateOrder(currentOrder);
+    }
+}

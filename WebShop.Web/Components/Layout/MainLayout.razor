@@ -14,11 +14,11 @@
                 <CartMenu />
                 <button type="button" class="btn btn-link" @onclick="@HandleLogin">@Message</button>
                 <AuthorizeView Roles="User, Admin">
-                    <Authorized> 
-                        <ProfilePageNav/>
+                    <Authorized>
+                        <ProfilePageNav />
                     </Authorized>
                 </AuthorizeView>
-                
+
             </div>
             <div class="container-fluid">
                 <AuthorizeView roles="Admin">
