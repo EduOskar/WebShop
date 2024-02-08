@@ -35,7 +35,7 @@ public class OrderRepository : IOrderRepository
             .Include(oi => oi.OrderItems).ThenInclude(oi => oi.Product)
             .Include(u => u.User)
             .Include(os => os.OrderStatus)
-            .SingleOrDefaultAsync(o => o.Id == orderId);
+            .FirstOrDefaultAsync(o => o.Id == orderId);
 
         if (order != null)
         {
@@ -69,6 +69,7 @@ public class OrderRepository : IOrderRepository
         var orders = await _dbContext.Orders
             .Include(oi => oi.OrderItems).ThenInclude(oi => oi.Product)
             .Include(u => u.User)
+            .Include(ww => ww.WarehouseWorker)
             .Include(os => os.OrderStatus)
             .ToListAsync();
 

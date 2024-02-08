@@ -22,6 +22,8 @@ public class OrderDto
 
     public int? WareHouseWorkerId { get; set; }
 
+    public UserDto? WarehouseWorker { get; set; } = default!;
+
     public List<OrderItemDto> OrderItems { get; set; } = default!;
 
 }

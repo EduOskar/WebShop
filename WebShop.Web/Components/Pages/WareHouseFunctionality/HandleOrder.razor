@@ -1,42 +1,93 @@
-﻿@page "/HandleOrder/{orderId:int}"
+﻿@layout WareHouseLayout
+@page "/HandleOrder/{orderId:int}"
 
 <AuthorizeView Roles="Warehouse Worker">
     <Authorized>
-        @if (currentOrder == null)
-        {
-            <DisplaySpinner/>
-        }
-        <EditForm Context="Blargh" Model="currentOrder" OnValidSubmit="UpdateOrder" FormName="updateOrder">
-            <div>
-                <p>OrderId: @currentOrder!.Id</p>
-                <p>Date placed: @currentOrder.PlacementTime</p>
-                <p>@currentOrder.OrderStatus</p>
-                <p>@currentOrder.Id</p>
-                <p>@currentOrder.OrderItems</p>
-            </div>
-
-            @if (currentOrder.OrderItems == null)
-            {
-              <DisplaySpinner/>
-            }
-            else
-            {
-                @foreach (var orderItem in currentOrder.OrderItems)
-                {
-
-                    <div>
-                        <p>OrderItemId: @orderItem!.Id</p>
-                        <p>Product: @orderItem.Product.Name</p>
-                        <p>Quantity: @orderItem.Quantity</p>
-                    </div>
-                }
-            }
-
-
-        </EditForm>
 
         <PageTitle>Stock Order</PageTitle>
+
+
+        @if (currentOrder == null)
+        {
+            <DisplaySpinner />
+        }
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>order Id</th>
+                        <th>PlacementTime</th>
+                        <th>Products</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>@currentOrder!.Id</td>
+                        <td>@currentOrder.PlacementTime</td>
+                        @if (currentOrder.OrderItems == null)
+                        {
+                            <DisplaySpinner />
+                        }
+                        else
+                        {
+                            
+                            @foreach (var item in currentOrder!.OrderItems)
+                            {
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Quantity</th>
+                                            <th>QuantityCheck</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>@item.Product.Name</td>
+                                            <td>@item.Quantity</td>
+                                            <td>@item.QuantityCheck</td>
+                                            <button onclick="@selectOrderItemId == @item.Id"></button>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            }
+                        }
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        @if (submitStatus != null)
+        {
+            <div class="alert @alertClass" role="alert">
+                @submitStatus
+            </div>
+        }
+
         <h4>Stock items in the Order</h4>
+
+        @if (ProductList == null)
+        {
+            <DisplaySpinner />
+        }
+        else
+        {
+            var productCount = ProductList.Count();
+
+            @if (productCount > 0)
+            {
+                @foreach (var productGroup in GetGroupedProductsByCategory())
+                {
+                    <h4>@GetCategoryName(productGroup)</h4>
+
+                    <div class="row mt-3">
+                        <WarehouseProductDisplay OrderItemId="selectOrderItemId" OrderItems="@currentOrder.OrderItems" ProductList="@productGroup"></WarehouseProductDisplay>
+                    </div>
+                    <h3 class="mb-3" />
+                }
+            }
+        }
     </Authorized>
 </AuthorizeView>
 
@@ -45,7 +96,17 @@
 
 @code {
     [Inject]
-    protected IOrdersService orderService { get; set; } = default!;
+    IOrdersService orderService { get; set; } = default!;
+
+    [Inject]
+    IOrderItemsService orderItemService { get; set; } = default!;
+
+    [Inject]
+    public IProductsService ProductService { get; set; } = default!;
+
+    public List<ProductDto> ProductList { get; set; } = default!;
+
+    public OrderItemDto OrderItem { get; set; } = default!;
 
     [SupplyParameterFromForm]
     public OrderDto currentOrder { get; set; } = new();
@@ -56,26 +117,53 @@
     [Parameter]
     public int userId { get; set; } = default!;
 
+    private int selectOrderItemId;
+
+    private int maxQuantity;
+
+    private string? submitStatus;
+    private string? alertClass;
+
     protected override async Task OnParametersSetAsync()
     {
         if (orderId is not null)
         {
             var order = await orderService.GetOrder(orderId.Value);
 
+            ProductList = await ProductService.GetProducts();
+
             if (order is not null)
             {
+
                 currentOrder.Id = order.Id;
                 currentOrder.UserId = order.UserId;
                 currentOrder.OrderItems = order.OrderItems;
-                currentOrder.OrderStatus = order.OrderStatus;
-                currentOrder.OrderStatusId = order.OrderStatusId;
                 currentOrder.OrderItems = order.OrderItems;
+
+                if (currentOrder.OrderItems != null && currentOrder.OrderItems.Any())
+                {
+                    maxQuantity = currentOrder.OrderItems.First().Quantity;
+                    selectOrderItemId = currentOrder.OrderItems.First().Id;
+                }
+
             }
         }
+
+
     }
 
-    async Task UpdateOrder()
+    protected IOrderedEnumerable<IGrouping<int, ProductDto>> GetGroupedProductsByCategory()
     {
-        var result = await orderService.UpdateOrder(currentOrder);
+        return from product in ProductList
+               where product.Status == ProductStatus.Active
+               group product by product.CategoryId into prodByCatGroup
+               orderby prodByCatGroup.Key
+               select prodByCatGroup;
+    }
+
+    protected string GetCategoryName(IGrouping<int, ProductDto> groupedProductDto)
+    {
+        return groupedProductDto?.FirstOrDefault(pg => pg.CategoryId == groupedProductDto.Key)!.CategoryName!.Substring(0, 1)!;
+
     }
 }

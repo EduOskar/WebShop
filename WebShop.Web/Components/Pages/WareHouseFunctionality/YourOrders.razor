@@ -1,0 +1,67 @@
+﻿@page "/YourOrders"
+@inject NavigationManager navigationManager
+@inject CustomStateProvider authenticationStateProvider
+@layout WareHouseLayout
+
+<AuthorizeView Roles="Warehouse Worker">
+    <Authorized>
+        @if (AssignedOrders == null)
+        {
+            <DisplaySpinner />
+        }
+        else
+        {
+            @foreach (var order in AssignedOrders)
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>OrderId</th>
+                            <th>Order Date</th>
+                            <th>Name</th>
+                            <th>Handle Order</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>@order.Id</td>
+                            <td>@order.PlacementTime</td>
+                            <td>@context.User.Identity!.Name</td>
+                            <td><a href="HandleOrder/@order.Id">Proceed to handling Order</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            }
+        }
+    </Authorized>
+</AuthorizeView>
+
+
+@code {
+    [Inject]
+    IOrdersService OrderService { get; set; } = default!;
+
+    public int UserId { get; set; }
+
+    IEnumerable<OrderDto> OrdersList { get; set; } = default!;
+
+    IEnumerable<OrderDto> AssignedOrders { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+
+        var user = authState.User;
+
+        OrdersList = await OrderService.GetOrders();
+
+        string userIdClaimValue = user.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+        if (int.TryParse(userIdClaimValue, out int userId))
+        {
+            UserId = userId;
+        }
+
+        AssignedOrders = OrdersList.Where(ww=>ww.WareHouseWorkerId == UserId);
+    }
+
+}

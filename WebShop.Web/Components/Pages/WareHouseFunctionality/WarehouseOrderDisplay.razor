@@ -1,90 +1,109 @@
 ﻿@inject NavigationManager navigationManager
 @inject AuthenticationStateProvider authStateProvider
 
-@if (OrdersList == null)
-{
-    <DisplaySpinner />
-}
-else
-{
-    <div class="table-responsive">
-        <table class="table table-hover">
-            <thead class="thead-dark">
-                <tr>
-                    <th>Order ID</th>
-                    <th>Placement Time</th>
-                    <th>User ID</th>
-                    <th>Order Status</th>
-                    <th>Status Date</th>
-                    <th>Update Status</th>
-                    <th>Pick Order</th>
-                    <th>Products</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var order in OrdersList)
-                {
-                    <tr>
-                        <td>@order.Id</td>
-                        <td>@order.PlacementTime</td>
-                        <td>@order.UserId</td>
-                        <td>@order.OrderStatus.CurrentStatus</td>
-                        <td>@order.OrderStatus.StatusDate</td>
-                        <td>
-                            <a href="HandleOrder/@order.Id" class="btn btn-primary mt-2" @onclick="() => AssinOrderToWorker(order.Id)">
-                                Pick Order to handle
-                            </a>
-                        </td>
-                        <td>
-                            @if (order.OrderStatus.CurrentStatus != OrderStatusType.New)
-                            {
-                                <select @bind="order.OrderStatus.CurrentStatus" class="form-control">
-                                    @foreach (var status in Enum.GetValues<OrderStatusType>())
+<AuthorizeView Roles="Warehouse Worker">
+    <Authorized>
+        @if (OrdersList == null)
+        {
+            <DisplaySpinner />
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Placement Time</th>
+                            <th>User ID</th>
+                            <th>Order Status</th>
+                            <th>Status Date</th>
+                            <th>Worker</th>
+                            <th>Pick Order</th>
+                            <th>Products</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in OrdersList)
+                        {
+                            <tr>
+                                <td>@order.Id</td>
+                                <td>@order.PlacementTime</td>
+                                <td>@order.UserId</td>
+                                <td>@order.OrderStatus.CurrentStatus</td>
+                                <td>@order.OrderStatus.StatusDate</td>
+                                @if (order.WareHouseWorkerId != null)
+                                {
+                                    <td>@order.WarehouseWorker!.FirstName</td>
+                                }
+                                else
+                                {
+                                    <span>Not assigned yet</span>
+                                }
+                                <td>
+                                    @if (order.WareHouseWorkerId is null)
                                     {
-                                        <option value="@status">@status</option>
+                                        <a href="HandleOrder/@order.Id" class="btn btn-primary mt-2" @onclick="() => AssinOrderToWorker(order.Id)">
+                                            Pick Order to handle
+                                        </a>
                                     }
-                                </select>
-                                <button class="btn btn-primary mt-2" @onclick="() => UpdateOrderStatus(order.Id, order.OrderStatus.CurrentStatus)">Update Status</button>
-                            }
-                        </td>
-                        <td>
-                            @if (order.OrderItems.Any())
-                            {@foreach (var item in order.OrderItems)
-                                {
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>Quantity</th>
-                                                <th>QuantityCheck</th>
-                                            </tr>
-                                        </thead>
-                                        <tr>
-                                            <td>@item.Product.Name</td>
-                                            <td>@item.Quantity</td>
-                                        </tr>
-                                    </table>
-                                }
-                                @if (submitStatus != null)
-                                {
-                                    <div class="alert @alertClass" role="alert">
-                                        @submitStatus
-                                    </div>
-                                }
-                            }
-                            else
-                            {
-                                <p>No items</p>
-                            }
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+                                    else
+                                    {
+                                        <span>This Order is already Assigned</span>
+                                    }
 
+                                </td>
+                                <td>
+                                    @if (order.OrderStatus.CurrentStatus != OrderStatusType.New)
+                                    {
+                                        <select @bind="order.OrderStatus.CurrentStatus" class="form-control">
+                                            @foreach (var status in Enum.GetValues<OrderStatusType>())
+                                            {
+                                                <option value="@status">@status</option>
+                                            }
+                                        </select>
+                                        <button class="btn btn-primary mt-2" @onclick="() => UpdateOrderStatus(order.Id, order.OrderStatus.CurrentStatus)">Update Status</button>
+                                    }
+                                </td>
+                                <td>
+                                    @if (order.OrderItems.Any())
+                                    {@foreach (var item in order.OrderItems)
+                                        {
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th>Quantity</th>
+                                                        <th>QuantityCheck</th>
+                                                    </tr>
+                                                </thead>
+                                                <tr>
+                                                    <td>@item.Product.Name</td>
+                                                    <td>@item.Quantity</td>
+                                                </tr>
+                                            </table>
+                                        }
+                                        @if (submitStatus != null)
+                                        {
+                                            <div class="alert @alertClass" role="alert">
+                                                @submitStatus
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p>No items</p>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </Authorized>
+</AuthorizeView>
 
-}
 
 @code {
     [Inject]

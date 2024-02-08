@@ -5,10 +5,15 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="sidebar">
-            <NavMenu />
-        </div>
+        @if (!isWarehouseWorker)
+        {
+            <div class="sidebar">
 
+                <NavMenu />
+
+            </div>
+
+        }
         <main>
             <div class="top-row px-4">
                 <CartMenu />
@@ -31,7 +36,9 @@
             <article class="content px-4">
                 @Body
             </article>
+
         </main>
+
     </div>
 </div>
 
@@ -48,17 +55,23 @@
 
     private bool showProfilePageDropDown = false;
 
+    private bool isWarehouseWorker = false;
+
     String Message = "Login";
 
     protected override async Task OnParametersSetAsync()
     {
+
+
         if (!(await AuthenticationState).User.Identity!.IsAuthenticated)
         {
             Message = "Login";
         }
         else
         {
+            var user = (await AuthenticationState).User;
             Message = "Logout";
+            isWarehouseWorker = user.IsInRole("Warehouse Worker");
         }
     }
 

@@ -27,7 +27,7 @@ public class CartOrderTransfersController : ControllerBase
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<bool>> CartOrderTransfer(int userId, string? discountCode)
+    public async Task<ActionResult<bool>> CartOrderTransfer(int userId, string? discountCode = null)
     {
         try
         {

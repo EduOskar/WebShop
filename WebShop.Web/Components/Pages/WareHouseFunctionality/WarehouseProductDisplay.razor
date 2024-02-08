@@ -1,0 +1,91 @@
+﻿
+<h2>@ErrorMessage</h2>
+
+@foreach (var products in ProductList)
+{
+
+    <div class="col-md-3" style="padding-bottom:40px;">
+        <div class="card">
+            <img class="img-thumbnail" src="@products.ImageURL" />
+            <div class="card-body">
+                <h5 class="card-title mb-3">
+                    @products.Name
+                </h5>
+                <p class="card-text">
+                    <b>@products.Price.ToString("C")</b>
+                </p>
+            </div>
+        </div>
+
+        @{
+            var matchingOrderItem = OrderItems.FirstOrDefault(oi => oi.ProductId == products.Id);
+        }
+        @if (matchingOrderItem != null)
+        {
+        <button class="btn btn-primary" @onclick="@(() => UpdateOrderQuantity(matchingOrderItem!.Id, matchingOrderItem.QuantityCheck + 1, products.Id))">Add to order</button>
+        }
+    </div>
+
+}
+
+@code {
+    [Parameter]
+    public IEnumerable<ProductDto> ProductList { get; set; } = default!;
+
+    [Parameter]
+    public List<OrderItemDto> OrderItems { get; set; } = default!;
+
+    [Parameter]
+    public int OrderItemId { get; set; }
+
+    public OrderItemDto orderItem { get; set; } = default!;
+
+    public OrderItemDto? matchingOrderItem;
+
+    [Inject]
+    public IOrderItemsService orderItemService { get; set; } = default!;
+
+    [Inject]
+    public IProductsService productService { get; set; } = default!;
+
+    string? ErrorMessage;
+
+    async Task<bool> UpdateOrderQuantity(int orderItemId, int quantityCheck, int productId)
+    {
+
+        orderItem = await orderItemService.GetOrderItem(orderItemId);
+
+        if (orderItem.ProductId == productId)
+        {
+            QuantityCheckDto quantitybool = new()
+                {
+                    OrderItemId = orderItemId,
+                    QuantityCheck = quantityCheck
+                };
+
+
+            var success = await orderItemService.QuantityCheck(orderItemId, quantitybool);
+
+            if (success)
+            {
+                // submitStatus = "QuantityCheck was Succesfull!";
+                // alertClass = "alert-success";
+                StateHasChanged();
+                return true;
+            }
+            else
+            {
+                // submitStatus = "QuantityCheck has Failed!";
+                // alertClass = "alert-danger";
+                return false;
+            }
+
+        }
+        else
+        {
+            ErrorMessage = "Product did not match the one in the order";
+            return false;
+        }
+
+    }
+}

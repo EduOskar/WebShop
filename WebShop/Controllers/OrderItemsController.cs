@@ -190,7 +190,7 @@ public class OrderItemsController : ControllerBase
 
                 orderItem.QuantityCheck = quantityCheck.QuantityCheck;
 
-                if (orderItem.Quantity == orderItem.QuantityCheck)
+                if (orderItem.Quantity >= orderItem.QuantityCheck)
                 { 
 
                     if (await _orderItemRepository.UpdateOrderItem(orderItem))
