@@ -1,10 +1,8 @@
 ﻿
-<h2>@ErrorMessage</h2>
-
-@foreach (var products in ProductList)
-{
-
-    <div class="col-md-3" style="padding-bottom:40px;">
+<div class="product-container">
+    @foreach (var products in ProductList)
+    {
+        <h2>@ErrorMessage</h2>
         <div class="card">
             <img class="img-thumbnail" src="@products.ImageURL" />
             <div class="card-body">
@@ -17,16 +15,17 @@
             </div>
         </div>
 
-        @{
-            var matchingOrderItem = OrderItems.FirstOrDefault(oi => oi.ProductId == products.Id);
-        }
+        var matchingOrderItem = OrderItems.FirstOrDefault(oi => oi.ProductId == products.Id);
         @if (matchingOrderItem != null)
         {
-        <button class="btn btn-primary" @onclick="@(() => UpdateOrderQuantity(matchingOrderItem!.Id, matchingOrderItem.QuantityCheck + 1, products.Id))">Add to order</button>
-        }
-    </div>
+            @if (matchingOrderItem.Quantity != matchingOrderItem.QuantityCheck)
+            {
+                <button class="btn btn-primary" @onclick="@(() => UpdateOrderQuantity(matchingOrderItem!.Id, matchingOrderItem.QuantityCheck + 1, products.Id))">Add to order</button>
+            }
 
-}
+        }
+    }
+</div>
 
 @code {
     [Parameter]
@@ -47,6 +46,9 @@
 
     [Inject]
     public IProductsService productService { get; set; } = default!;
+
+    [Parameter]
+    public EventCallback<bool> OnQuantityUpdate { get; set; }
 
     string? ErrorMessage;
 
@@ -70,13 +72,12 @@
             {
                 // submitStatus = "QuantityCheck was Succesfull!";
                 // alertClass = "alert-success";
-                StateHasChanged();
+                await OnQuantityUpdate.InvokeAsync(true);
                 return true;
             }
             else
             {
-                // submitStatus = "QuantityCheck has Failed!";
-                // alertClass = "alert-danger";
+                ErrorMessage = "You already reached max quantity";
                 return false;
             }
 

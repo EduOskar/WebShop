@@ -27,7 +27,15 @@
                             <td>@order.Id</td>
                             <td>@order.PlacementTime</td>
                             <td>@context.User.Identity!.Name</td>
-                            <td><a href="HandleOrder/@order.Id">Proceed to handling Order</a></td>
+                            @if (order.OrderStatus.CurrentStatus == OrderStatusType.New)
+                            {
+                                <td><a href="HandleOrder/@order.Id">Proceed to handling Order</a></td>
+                            }
+                            else
+                            {
+                                <td><a href="HandleOrder/@order.Id">Review processed order</a></td>
+                            }
+
                         </tr>
                     </tbody>
                 </table>

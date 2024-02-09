@@ -1,8 +1,7 @@
 ﻿@page "/ProfilePage"
 @inject CustomStateProvider authenticationStateProvider
 
-<AuthorizeView>
-    <Authorized>
+
         @if (User == null)
         {
             <DisplaySpinner />
@@ -17,10 +16,11 @@
                         <CardSubTitle Class="mb-2 text-muted">@User.Phonenumber</CardSubTitle>
                     </CardBody>
                 </Card>
-        }
-    </Authorized>
-</AuthorizeView>
 
+               
+        }
+
+         <ResetPassword/>
 
 @code {
     private ClaimsPrincipal UserAuth = default!;
@@ -48,5 +48,4 @@
             User = await UserService.GetUser(UserId);
         }
     }
-
 }
