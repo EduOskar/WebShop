@@ -5,13 +5,21 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.Serialization;
 
 namespace WebShop.Models.DTOs;
 public enum OrderStatusType
 {
+    [EnumMember(Value = "New")]
     New,
+
+    [EnumMember(Value = "Sent")]
     Sent,
+
+    [EnumMember(Value = "Delivered")]
     Delivered,
+
+    [EnumMember(Value = "Cancelled")]
     Cancelled
 }
 public class OrderStatusDto

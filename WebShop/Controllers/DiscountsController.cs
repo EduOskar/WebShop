@@ -1,9 +1,14 @@
 ﻿using AutoMapper;
+using AutoMapper.Configuration.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using WebShop.Api.Entity;
 using WebShop.Api.Repositories.Contracts;
 using WebShop.Models.DTOs;
+using DiscountType = WebShop.Api.Entity.DiscountType;
 
 namespace WebShop.Api.Controllers;
 [Route("api/[controller]")]
@@ -14,16 +19,19 @@ public class DiscountsController : ControllerBase
     private readonly IDiscountRepository _discountRepository;
     private readonly IUserRepository _userRepository;
     private readonly IEmailSenderRepository _emailSenderRepository;
+    private readonly IProductRepository _productRepository;
 
     public DiscountsController(IMapper mapper,
         IDiscountRepository discountRepository,
         IUserRepository userRepository,
-        IEmailSenderRepository emailSenderRepository)
+        IEmailSenderRepository emailSenderRepository,
+        IProductRepository productRepository)
     {
         _mapper = mapper;
         _discountRepository = discountRepository;
         _userRepository = userRepository;
         _emailSenderRepository = emailSenderRepository;
+        _productRepository = productRepository;
     }
 
     [HttpGet("{discountCode}")]
@@ -56,20 +64,42 @@ public class DiscountsController : ControllerBase
         return NotFound();
     }
 
+    [HttpGet("ProductsDiscounts")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(500)]
+    public async Task<ActionResult<List<ProductsDiscount>>> GetProductDiscounts()
+    {
+        var productDiscounts = await _discountRepository.GetProductDiscounts();
+
+        if (productDiscounts != null)
+        {
+            return Ok(productDiscounts);
+        }
+
+        return NotFound();
+    }
+
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult> CreateDiscount([FromBody] DiscountDto discountCreate)
+    public async Task<ActionResult> CreateDiscount([FromBody] DiscountDto discountCreate, [FromQuery]DiscountType discountType)
     {
         if (discountCreate != null)
         {
-            var newCode = _discountRepository.GenerateUniqueCode(7, discountCreate.DiscountCode!);
-
             var discountMap = _mapper.Map<Discount>(discountCreate);
-            discountMap.DiscountCode = newCode;
+
+            if (discountType == DiscountType.ProductSpecific)
+            {
+                var newCode = _discountRepository.GenerateUniqueCode(7, discountCreate.DiscountCode!);
+                
+                discountMap.DiscountCode = newCode;
+            }
+            
             discountMap.IsActive = (Entity.DiscountStatus)1;
             discountMap.DiscountsUsed = 0;
+            discountMap.DiscountType = discountType;
 
             if (await _discountRepository.CreateDiscount(discountMap))
             {
@@ -104,6 +134,26 @@ public class DiscountsController : ControllerBase
 
         }
         return BadRequest("Discount cannot be applied: either it's invalid, expired, or already used.");
+    }
+
+    [HttpPost("apply-discount-On-Product/{productId:int}/{discountId:int}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(500)]
+    public async Task<ActionResult> ApplyDiscountOnProducts(int productId, int discountId)
+    {
+        var product = await _productRepository.GetProduct(productId);
+
+        var discount = await _discountRepository.GetDiscountById(discountId);
+
+        if (discount != null && product != null)
+        {
+            await _discountRepository.ApplyDiscountOnProduct(product.Id, discount.Id);
+
+            return Ok();
+        }
+
+        return NotFound();
     }
 
     [HttpPut("{discountId:int}")]

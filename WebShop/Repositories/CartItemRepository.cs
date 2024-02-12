@@ -17,6 +17,7 @@ public class CartItemRepository : ICartItemRepository
     public async Task<bool> CartItemExist(int cartItemId)
     {
         var cartItemExist = await _dbContext.CartItems
+            .AsNoTracking()
             .Include(ci => ci.Product)
             .AnyAsync(ci => ci.Id == cartItemId);
 
@@ -63,6 +64,7 @@ public class CartItemRepository : ICartItemRepository
     public async Task<ICollection<CartItem>> GetCartItems(int userId)
     {
         var cartItems = await _dbContext.CartItems
+            .AsNoTracking()
             .Include(ci => ci.Cart)
             .Include(p => p.Product)
             .Where(ci => ci.Cart!.UserId == userId)

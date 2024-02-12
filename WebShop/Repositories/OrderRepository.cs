@@ -35,6 +35,7 @@ public class OrderRepository : IOrderRepository
             .Include(oi => oi.OrderItems).ThenInclude(oi => oi.Product)
             .Include(u => u.User)
             .Include(os => os.OrderStatus)
+            .AsNoTracking()
             .FirstOrDefaultAsync(o => o.Id == orderId);
 
         if (order != null)
@@ -53,6 +54,7 @@ public class OrderRepository : IOrderRepository
             .Include(os => os.OrderStatus)
             .Where(o => o.UserId == userId)
             .OrderBy(o => o.Id)
+            .AsNoTracking()
             .LastOrDefaultAsync();
 
         if (orders != null)
@@ -71,6 +73,7 @@ public class OrderRepository : IOrderRepository
             .Include(u => u.User)
             .Include(ww => ww.WarehouseWorker)
             .Include(os => os.OrderStatus)
+            .AsNoTracking()
             .ToListAsync();
 
         return orders;
@@ -83,6 +86,7 @@ public class OrderRepository : IOrderRepository
             .Include(u => u.User)
             .Include(os => os.OrderStatus)
             .Where(o => o.UserId == userId)
+            .AsNoTracking()
             .ToListAsync();
 
         return orders;

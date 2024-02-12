@@ -36,7 +36,8 @@ public class ReviewRepository : IReviewRepository
 
     public async Task<Review> GetReview(int reviewId)
     {
-        var review = await _dbContext.Reviews.FindAsync(reviewId);
+        var review = await _dbContext.Reviews
+            .FindAsync(reviewId);
 
         if (review != null)
         {
@@ -51,6 +52,7 @@ public class ReviewRepository : IReviewRepository
         var reviews = await _dbContext.Reviews
             .Include(x => x.User)
             .Include(x => x.Product)
+            .AsNoTracking()
             .ToListAsync();
 
         return reviews;
@@ -61,6 +63,7 @@ public class ReviewRepository : IReviewRepository
         var reviewsByUser = await _dbContext.Reviews
             .Include(x => x.User)
             .Include(x => x.Product)
+            .AsNoTracking()
             .Where(r => r.ProductId == productId).ToListAsync();
 
         if (reviewsByUser != null)
@@ -74,7 +77,9 @@ public class ReviewRepository : IReviewRepository
     public async Task<ICollection<Review>> GetReviewsFromUser(int userId)
     {
         var userReview = await _dbContext.Reviews
-            .Where(u => u.User!.Id == userId).ToListAsync();
+            .Where(u => u.User!.Id == userId)
+            .AsNoTracking()
+            .ToListAsync();
 
         return userReview;
     }

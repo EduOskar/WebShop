@@ -64,7 +64,9 @@ public class UserRepository : IUserRepository
 
     public async Task<ICollection<User>> GetUsers()
     {
-        var users = await _userManager.Users.ToListAsync();
+        var users = await _userManager.Users
+            .AsNoTracking()
+            .ToListAsync();
 
         return users;
     }

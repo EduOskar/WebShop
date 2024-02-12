@@ -1,13 +1,22 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
 
 namespace WebShop.Api.Entity;
 
 public enum OrderStatusType
 {
+
+    [EnumMember(Value = "New")]
     New,
+
+    [EnumMember(Value = "Sent")]
     Sent,
+
+    [EnumMember(Value = "Delivered")]
     Delivered,
+
+    [EnumMember(Value = "Cancelled")]
     Cancelled
 }
 public class OrderStatus

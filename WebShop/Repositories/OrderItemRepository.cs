@@ -31,6 +31,7 @@ public class OrderItemRepository : IOrderItemRepository
     public async Task<OrderItem> GetOrderItem(int orderItemId)
     {
         var orderItem = await _dbContext.OrderItems
+            .AsNoTracking()
             .Include(p => p.Product)
             .Include(p => p.Order).ThenInclude(os => os!.OrderStatus)
             .Where(oi => oi.Id == orderItemId)
@@ -49,6 +50,7 @@ public class OrderItemRepository : IOrderItemRepository
         var orderItem = await _dbContext.OrderItems
             .Include(p => p.Product)
             .Include(p => p.Order).ThenInclude(os => os!.OrderStatus)
+            .AsNoTracking()
             .ToListAsync();
 
         return orderItem;
@@ -60,6 +62,7 @@ public class OrderItemRepository : IOrderItemRepository
             .Include(p => p.Product) 
             .Include(oi => oi.Order).ThenInclude(os => os!.OrderStatus)
             .Where(o=>o.OrderId == orderId)
+            .AsNoTracking()
             .ToListAsync();
 
         return orderItem;

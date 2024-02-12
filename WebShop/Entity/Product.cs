@@ -1,11 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
 
 namespace WebShop.Api.Entity;
 
 public enum ProductStatus
 {
+    [EnumMember(Value = "Active")]
     Active,
+
+    [EnumMember(Value = "Inactive")]
     Inactive
 }
 
@@ -37,4 +41,6 @@ public class Product
     public virtual ProductCategory? Category { get; set; }
 
     public ICollection<Review>? Reviews { get; set; }
+
+    public ICollection<ProductsDiscount>? ProductsDiscount { get; set; }
 }

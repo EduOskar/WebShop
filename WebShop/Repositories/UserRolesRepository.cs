@@ -20,7 +20,9 @@ public class UserRolesRepository : IUserRolesRepository
     }
     public async Task<IdentityUserRole<int>> GetUserRole(int userId)
     {
-        var role = await _dbContext.UserRoles.FirstOrDefaultAsync(r => r.UserId == userId);
+        var role = await _dbContext.UserRoles
+            .AsNoTracking()
+            .FirstOrDefaultAsync(r => r.UserId == userId);
 
         if (role != null)
         {
@@ -32,7 +34,9 @@ public class UserRolesRepository : IUserRolesRepository
 
     public async Task<IdentityRole<int>> GetRole(int roleId)
     {
-        var role = await _dbContext.Roles.FirstOrDefaultAsync(r => r.Id == roleId);
+        var role = await _dbContext.Roles
+            .AsNoTracking()
+            .FirstOrDefaultAsync(r => r.Id == roleId);
 
         if (role != null)
         {
@@ -44,7 +48,9 @@ public class UserRolesRepository : IUserRolesRepository
 
     public async Task<List<IdentityRole<int>>> GetRoles()
     {
-        var roles = await _rolemanager.Roles.ToListAsync();
+        var roles = await _rolemanager.Roles
+            .AsNoTracking()
+            .ToListAsync();
 
         if (roles != null)
         {
@@ -77,7 +83,9 @@ public class UserRolesRepository : IUserRolesRepository
 
     public Task<List<IdentityUserRole<int>>> GetUsersAndRoles()
     {
-        var roles = _dbContext.UserRoles.ToListAsync();
+        var roles = _dbContext.UserRoles
+            .AsNoTracking()
+            .ToListAsync();
 
         if (roles != null)
         {

@@ -28,7 +28,9 @@ public class OrderStatusRepository : IOrderStatusRepository
 
     public async Task<OrderStatus> GetOrderStatus(int orderStatusId)
     {
-        var orderStatus = await _dbContext.OrderStatus.FirstOrDefaultAsync(os => os.Id == orderStatusId);
+        var orderStatus = await _dbContext.OrderStatus
+            .AsNoTracking()
+            .FirstOrDefaultAsync(os => os.Id == orderStatusId);
 
         if (orderStatus != null)
         {

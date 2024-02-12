@@ -14,6 +14,12 @@ public interface IDiscountRepository
 
     Task<Discount> GetDiscount(string discountCode);
 
+    Task<Discount> GetDiscountById(int discountId);
+
+    Task<bool> ApplyDiscountOnProduct(int productId, int discountId);
+
+    Task<List<ProductsDiscount>> GetProductDiscounts();
+
     Task<bool> CreateDiscount(Discount discountCreate);
 
     Task<bool> DeleteDiscount(Discount discountDelete);

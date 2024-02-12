@@ -23,6 +23,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
     public DbSet<OrderStatus> OrderStatus { get; set; }
     public DbSet<Discount> Discounts { get; set; }
     public DbSet<DiscountUsage> DiscountUsages { get; set; }
+    public DbSet<ProductsDiscount> ProductDiscounts { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

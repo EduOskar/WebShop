@@ -18,7 +18,8 @@ public class DiscountRepository : IDiscountRepository
 
     private bool IsCodeExists(string code)
     {
-        return _dbContext.Discounts.Any(dc => dc.DiscountCode == code);
+        return _dbContext.Discounts
+            .Any(dc => dc.DiscountCode == code);
     }
 
     public string GenerateUniqueCode(int length = 7, string prefix = "DISC-")
@@ -38,6 +39,7 @@ public class DiscountRepository : IDiscountRepository
 
     public async Task<bool> CreateDiscount(Discount discountCreate)
     {
+
         await _dbContext.AddAsync(discountCreate);
 
         return await Save();
@@ -52,7 +54,9 @@ public class DiscountRepository : IDiscountRepository
 
     public async Task<Discount> GetDiscount(string discountCode)
     {
-        var discount = await _dbContext.Discounts.FirstOrDefaultAsync(dc => dc.DiscountCode == discountCode);
+        var discount = await _dbContext.Discounts
+            .AsNoTracking()
+            .FirstOrDefaultAsync(dc => dc.DiscountCode == discountCode);
 
         if (discount != null)
         {
@@ -62,9 +66,26 @@ public class DiscountRepository : IDiscountRepository
         throw new Exception("Entity Not found");
     }
 
+    public async Task<Discount> GetDiscountById(int discountId)
+    {
+        var discount = await _dbContext.Discounts
+            .AsNoTracking()
+            .FirstOrDefaultAsync(dc => dc.Id == discountId);
+
+        if (discount != null)
+        {
+            return discount;
+        }
+
+        throw new Exception("Entity Not found");
+    }
+
+
     public async Task<List<Discount>> GetDiscounts()
     {
-        var discounts = await _dbContext.Discounts.ToListAsync();
+        var discounts = await _dbContext.Discounts
+            .AsNoTracking()
+            .ToListAsync();
 
         if (discounts != null)
         {
@@ -115,7 +136,7 @@ public class DiscountRepository : IDiscountRepository
     {
 
         var discount = await _dbContext.Discounts.FirstOrDefaultAsync(dc => dc.DiscountCode == discountCode);
-        
+
         if (discount == null)
         {
             return false;
@@ -124,5 +145,40 @@ public class DiscountRepository : IDiscountRepository
         var discountFalse = await _dbContext.DiscountUsages.AnyAsync(du => du.UserId == userId && du.DiscountId == discount.Id);
 
         return !discountFalse;
+    }
+
+    public async Task<bool> ApplyDiscountOnProduct(int productId, int discountId)
+    {
+        var product = await _dbContext.Products.FirstOrDefaultAsync(x => x.Id == discountId);
+        var discount = await _dbContext.Discounts.FirstOrDefaultAsync(x => x.Id == discountId);
+
+        if (discount != null && product != null)
+        {
+            var productDiscount = new ProductsDiscount
+            {
+                DiscountId = discountId,
+                Discount = discount,
+                ProductId = productId,
+                Product = product
+            };
+
+
+            await _dbContext.AddAsync(productDiscount);
+
+            await Save();
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public async Task<List<ProductsDiscount>> GetProductDiscounts()
+    {
+        var productDiscounts = await _dbContext.ProductDiscounts
+            .AsNoTracking()
+            .ToListAsync();
+
+        return productDiscounts;
     }
 }

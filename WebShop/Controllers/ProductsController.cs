@@ -15,14 +15,17 @@ public class ProductsController : ControllerBase
     private readonly IProductRepository _productRepository;
     private readonly IProductCategoryRepository _productCategoryRepository;
     private readonly IMapper _mapper;
+    private readonly IDiscountRepository _discountRepository;
 
-    public ProductsController(IProductRepository productRepository, 
-        IProductCategoryRepository productCategoryRepository, 
-        IMapper mapper)
+    public ProductsController(IProductRepository productRepository,
+        IProductCategoryRepository productCategoryRepository,
+        IMapper mapper,
+        IDiscountRepository discountRepository)
     {
         _productRepository = productRepository;
         _productCategoryRepository = productCategoryRepository;
         _mapper = mapper;
+        _discountRepository = discountRepository;
     }
 
     [HttpGet]
@@ -38,7 +41,7 @@ public class ProductsController : ControllerBase
         {
             return BadRequest(ModelState);
         }
-        
+
         return Ok(products);
     }
 
@@ -49,36 +52,30 @@ public class ProductsController : ControllerBase
     public async Task<ActionResult<Product>> GetProduct(int productId)
     {
 
-        if (!await _productRepository.ProductExist(productId))
-        {
-            return NotFound();
-        }
-
         var product = _mapper.Map<ProductDto>(
-            await _productRepository.GetProduct(productId));
+         await _productRepository.GetProduct(productId));
 
-        if (!ModelState.IsValid)
+        if (await _productRepository.ProductExist(product.Id))
         {
-            return BadRequest(ModelState);
+            return Ok(product);
         }
-
-        return Ok(product);
+        return NotFound();
     }
 
     [HttpGet("GetProducts-By-Category/{categoryId:int}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     public async Task<ActionResult<Product>> GetProductsByCategory(int categoryId)
-     {
+    {
         var productsByCategory = _mapper.Map<List<ProductDto>>(
             await _productRepository.GetProductByCategory(categoryId));
 
-        if (productsByCategory == null)
+        if (productsByCategory != null)
         {
-            return BadRequest();
+            return Ok(productsByCategory);
         }
 
-        return Ok(productsByCategory);
+        return BadRequest();
     }
 
     [HttpPost]
