@@ -1,4 +1,10 @@
-﻿div-col-md {
+﻿.product-container{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+div-col-md {
     width: 40px;
 }
 
@@ -18,11 +24,13 @@ a {
 
 .card {
     transition: box-shadow 0.3s ease-in-out;
-    overflow: hidden;
+  /*  overflow: hidden;*/
     align-items: center;
-    background-color: lightblue;
     width: 433px;
     height: 300px;
+    flex: 0 1 calc(20% - 10px);
+    margin: 5px;
+    padding-bottom: 40px;
 }
 
 a:hover img {
