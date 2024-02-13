@@ -5,6 +5,7 @@ using WebShop.Api.Entity;
 using WebShop.Api.Repositories;
 using WebShop.Api.Repositories.Contracts;
 using WebShop.Models.DTOs;
+using DiscountType = WebShop.Api.Entity.DiscountType;
 
 namespace WebShop.Api.Controllers;
 
@@ -36,13 +37,22 @@ public class ProductsController : ControllerBase
         var products = _mapper.Map<List<ProductDto>>(
             await _productRepository.GetProducts());
 
-
-        if (!ModelState.IsValid)
+        if (products != null )
         {
-            return BadRequest(ModelState);
+            var productsDiscount = await _discountRepository.GetProductDiscounts();
+
+            foreach (var discount in productsDiscount)
+            {
+                if (discount.Discount.DiscountType == DiscountType.ProductSpecific)
+                {
+
+                }
+            }
+            
+            return Ok(products);
         }
 
-        return Ok(products);
+        return BadRequest(products);
     }
 
     [HttpGet("{productId:int}")]

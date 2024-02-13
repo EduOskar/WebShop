@@ -17,16 +17,34 @@ else
 
 <EditForm Model="currentDiscount" OnValidSubmit="HandleSubmit" FormName="DiscountForm">
     <div>
-        <label for="discountCode"></label>
+        <label for="discountCode">DiscountCode</label>
         <InputText id="discountCode" placeholder="If no discountName is provided, it will generate with random letters" @bind-Value="@currentDiscount.DiscountCode" class="form-control" />
     </div>
     <div>
-        <label for="discountPercentage"></label>
+        <label for="discountPercentage">DiscountPercentage</label>
         <InputNumber id="discountPercentage" placeholder="discountPercentage" @bind-Value=@currentDiscount.DiscountPercentage class="form-control"></InputNumber>
     </div>
     <div>
-        <label for="discountStatus">Discount Status:</label>
-        <InputNumber id="discountStatus" @bind-Value="discountStatus" class="form-control"></InputNumber>
+        <label id="discountStatus">discountStatus</label>
+        <select @bind="@currentDiscount.IsActive" class="form-control">
+            @foreach (var status in Enum.GetValues<DiscountStatus>())
+            {
+                <option value="@status">@status</option>
+            }
+        </select>
+       @*  <label for="discountStatus">Discount Status:</label>
+        <InputSelect id="discountStatus" @bind-Value="@currentDiscount.IsActive" class="form-control"></InputSelect> *@
+    </div>
+    <div>
+       @*  <label for="discountType">DiscountType</label>
+        <InputSelect id="discountType" @bind-Value="currentDiscount.DiscountType" class="form-control"></InputSelect> *@
+        <label id="discountType">DiscountType</label>
+        <select @bind="@currentDiscount.DiscountType" class="form-control">
+            @foreach (var status in Enum.GetValues<DiscountType>())
+            {
+                <option value="@status">@status</option>
+            }
+        </select>
     </div>
     <button type="submit" class="btn btn-primary">@Message</button>
 </EditForm>

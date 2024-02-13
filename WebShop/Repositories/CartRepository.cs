@@ -37,7 +37,6 @@ public class CartRepository : ICartRepository
     public async Task<Cart> GetCart(int cartId)
     {
         var cart = await _dbContext.Carts.Where(c => c.Id == cartId)
-            .AsNoTracking()
             .FirstOrDefaultAsync();
 
         if (cart != null)
@@ -51,7 +50,6 @@ public class CartRepository : ICartRepository
     public async Task<Cart> GetCartByUser(int UserId)
     {
         var userCart = await _dbContext.Carts.Where(c => c.UserId == UserId)
-            .AsNoTracking()
             .FirstOrDefaultAsync();
 
         if (userCart != null)
@@ -65,7 +63,6 @@ public class CartRepository : ICartRepository
     public async Task<ICollection<Cart>> GetCarts()
     {
         var carts = await _dbContext.Carts
-            .AsNoTracking()
             .ToListAsync();
 
         return carts;

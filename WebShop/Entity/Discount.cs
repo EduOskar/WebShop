@@ -15,7 +15,7 @@ public enum DiscountType
     ProductSpecific = 1,
 }
 public enum DiscountStatus
-{
+{ 
     [EnumMember(Value = "Active")]
     Active = 0,
 
@@ -38,5 +38,4 @@ public class Discount
 
     public DiscountType DiscountType { get; set; } = default!;
 
-    public ICollection<ProductsDiscount>? ProductDiscounts { get; set; }
 }

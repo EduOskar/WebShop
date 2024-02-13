@@ -176,7 +176,8 @@ public class DiscountRepository : IDiscountRepository
     public async Task<List<ProductsDiscount>> GetProductDiscounts()
     {
         var productDiscounts = await _dbContext.ProductDiscounts
-            .AsNoTracking()
+            .Include(u => u.Product)
+            .Include(d => d.Discount)
             .ToListAsync();
 
         return productDiscounts;

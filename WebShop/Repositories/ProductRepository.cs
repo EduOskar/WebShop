@@ -32,9 +32,7 @@ public class ProductRepository : IProductRepository
     {
         
         var product = await _dbContext.Products
-            .AsNoTracking()
             .Include(p => p.Category)
-            .AsNoTracking()
             .SingleOrDefaultAsync(p => p.Id == productId);
 
         if (product != null)

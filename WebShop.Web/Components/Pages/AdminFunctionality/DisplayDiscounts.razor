@@ -1,7 +1,5 @@
 ﻿@page "/DisplayDiscounts"
 
-<h3>DisplayDiscounts</h3>
-
 <PageTitle>Admin Discount</PageTitle>
 
 <AuthorizeView Roles="Admin">
@@ -26,6 +24,7 @@
                         <th>discount code</th>
                         <th>discount percentage</th>
                         <th>Active Status</th>
+                        <th>Discounttype</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -49,6 +48,8 @@
                                 </select>
                                 <button class="btn btn-primary mt-2" @onclick="()=>UpdateDiscountStatus(discount)">Update status</button>
                             </td>
+                            <td>@discount.DiscountType</td>
+                                
                         </tr>
                     }
                 </tbody>

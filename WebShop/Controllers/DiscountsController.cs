@@ -1,10 +1,5 @@
 ﻿using AutoMapper;
-using AutoMapper.Configuration.Annotations;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
-using System.Runtime.Serialization;
-using System.Xml.Serialization;
 using WebShop.Api.Entity;
 using WebShop.Api.Repositories.Contracts;
 using WebShop.Models.DTOs;
@@ -49,6 +44,21 @@ public class DiscountsController : ControllerBase
         return NotFound();
     }
 
+    [HttpGet("{discountId:int}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    public async Task<ActionResult<DiscountDto>> GetDiscountById(int discountId)
+    {
+        var discount = _mapper.Map<DiscountDto>(await _discountRepository.GetDiscountById(discountId));
+
+        if (discount != null)
+        {
+            return Ok(discount);
+        }
+
+        return NotFound(discount);
+    }
+
     [HttpGet]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
@@ -84,13 +94,13 @@ public class DiscountsController : ControllerBase
     [ProducesResponseType(201)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult> CreateDiscount([FromBody] DiscountDto discountCreate, [FromQuery]DiscountType discountType)
+    public async Task<ActionResult> CreateDiscount([FromBody] DiscountDto discountCreate)
     {
         if (discountCreate != null)
         {
             var discountMap = _mapper.Map<Discount>(discountCreate);
 
-            if (discountType == DiscountType.ProductSpecific)
+            if (discountMap.DiscountType == DiscountType.TotalPrice)
             {
                 var newCode = _discountRepository.GenerateUniqueCode(7, discountCreate.DiscountCode!);
                 
@@ -99,11 +109,10 @@ public class DiscountsController : ControllerBase
             
             discountMap.IsActive = (Entity.DiscountStatus)1;
             discountMap.DiscountsUsed = 0;
-            discountMap.DiscountType = discountType;
 
             if (await _discountRepository.CreateDiscount(discountMap))
             {
-                return CreatedAtAction("GetDiscount", new { discountCode = discountMap.DiscountCode }, discountMap);
+                return CreatedAtAction("GetDiscountById", new { discountId = discountMap.Id }, discountMap);
             }
 
         }
@@ -148,9 +157,14 @@ public class DiscountsController : ControllerBase
 
         if (discount != null && product != null)
         {
-            await _discountRepository.ApplyDiscountOnProduct(product.Id, discount.Id);
+            if (discount.DiscountType == DiscountType.ProductSpecific)
+            {
+                await _discountRepository.ApplyDiscountOnProduct(product.Id, discount.Id);
 
-            return Ok();
+                return Ok();
+            }
+
+            return BadRequest("DiscountType are not productSpecific");
         }
 
         return NotFound();
