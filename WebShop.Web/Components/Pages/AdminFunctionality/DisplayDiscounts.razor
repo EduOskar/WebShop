@@ -83,9 +83,9 @@
         discountList = await discountSevice.GetDiscounts();
     }
 
-    private async Task SendDiscountMail(string discountCode)
+    private async Task SendDiscountMail(int discountId)
     {
-        var result = await discountSevice.EmailDiscounts(discountCode);
+        var result = await discountSevice.EmailDiscounts(discountId);
 
         if (result)
         {
@@ -104,7 +104,7 @@
         {
             if (discount.IsActive == DiscountStatus.Active)
             {
-                await SendDiscountMail(discount.DiscountCode!);
+                await SendDiscountMail(discount.Id!);
             }
         }
     }

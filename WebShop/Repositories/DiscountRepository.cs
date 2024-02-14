@@ -149,7 +149,7 @@ public class DiscountRepository : IDiscountRepository
 
     public async Task<bool> ApplyDiscountOnProduct(int productId, int discountId)
     {
-        var product = await _dbContext.Products.FirstOrDefaultAsync(x => x.Id == discountId);
+        var product = await _dbContext.Products.FirstOrDefaultAsync(x => x.Id == productId);
         var discount = await _dbContext.Discounts.FirstOrDefaultAsync(x => x.Id == discountId);
 
         if (discount != null && product != null)

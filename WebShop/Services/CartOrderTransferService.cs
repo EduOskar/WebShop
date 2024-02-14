@@ -54,6 +54,7 @@ public class CartOrderTransferService
             }
             else
             {
+
                 totalCost = cart.CartItems!.Sum(item => item.Product.Price * item.Quantity);
 
                 user.Credit -= totalCost;

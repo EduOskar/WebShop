@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebShop.Api.Entity;
 using WebShop.Api.Repositories;
 using WebShop.Api.Repositories.Contracts;
+using WebShop.Api.Services;
 using WebShop.Models.DTOs;
 using DiscountType = WebShop.Api.Entity.DiscountType;
 
@@ -16,40 +17,36 @@ public class ProductsController : ControllerBase
     private readonly IProductRepository _productRepository;
     private readonly IProductCategoryRepository _productCategoryRepository;
     private readonly IMapper _mapper;
-    private readonly IDiscountRepository _discountRepository;
+
 
     public ProductsController(IProductRepository productRepository,
         IProductCategoryRepository productCategoryRepository,
-        IMapper mapper,
-        IDiscountRepository discountRepository)
+        IMapper mapper)
     {
         _productRepository = productRepository;
         _productCategoryRepository = productCategoryRepository;
         _mapper = mapper;
-        _discountRepository = discountRepository;
     }
 
     [HttpGet]
     [ProducesResponseType(200)]
-    public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+    public async Task<ActionResult<List<ProductDto>>> GetProducts()
     {
 
         var products = _mapper.Map<List<ProductDto>>(
             await _productRepository.GetProducts());
 
-        if (products != null )
+        if (products != null)
         {
-            var productsDiscount = await _discountRepository.GetProductDiscounts();
-
-            foreach (var discount in productsDiscount)
+            if (products != null)
             {
-                if (discount.Discount.DiscountType == DiscountType.ProductSpecific)
-                {
-
-                }
+                return Ok(products);
             }
-            
-            return Ok(products);
+            else
+            {
+                return BadRequest("Failed to apply discounts");
+            }
+
         }
 
         return BadRequest(products);
@@ -59,11 +56,11 @@ public class ProductsController : ControllerBase
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
-    public async Task<ActionResult<Product>> GetProduct(int productId)
+    public async Task<ActionResult<ProductDto>> GetProduct(int productId)
     {
 
         var product = _mapper.Map<ProductDto>(
-         await _productRepository.GetProduct(productId));
+         await _productRepository.GetProduct(productId));  
 
         if (await _productRepository.ProductExist(product.Id))
         {
@@ -75,7 +72,7 @@ public class ProductsController : ControllerBase
     [HttpGet("GetProducts-By-Category/{categoryId:int}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
-    public async Task<ActionResult<Product>> GetProductsByCategory(int categoryId)
+    public async Task<ActionResult<ProductDto>> GetProductsByCategory(int categoryId)
     {
         var productsByCategory = _mapper.Map<List<ProductDto>>(
             await _productRepository.GetProductByCategory(categoryId));

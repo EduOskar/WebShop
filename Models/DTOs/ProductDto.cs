@@ -25,6 +25,8 @@ public class ProductDto
 
     public decimal Price { get; set; } = default!;
 
+    public decimal? DiscountedPrice { get; set; } = default!;
+
     public int Quantity { get; set; } = default!;
 
     public ProductStatus Status { get; set; }

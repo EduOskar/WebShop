@@ -12,6 +12,9 @@ public class CartItemDto
     public int Id { get; set; }
     public int CartId { get; set; }
     public int ProductId { get; set; }
+
+    public ProductDto? Product { get; set; }
+
     public string? ProductName { get; set; }
     public string? ProductDescription { get; set; } 
     public string? ProductImageUrl { get; set; } 

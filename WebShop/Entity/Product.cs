@@ -31,6 +31,8 @@ public class Product
     [MaxLength(100000)]
     public decimal Price { get; set; } = default!;
 
+    public decimal? DiscountedPrice { get; set; }
+
     [MaxLength(500)]
     public int Quantity { get; set; } = default!;
 
@@ -42,5 +44,5 @@ public class Product
 
     public ICollection<Review>? Reviews { get; set; }
 
-    public ICollection<ProductsDiscount>? ProductsDiscount { get; set; }
+    public List<ProductsDiscount>? ProductsDiscount { get; set; }
 }

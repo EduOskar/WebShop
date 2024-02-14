@@ -32,6 +32,8 @@ public class ProductRepository : IProductRepository
     {
         
         var product = await _dbContext.Products
+            .Include(pd => pd.ProductsDiscount!)
+            .ThenInclude(d => d.Discount)
             .Include(p => p.Category)
             .SingleOrDefaultAsync(p => p.Id == productId);
 

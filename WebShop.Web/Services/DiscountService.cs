@@ -54,9 +54,9 @@ public class DiscountService : IDiscountService
         }
     }
 
-    public async Task<bool> EmailDiscounts(string discountCode)
+    public async Task<bool> EmailDiscounts(int discountId)
     {
-        var response = await _httpClient.GetAsync($"api/Discounts/Email-discounts/{discountCode}");
+        var response = await _httpClient.GetAsync($"api/Discounts/Email-discounts/{discountId}");
 
         if (response.IsSuccessStatusCode)
         {

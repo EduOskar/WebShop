@@ -64,7 +64,15 @@ else
                         {
                             <tr>
                                 <td>@item.Quantity x @item.ProductName</td>
-                                <td>@item.TotalPrice.ToString("C")</td>
+                                @if (item.Product!.DiscountedPrice > 0 || item.Product.DiscountedPrice != null)
+                                {
+                                    <td>@item.Product.DiscountedPrice.ToString()</td>
+                                }
+                                else
+                                {
+                                    <td>@item.TotalPrice.ToString("C")</td>
+                                }
+                                
                             </tr>
                         }
                         <tr>
@@ -131,7 +139,13 @@ else
 
             ShoppingCartItems = await CartItemService.GetCartItems(UserId);
 
-            PaymentAmount = ShoppingCartItems.Sum(p => p.TotalPrice);
+            PaymentAmount = ShoppingCartItems.Sum(item =>
+            {
+                var priceToUse = item.Product!.DiscountedPrice.HasValue ? item.Product.DiscountedPrice.Value : item.Product.Price;
+
+                return priceToUse * item.Quantity;
+            });
+
             TotalQuantity = ShoppingCartItems.Sum(p => p.Quantity);
 
         }

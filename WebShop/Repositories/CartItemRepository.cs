@@ -50,6 +50,7 @@ public class CartItemRepository : ICartItemRepository
             .AsNoTracking()
             .Include(ci => ci.Cart)
             .Include(p => p.Product)
+            .ThenInclude(d => d.ProductsDiscount)
             .Where(ci => ci.Id == cartItemId)
             .FirstOrDefaultAsync();
 

@@ -1,21 +1,27 @@
 ﻿@foreach (var products in ProductList)
 {
-  
-        <div class="col-md" style="padding-bottom:40px;">
-            <a href="/ProductDetails/@products.Id">
-                <div class="card">
-                    <img class="img-thumbnail" src="@products.ImageURL" />
-                    <div class="card-body">
-                        <h5 class="card-title mb-3">
-                            @products.Name
-                        </h5>
+
+    <div class="col-md" style="padding-bottom:40px;">
+        <a href="/ProductDetails/@products.Id">
+            <div class="card">
+                <img class="img-thumbnail" src="@products.ImageURL" />
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        @products.Name
+                    </h5>
+                    <p class="card-text">
+                        <b>@products.Price.ToString("C")</b>
+                    </p>
+                    @if (products.DiscountedPrice > 0)
+                    {
                         <p class="card-text">
-                            <b>@products.Price.ToString("C")</b>
+                            <b>@products.DiscountedPrice.ToString()</b>
                         </p>
+                    }
                 </div>
-                </div>
-            </a>
-        </div>
+            </div>
+        </a>
+    </div>
 
 
 }

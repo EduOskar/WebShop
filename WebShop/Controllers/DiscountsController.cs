@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using WebShop.Api.Entity;
 using WebShop.Api.Repositories.Contracts;
+using WebShop.Api.Services;
 using WebShop.Models.DTOs;
 using DiscountType = WebShop.Api.Entity.DiscountType;
 
@@ -15,18 +16,21 @@ public class DiscountsController : ControllerBase
     private readonly IUserRepository _userRepository;
     private readonly IEmailSenderRepository _emailSenderRepository;
     private readonly IProductRepository _productRepository;
+    private readonly ApplyDiscountToProductServices _applyDiscountToProductServices;
 
     public DiscountsController(IMapper mapper,
         IDiscountRepository discountRepository,
         IUserRepository userRepository,
         IEmailSenderRepository emailSenderRepository,
-        IProductRepository productRepository)
+        IProductRepository productRepository,
+        ApplyDiscountToProductServices applyDiscountToProductServices)
     {
         _mapper = mapper;
         _discountRepository = discountRepository;
         _userRepository = userRepository;
         _emailSenderRepository = emailSenderRepository;
         _productRepository = productRepository;
+        _applyDiscountToProductServices = applyDiscountToProductServices;
     }
 
     [HttpGet("{discountCode}")]
@@ -170,6 +174,23 @@ public class DiscountsController : ControllerBase
         return NotFound();
     }
 
+    [HttpPost("Activate-Discounts-On-Products")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(500)]
+    public async Task<ActionResult> ActivateProductdiscounts()
+    {
+        var result = await _applyDiscountToProductServices.ApplyDiscountsOnProducts();
+
+        if (result)
+        {
+            return Ok();
+        }
+        else
+        {
+            return BadRequest();
+        }
+    }
+
     [HttpPut("{discountId:int}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
@@ -194,19 +215,19 @@ public class DiscountsController : ControllerBase
         return BadRequest();
     }
 
-    [HttpGet("Email-discounts/{discountCode}")]
+    [HttpGet("Email-discounts/{discountId:int}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult> EmailDiscounts(string discountCode)
+    public async Task<ActionResult> EmailDiscounts(int discountId)
     {
-        var discount = await _discountRepository.GetDiscount(discountCode);
+        var discount = await _discountRepository.GetDiscountById(discountId);
 
         if (discount != null)
         {
             var userList = await _userRepository.GetUsers();
 
-            if (userList.Any())
+            if (userList.Any() && discount.DiscountType == DiscountType.TotalPrice)
             {
                 EmailDto email = new EmailDto();
 
@@ -222,7 +243,7 @@ public class DiscountsController : ControllerBase
                 return Ok();
             }
 
-            return BadRequest();
+            return Ok("updating products wont send Email");
         }
         return NotFound();
     }

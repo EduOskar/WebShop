@@ -23,7 +23,21 @@ else
                 <strong>
                     @Product?.Price.ToString("C") (@Product?.Quantity items in stock);
                 </strong>
+
             </p>
+            @if (Product!.DiscountedPrice > 0)
+            {
+                <p>
+
+                    <h5>
+                        Discount
+                    </h5>
+                    <strong>
+                        @Product?.DiscountedPrice.ToString()
+                    </strong>
+                </p>
+            }
+
             @if (!User.Identity!.IsAuthenticated)
             {
                 <h5>You need to be logged in to have a shopping cart</h5>
@@ -57,8 +71,8 @@ else
             {
                 @foreach (var review in ReviewList)
                 {
-                    <ReviewDisplay Review="review" UserId="@UserId" OnEditRequested="HandleEditRequest" OnReviewDeleted="OnReviewDeleted"/>
-                } 
+                    <ReviewDisplay Review="review" UserId="@UserId" OnEditRequested="HandleEditRequest" OnReviewDeleted="OnReviewDeleted" />
+                }
             }
         </div>
     </div>
