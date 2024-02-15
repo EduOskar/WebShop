@@ -32,12 +32,8 @@ else
                 <option value="@status">@status</option>
             }
         </select>
-       @*  <label for="discountStatus">Discount Status:</label>
-        <InputSelect id="discountStatus" @bind-Value="@currentDiscount.IsActive" class="form-control"></InputSelect> *@
     </div>
     <div>
-       @*  <label for="discountType">DiscountType</label>
-        <InputSelect id="discountType" @bind-Value="currentDiscount.DiscountType" class="form-control"></InputSelect> *@
         <label id="discountType">DiscountType</label>
         <select @bind="@currentDiscount.DiscountType" class="form-control">
             @foreach (var status in Enum.GetValues<DiscountType>())

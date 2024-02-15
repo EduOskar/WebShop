@@ -46,7 +46,8 @@ public class CartOrderTransferService
             {
                 var discount = await _dbContext.Discounts.FirstOrDefaultAsync(dc => dc.DiscountCode == discountCode);
 
-                totalCost = cart.CartItems!.Sum(item => item.Product.Price * item.Quantity);
+                totalCost = cart.CartItems!.Sum(item =>
+                (item.Product.DiscountedPrice ?? item.Product.Price) * item.Quantity);
 
                 totalCost = totalCost * discount!.DiscountPercentage;
 
@@ -55,7 +56,8 @@ public class CartOrderTransferService
             else
             {
 
-                totalCost = cart.CartItems!.Sum(item => item.Product.Price * item.Quantity);
+                totalCost = cart.CartItems!.Sum(item =>
+                (item.Product.DiscountedPrice ?? item.Product.Price) * item.Quantity);
 
                 user.Credit -= totalCost;
             }
@@ -65,7 +67,7 @@ public class CartOrderTransferService
             {
                 return false;
             }
-           
+
 
             var order = new Order
             {
@@ -77,7 +79,8 @@ public class CartOrderTransferService
             var getOrder = await _dbContext.Orders.AddAsync(order);
 
             var productListString = cart.CartItems!
-            .Select(item => $"{item.Quantity}x {item.Product.Name} (Price: {item.Product.Price * item.Quantity:C})")
+          .Select(item =>
+            $"{item.Quantity}x {item.Product.Name} (Price: {(item.Product.DiscountedPrice ?? item.Product.Price) * item.Quantity:C})")
             .Aggregate((current, next) => current + "\n" + next);
 
             var productList = cart.CartItems;
