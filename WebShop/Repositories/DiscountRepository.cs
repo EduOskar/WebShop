@@ -104,6 +104,21 @@ public class DiscountRepository : IDiscountRepository
 
     public async Task<bool> UpdateDiscount(Discount discount)
     {
+        if (discount.IsActive == DiscountStatus.InActive)
+        {
+            var productsWithDiscount = await _dbContext.ProductDiscounts
+                .Include(p => p.Product)
+                .Where(pd => pd.DiscountId == discount.Id)
+                .ToListAsync();
+
+            foreach (var product in productsWithDiscount)
+            {
+                product.Product.DiscountedPrice = null;
+            }
+
+            _dbContext.RemoveRange(productsWithDiscount);
+        }
+
         _dbContext.Update(discount);
 
         return await Save();
@@ -181,5 +196,25 @@ public class DiscountRepository : IDiscountRepository
             .ToListAsync();
 
         return productDiscounts;
+    }
+
+    public async Task<bool> RemoveProductDiscounts()
+    {
+        var productdiscounts = await _dbContext.ProductDiscounts.ToListAsync();
+
+        var productIdsWithDiscounts = productdiscounts.Select(pd => pd.ProductId).ToList();
+
+        var productsToUpdate = await _dbContext.Products
+            .Where(p => productIdsWithDiscounts.Contains(p.Id))
+            .ToListAsync();
+
+        foreach (var product in productsToUpdate)
+        {
+            product.DiscountedPrice = null;
+        }
+
+        _dbContext.RemoveRange(productdiscounts);
+
+        return await Save();
     }
 }

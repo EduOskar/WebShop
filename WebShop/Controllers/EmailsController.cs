@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using WebShop.Api.Repositories.Contracts;
 using Microsoft.AspNetCore.Mvc;
-using WebShop.Models.DTOs;
 using System.Net.Mail;
+using WebShop.Models.DTOs.MailDtos;
 
 namespace WebShop.Api.Controllers;
 [Route("api/[controller]")]

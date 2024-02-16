@@ -28,5 +28,7 @@ public interface IDiscountRepository
 
     Task<bool> UpdateDiscountStatus(Discount discount);
 
+    Task<bool> RemoveProductDiscounts();
+
     Task<bool> Save();
 }

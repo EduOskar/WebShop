@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WebShop.Models.DTOs;
-public class EmailDto
+namespace WebShop.Models.DTOs.MailDtos;
+public class SupportMailDto
 {
     public string From { get; set; } = default!;
 
@@ -15,3 +15,4 @@ public class EmailDto
 
     public string Body { get; set; } = default!;
 }
+ 

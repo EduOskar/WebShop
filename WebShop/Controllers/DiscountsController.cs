@@ -4,6 +4,7 @@ using WebShop.Api.Entity;
 using WebShop.Api.Repositories.Contracts;
 using WebShop.Api.Services;
 using WebShop.Models.DTOs;
+using WebShop.Models.DTOs.MailDtos;
 using DiscountType = WebShop.Api.Entity.DiscountType;
 
 namespace WebShop.Api.Controllers;
@@ -82,9 +83,9 @@ public class DiscountsController : ControllerBase
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<List<ProductsDiscount>>> GetProductDiscounts()
+    public async Task<ActionResult<List<ProductDiscountsDto>>> GetProductDiscounts()
     {
-        var productDiscounts = await _discountRepository.GetProductDiscounts();
+        var productDiscounts = _mapper.Map<List<ProductDiscountsDto>>(await _discountRepository.GetProductDiscounts());
 
         if (productDiscounts != null)
         {
@@ -161,7 +162,7 @@ public class DiscountsController : ControllerBase
 
         if (discount != null && product != null)
         {
-            if (discount.DiscountType == DiscountType.ProductSpecific)
+            if (discount.DiscountType == DiscountType.ProductSpecific && discount.IsActive == Entity.DiscountStatus.Active)
             {
                 await _discountRepository.ApplyDiscountOnProduct(product.Id, discount.Id);
 
@@ -171,7 +172,7 @@ public class DiscountsController : ControllerBase
             return BadRequest("DiscountType are not productSpecific");
         }
 
-        return NotFound();
+        return NotFound($"There was no product -{product} or discount -{discount} with that Id");
     }
 
     [HttpPost("Activate-Discounts-On-Products")]
@@ -246,6 +247,21 @@ public class DiscountsController : ControllerBase
             return Ok("updating products wont send Email");
         }
         return NotFound();
+    }
+
+    [HttpDelete]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(500)]
+    public async Task<ActionResult<bool>> RemoveProductDiscounts()
+    {
+        var discountRepository = await _discountRepository.RemoveProductDiscounts();
+
+        if (discountRepository)
+        {
+            return NoContent();
+        }
+
+        return BadRequest();
     }
 
 }

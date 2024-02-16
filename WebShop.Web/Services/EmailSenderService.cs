@@ -1,5 +1,5 @@
 ﻿using System.Net.Http;
-using WebShop.Models.DTOs;
+using WebShop.Models.DTOs.MailDtos;
 using WebShop.Web.Services.Contracts;
 
 namespace WebShop.Web.Services;

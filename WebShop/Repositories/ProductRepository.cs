@@ -49,7 +49,6 @@ public class ProductRepository : IProductRepository
     {
         var productsByCategory = await _dbContext.Products
             .Include(p => p.Category)
-            .AsNoTracking()
             .Where(pc => pc.CategoryId == categoryId).ToListAsync();
 
         return productsByCategory;
@@ -61,7 +60,6 @@ public class ProductRepository : IProductRepository
         var products = await _dbContext.Products
             .OrderBy(p => p.CategoryId)
             .Include(p => p.Category)
-            .AsNoTracking()
             .ToListAsync();
 
         return products;

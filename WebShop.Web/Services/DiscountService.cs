@@ -14,8 +14,22 @@ public class DiscountService : IDiscountService
 
     public DiscountService(IHttpClientFactory clientFactory)
     {
-        _httpClient = clientFactory.CreateClient("WebShop.Api"); 
+        _httpClient = clientFactory.CreateClient("WebShop.Api");
     }
+
+    public async Task<bool> ActivateProductDiscounts()
+    {
+        var response = await _httpClient.PostAsync($"api/Discounts/Activate-Discounts-On-Products", null);
+
+        if (response.IsSuccessStatusCode)
+        {
+            return true;
+        }
+
+        var message = await response.Content.ReadAsStringAsync();
+        throw new Exception($"Http status:{response.StatusCode} Message -{message}");
+    }
+
     public async Task<bool> ApplyDiscount(int userId, string discountCode)
     {
         string requestUrl = $"api/Discounts/apply-discount/{userId}-{discountCode}";
@@ -28,8 +42,23 @@ public class DiscountService : IDiscountService
         }
         else
         {
-            return false;
+            var message = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Http status:{response.StatusCode} Message -{message}");
         }
+    }
+
+    public async Task<bool> ApplyDiscountOnProduct(int productId, int discountId)
+    {
+        var response = await _httpClient.PostAsync($"api/Discounts/apply-discount-on-product/{productId}/{discountId}", null);
+
+        if (response.IsSuccessStatusCode)
+        {
+            return true;
+        }
+
+        var message = await response.Content.ReadAsStringAsync();
+        throw new Exception($"Http status:{response.StatusCode} Message -{message}");
+
     }
 
     public async Task<DiscountDto> CreateDiscount(DiscountDto discountCreate)
@@ -112,6 +141,21 @@ public class DiscountService : IDiscountService
                 return null!;
             }
             return discounts;
+        }
+        else
+        {
+            var message = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Http status: {response.StatusCode} Message - {message}");
+        }
+    }
+
+    public async Task<bool> RemoveProductDiscounts()
+    {
+        var response = await _httpClient.DeleteAsync("api/Discounts");
+
+        if (response.IsSuccessStatusCode)
+        {
+            return true;
         }
         else
         {

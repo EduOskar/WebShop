@@ -9,6 +9,7 @@ using System.Web;
 using WebShop.Api.Entity;
 using WebShop.Api.Repositories.Contracts;
 using WebShop.Models.DTOs;
+using WebShop.Models.DTOs.MailDtos;
 using WebShop.Models.DTOs.PasswordManagement;
 
 namespace WebShop.Api.Controllers;

@@ -140,7 +140,7 @@ using (var scope = app.Services.CreateScope())
 
     //dbContext.Database.EnsureCreated();
 
-    var roles = new[] { "Admin", "User", "Warehouse Worker" };
+    var roles = new[] { "Admin", "User", "Warehouse Worker", "Support" };
 
     foreach (var role in roles)
     {
@@ -194,17 +194,41 @@ using (var scope = app.Services.CreateScope())
         await userManager.AddToRoleAsync(user2, "Warehouse Worker");
 
 
-        if (!dbContext.Carts.Any(c => c.UserId == user.Id))
+
+        string userName3 = "Ina";
+        string password3 = "Hejsan123!";
+        string email3 = "Ina@Mail.com";
+
+        var user3 = await userManager.FindByNameAsync(userName3);
+        if (user3 == null)
         {
-            var cart = new Cart
+            user3 = new User
             {
-                UserId = user.Id
+                Email = email3,
+                UserName = userName3,
+                FirstName = "Ina",
+                LastName = "Nilsson",
+                Adress = "Warehouse Street 1",
+                PhoneNumber = "+46 - 332 332 32"
             };
 
-            dbContext.Carts.Add(cart);
-            await dbContext.SaveChangesAsync();
+            var createUserResult2 = await userManager.CreateAsync(user3, password3);
+
+            await userManager.AddToRoleAsync(user3, "Support");
+
+            if (!dbContext.Carts.Any(c => c.UserId == user.Id))
+            {
+                var cart = new Cart
+                {
+                    UserId = user.Id
+                };
+
+                dbContext.Carts.Add(cart);
+                await dbContext.SaveChangesAsync();
+            }
         }
+
     }
-   
 }
-    app.Run();
+
+app.Run();

@@ -39,7 +39,6 @@ public class ProductCategoryRepository : IProductCategoryRepository
     {
         var categories = await _dbContext.ProductCategories
             .OrderBy(c => c.Id)
-            .AsNoTracking()
             .ToListAsync();
 
         return categories;
@@ -48,7 +47,6 @@ public class ProductCategoryRepository : IProductCategoryRepository
     public async Task<ProductCategory> GetCategory(int id)
     {
         var category = await _dbContext.ProductCategories
-            .AsNoTracking()
             .SingleOrDefaultAsync(c => c.Id == id);
 
         if (category != null)

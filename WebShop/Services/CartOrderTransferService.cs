@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using WebShop.Api.Data;
 using WebShop.Api.Entity;
 using WebShop.Api.Repositories.Contracts;
-using WebShop.Models.DTOs;
+using WebShop.Models.DTOs.MailDtos;
 
 namespace WebShop.Api.Services;
 

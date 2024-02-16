@@ -1,6 +1,6 @@
 ﻿using System.Net.Mail;
 using System.Text;
-using WebShop.Models.DTOs;
+using WebShop.Models.DTOs.MailDtos;
 
 namespace WebShop.Api.Repositories.Contracts;
 

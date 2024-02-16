@@ -39,5 +39,7 @@ public class MappingProfile : Profile
         CreateMap<Discount,  DiscountDto>().ReverseMap();
 
         CreateMap<DiscountUsage, DiscountUsageDto>().ReverseMap();
+
+       CreateMap<ProductsDiscount, ProductDiscountsDto>().ReverseMap();
     }
 }

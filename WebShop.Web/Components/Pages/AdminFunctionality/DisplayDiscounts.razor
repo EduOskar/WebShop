@@ -49,7 +49,12 @@
                                 <button class="btn btn-primary mt-2" @onclick="()=>UpdateDiscountStatus(discount)">Update status</button>
                             </td>
                             <td>@discount.DiscountType</td>
-                                
+                            @if (discount.DiscountType == DiscountType.ProductSpecific)
+                            {
+                                <td>
+                                    <button @onclick="() => SelectDiscount(discount.Id)">Select discount for products</button>
+                                </td>
+                            }
                         </tr>
                     }
                 </tbody>
@@ -58,15 +63,68 @@
             <br />
             <br />
         }
+
+        @if (ProductList == null && discountList == null)
+        {
+            <DisplaySpinner />
+        }
+        else
+        {
+            <h4>Select Products to apply discount On</h4>
+            <br />
+            <h5>DiscountId: @discountId</h5>
+            @foreach (var product in ProductList!)
+            {
+
+                <div>
+                    @if (product.DiscountedPrice == null)
+                    {
+                        <input type="checkbox" value="@product.Id" @onchange="@(e => HandleProductSelection(e, product.Id))" />
+                    }
+                    Id:@product.Id -
+                    Product: @product.Name
+                    <br />
+                </div>
+
+            }
+            <br />
+
+
+
+            @if (discountId > 0)
+            {
+                <div>
+                    <button id="btnApply" class="btn btn-primary" @onclick="() => ApplyDiscountOnProducts(productIdList, discountId)">Apply discounts on products</button>
+
+                </div>
+
+                <div>
+                    <button id="btnActivate" class="btn btn-outline-success" @onclick="@ActivateProductDiscounts">Activate discounts</button>
+                </div>
+            }
+            <div>
+                <button class="btn btn-outline-danger" @onclick="@RemoveProductDiscounts">Remove ProductDiscounts</button>
+            </div>
+            <h3>@status</h3>
+        }
     </Authorized>
 </AuthorizeView>
 
 
 @code {
     [Inject]
-    protected IDiscountService discountSevice { get; set; } = default!;
+    protected IDiscountService DiscountSevice { get; set; } = default!;
+
+    [Inject]
+    protected IProductsService ProductService { get; set; } = default!;
 
     protected List<DiscountDto> discountList { get; set; } = default!;
+
+    protected List<ProductDto> ProductList { get; set; } = default!;
+
+    protected List<int> productIdList { get; set; } = new();
+
+    protected int discountId { get; set; }
 
     string? filterDiscount { get; set; }
 
@@ -74,18 +132,27 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await FetchDiscounts();
+        await FetchLists();
 
     }
 
-    private async Task FetchDiscounts()
+    private async Task FetchLists()
     {
-        discountList = await discountSevice.GetDiscounts();
+        discountList = await DiscountSevice.GetDiscounts();
+
+        ProductList = await ProductService.GetProducts();
+
+        productIdList = new();
+    }
+
+    private void SelectDiscount(int id)
+    {
+        discountId = id;
     }
 
     private async Task SendDiscountMail(int discountId)
     {
-        var result = await discountSevice.EmailDiscounts(discountId);
+        var result = await DiscountSevice.EmailDiscounts(discountId);
 
         if (result)
         {
@@ -99,13 +166,84 @@
 
     private async Task UpdateDiscountStatus(DiscountDto discount)
     {
-        bool successResponse = await discountSevice.UpdateDiscount(discount);
+        bool successResponse = await DiscountSevice.UpdateDiscount(discount);
         if (successResponse)
         {
             if (discount.IsActive == DiscountStatus.Active)
             {
                 await SendDiscountMail(discount.Id!);
+                ProductList = await ProductService.GetProducts();
+                StateHasChanged();
             }
+        }
+    }
+
+    private async Task ApplyDiscountOnProducts(List<int> productIdList, int discountId)
+    {
+        @foreach (var productId in productIdList)
+        {
+            var response = await DiscountSevice.ApplyDiscountOnProduct(productId, discountId);
+
+            if (response)
+            {
+                status = "Discounts were applied successfully";
+            }
+            else
+            {
+                status = "Discounts failed to apply";
+            }
+        }
+    }
+
+    private async Task ActivateProductDiscounts()
+    {
+        var response = await DiscountSevice.ActivateProductDiscounts();
+
+        if (response)
+        {
+            status = "Discounts are now active";
+            discountId = 0;
+            ProductList = await ProductService.GetProducts();
+            StateHasChanged();
+        }
+        else
+        {
+            status = "Discounts failed to activate";
+        }
+    }
+
+    private void HandleProductSelection(ChangeEventArgs e, int productId)
+    {
+        bool isChecked = Convert.ToBoolean(e.Value);
+        if (isChecked)
+        {
+            if (!productIdList.Contains(productId))
+            {
+                productIdList.Add(productId);
+            }
+        }
+        else
+        {
+            if (productIdList.Contains(productId))
+            {
+                productIdList.Remove(productId);
+            }
+        }
+    }
+
+    private async Task RemoveProductDiscounts()
+    {
+        var response = await DiscountSevice.RemoveProductDiscounts();
+
+        if (response)
+        {
+            status = "Successfully removed discounts";
+            ProductList = await ProductService.GetProducts();
+            StateHasChanged();
+        }
+        else
+        {
+            status = "Failed to remove discounts";
         }
     }
 

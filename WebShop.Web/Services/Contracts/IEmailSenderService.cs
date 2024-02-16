@@ -1,4 +1,4 @@
-﻿using WebShop.Models.DTOs;
+﻿using WebShop.Models.DTOs.MailDtos;
 
 namespace WebShop.Web.Services.Contracts;
 

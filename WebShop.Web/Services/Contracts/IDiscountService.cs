@@ -13,7 +13,13 @@ public interface IDiscountService
 
     Task<bool> ApplyDiscount(int userId, string discountCode);
 
+    Task<bool> ApplyDiscountOnProduct(int productId, int discountId);
+
+    Task<bool> ActivateProductDiscounts();
+
     Task<bool> UpdateDiscount(DiscountDto discountUpdate);
 
     Task<bool> EmailDiscounts(int discountId);
+
+    Task<bool> RemoveProductDiscounts();
 }
