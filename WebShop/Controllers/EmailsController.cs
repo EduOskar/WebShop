@@ -18,6 +18,7 @@ public class EmailsController : ControllerBase
 
     [HttpPost]
     [ProducesResponseType(204)]
+    [ProducesResponseType(500)]
     public async Task<ActionResult> SendEmail([FromBody] EmailDto email)
     {
         if (email != null)

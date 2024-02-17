@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using WebShop.Api.Entity;
 using WebShop.Models.DTOs;
+using WebShop.Models.DTOs.MailDtos;
 
 namespace WebShop.Api.Helper;
 
@@ -41,5 +42,7 @@ public class MappingProfile : Profile
         CreateMap<DiscountUsage, DiscountUsageDto>().ReverseMap();
 
        CreateMap<ProductsDiscount, ProductDiscountsDto>().ReverseMap();
+
+        CreateMap<SupportMail, SupportMailDto>().ReverseMap();
     }
 }

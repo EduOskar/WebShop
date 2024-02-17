@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace WebShop.Api.Entity;
 
-namespace WebShop.Models.DTOs.MailDtos;
-public class SupportMailDto
+public class SupportMail
 {
     public int Id { get; set; }
 
     public int UserId { get; set; }
+    public virtual User User { get; set; } = default!;
 
-    public int SupportId { get; set; }
+    public int? SupportId { get; set; }
+    public User? Support { get; set; }
 
     public string From { get; set; } = default!;
 
@@ -21,4 +18,3 @@ public class SupportMailDto
 
     public string Body { get; set; } = default!;
 }
- 

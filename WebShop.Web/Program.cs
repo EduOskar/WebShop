@@ -42,6 +42,7 @@ builder.Services.AddScoped<IOrderItemsService, OrderItemsService>();
 builder.Services.AddScoped<ICartOrderTransferService, CartOrderTransferService>();
 builder.Services.AddScoped<IReviewServices, ReviewService>();
 builder.Services.AddScoped<IDiscountService, DiscountService>();
+builder.Services.AddScoped<ISupportService, SupportService>();
 builder.Services.AddSingleton<CategoryStateService>();
 builder.Services.AddTransient<IEmailSenderService, EmailSenderService>();
 builder.Services.AddScoped<DiscountCodeState>();

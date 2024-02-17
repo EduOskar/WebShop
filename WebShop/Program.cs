@@ -85,6 +85,7 @@ builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
 builder.Services.AddScoped<IOrderStatusRepository, OrderStatusRepository>();
 builder.Services.AddScoped<IDiscountRepository, DiscountRepository>();
+builder.Services.AddScoped<ISupportrepository, SupportRepository>();        
 builder.Services.AddScoped<CartOrderTransferService>();
 builder.Services.AddScoped<OrderWorkerService>();
 builder.Services.AddScoped<ApplyDiscountToProductServices>();
