@@ -96,7 +96,7 @@ public class SupportService : ISupportService
     {
         try
         {
-            var response = await _httpClient.GetAsync("api/Discounts");
+            var response = await _httpClient.GetAsync("api/Supports");
 
             if (response.IsSuccessStatusCode)
             {
@@ -125,7 +125,7 @@ public class SupportService : ISupportService
     {
         try
         {
-            var response = await _httpClient.GetAsync($"api/Reviews/Users-Support-emails/{userId}");
+            var response = await _httpClient.GetAsync($"api/Supports/Users-Support-emails/{userId}");
 
             if (response.IsSuccessStatusCode)
             {

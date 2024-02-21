@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebShop.Api.Entity;
+using WebShop.Api.Repositories;
 using WebShop.Api.Repositories.Contracts;
 using WebShop.Models.DTOs.MailDtos;
 
@@ -19,6 +20,34 @@ public class SupportsController : ControllerBase
         _supportrepository = supportrepository;
         _userRepository = userRepository;
         _mapper = mapper;
+    }
+
+    [HttpGet("messages/{supportMailId:int}")]
+    public async Task<ActionResult<List<SupportMessagesDto>>> GetSupportMessages(int supportMailId)
+    {
+        var messages = await _supportrepository.GetSupportMessagesForMail(supportMailId);
+        if (messages != null)
+        {
+            var messageMap = _mapper.Map<List<SupportMessagesDto>>(messages);
+
+            return Ok(messageMap);
+        }
+
+        return NotFound();
+    }
+
+    [HttpPost("messages/{supportMailId:int}")]
+    public async Task<ActionResult<SupportMessagesDto>> CreateSupportMessage(int supportMailId, [FromBody] SupportMessagesDto messageDto)
+    {
+        var message = _mapper.Map<SupportMessages>(messageDto);
+        message.SupportMailId = supportMailId;
+
+        if (await _supportrepository.AddSupportMessage(message))
+        {
+            return CreatedAtAction(nameof(GetSupportMessages), new { supportMailId = message.SupportMailId }, message);
+        }
+
+        return BadRequest();
     }
 
     [HttpGet]

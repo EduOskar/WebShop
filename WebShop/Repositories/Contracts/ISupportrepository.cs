@@ -5,6 +5,10 @@ namespace WebShop.Api.Repositories.Contracts;
 
 public interface ISupportrepository
 {
+    Task<bool> AddSupportMessage(SupportMessages supportMessage);
+
+    Task<List<SupportMessages>> GetSupportMessagesForMail(int supportMailId);
+
     Task<List<SupportMail>> GetSupportMails();
 
     Task<List<SupportMail>> GetUserSupportMails(int userId);

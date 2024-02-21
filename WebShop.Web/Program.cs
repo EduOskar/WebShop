@@ -45,8 +45,8 @@ builder.Services.AddScoped<IDiscountService, DiscountService>();
 builder.Services.AddScoped<ISupportService, SupportService>();
 builder.Services.AddSingleton<CategoryStateService>();
 builder.Services.AddTransient<IEmailSenderService, EmailSenderService>();
+builder.Services.AddScoped<ISupportService, SupportService>();
 builder.Services.AddScoped<DiscountCodeState>();
-
 builder.Services.AddScoped<CustomStateProvider>(); 
 builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<CustomStateProvider>());
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -54,6 +54,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddBlazorBootstrap();
 builder.Services.AddRadzenComponents();
+
 //builder.Services.AddCascadingAuthenticationState();
 
 var app = builder.Build();

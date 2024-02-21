@@ -4,8 +4,8 @@
         <div class="order">
             <div @onclick="ToggleDetails">
                 <Button Class="centered-button">Order ID: @Order.Id - Placed: @Order.OrderStatus.StatusDate - OrderStatus: @Order.OrderStatus.CurrentStatus</Button>
-                </div>
-                @if (Order.OrderStatus.CurrentStatus == OrderStatusType.New)
+            </div>
+            @if (Order.OrderStatus.CurrentStatus == OrderStatusType.New)
             {
                 <Button @onclick="CancelOrder" class="cancel-button">Cancel Order</Button>
                 @if (submitStatus != null)
@@ -15,7 +15,7 @@
                     </div>
                 }
             }
-                @if (showDetails)
+            @if (showDetails)
             {
                 <table class="table">
                     <thead>

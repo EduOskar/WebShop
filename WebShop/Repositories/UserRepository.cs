@@ -21,6 +21,21 @@ public class UserRepository : IUserRepository
         _dbContext = dbContext;
         _mapper = mapper;
     }
+
+    public async Task<bool> AddSupportMessage(SupportMessages supportMessage)
+    {
+        await _dbContext.SupportMessages.AddAsync(supportMessage);
+        return await Save();
+    }
+
+    public async Task<List<SupportMessages>> GetSupportMessagesForMail(int supportMailId)
+    {
+        return await _dbContext.SupportMessages
+                                .Where(m => m.SupportMailId == supportMailId)
+                                .OrderBy(m => m.CreatedAt)
+                                .ToListAsync();
+    }
+
     public async Task<IdentityResult> CreateUser(User user, string password)
     {
         var hashPassword = _userManager.PasswordHasher.HashPassword(user, password);

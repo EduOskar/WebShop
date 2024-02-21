@@ -25,6 +25,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
     public DbSet<DiscountUsage> DiscountUsages { get; set; }
     public DbSet<ProductsDiscount> ProductDiscounts { get; set; }
     public DbSet<SupportMail> SupportMails { get; set; }
+    public DbSet<SupportMessages> SupportMessages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -95,6 +96,15 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
         .WithMany()
         .HasForeignKey(s => s.SupportId)
         );
+
+        modelBuilder.Entity<SupportMail>(supportMail =>
+        {
+            supportMail.HasKey(sm => sm.Id);
+
+            supportMail.HasMany(sm => sm.Messages)
+            .WithOne(sm => sm.SupportMail)
+            .HasForeignKey(m => m.SupportMailId);
+        });
 
         //Products
         //Beauty Category

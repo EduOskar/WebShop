@@ -1,0 +1,77 @@
+﻿@page "/HandleUser/{UserId:int}"
+@inject NavigationManager navigationManager
+
+<AuthorizeView Roles="Support">
+    <Authorized>
+        @if (UserId == 0 || UserSupportMail == null)
+        {
+            <h5>Loading Information - <DisplaySpinner/> </h5>
+        }
+        else
+        {
+            <Card Class="col-md-2 align-content-between">
+                <CardBody>
+                    <CardTitle>@User.FirstName @User.LastName</CardTitle>
+                    <CardSubTitle Class="mb-2 text-muted">@User.Email</CardSubTitle>
+                    <CardSubTitle Class="mb-2 text-muted">@User.UserName</CardSubTitle>
+                </CardBody>
+            </Card>
+
+            @foreach (var email in UserSupportMail)
+            {
+                <div class="support-container">
+                    <div class="support">
+                        <div @onclick="ToggleDetails">
+                            <Button onclick="" Class="centered-button">@email.Id - Status: @email.IsResolved</Button>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    [Inject]
+    IUsersService UserService { get; set; } = default!;
+
+    [Inject]
+    ISupportService SupportService { get; set; } = default!;
+
+    List<SupportMailDto> UserSupportMail { get; set; } = default!;
+
+    [Parameter]
+    public int? UserId { get; set; }
+
+    UserDto User { get; set; } = default!;
+
+    [SupplyParameterFromForm]
+    public UserDto CurrentUser { get; set; } = new();
+
+    private bool showDetails = false;
+
+    private void ToggleDetails() => showDetails = !showDetails;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (UserId is not null)
+        {
+            User = await UserService.GetUser(UserId.Value);
+
+            if (User is not null)
+            {
+                CurrentUser.Id = User.Id;
+                CurrentUser.FirstName = User.FirstName;
+                CurrentUser.LastName = User.LastName;
+                CurrentUser.UserName = User.UserName;
+                CurrentUser.Adress = User.Adress;
+                CurrentUser.Email = User.Email;
+                CurrentUser.Phonenumber = User.Phonenumber;
+
+                UserSupportMail = await SupportService.GetUsersSupportMail(UserId.Value);
+            }
+        }
+    }
+
+    
+}

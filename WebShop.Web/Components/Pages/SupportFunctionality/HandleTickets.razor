@@ -1,0 +1,101 @@
+﻿@page "/HandleTickets"
+@inject NavigationManager navigationManager
+
+
+@if (UserList == null)
+{
+    <DisplaySpinner />
+}
+else
+{
+    <Grid TItem="UserDto"
+          class="table table-hover table-bordered table-striped"
+          DataProvider="UsersDataProvider"
+          AllowFiltering="true"
+          AllowPaging="true"
+          PageSize="5"
+          ItemsPerPageText="1"
+        
+          PageSizeSelectorItems="[1]"
+          PaginationItemsTextFormat="yes"
+          AllowSorting="true"
+          Responsive="true">
+        <GridColumn TItem="UserDto" HeaderText="Id" IsDefaultSortColumn="true" PropertyName="Id" SortKeySelector="item => item.Id">
+            @context.Id
+        </GridColumn>
+        <GridColumn TItem="UserDto" HeaderText="First Name" PropertyName="FirstName" SortKeySelector="item => item.FirstName">
+            @context.FirstName
+        </GridColumn>
+        <GridColumn TItem="UserDto" HeaderText="Last Name" PropertyName="LastName" SortKeySelector="item => item.LastName">
+            @context.LastName
+        </GridColumn>
+        <GridColumn TItem="UserDto" HeaderText="Credit" PropertyName="Credit" SortKeySelector="item => item.Credit">
+            @context.Credit
+        </GridColumn>
+        <GridColumn TItem="UserDto" HeaderText="Address" PropertyName="Adress" SortKeySelector="item => item.Adress">
+            @context.Adress
+        </GridColumn>
+        <GridColumn TItem="UserDto" HeaderText="Username" PropertyName="UserName" SortKeySelector="item => item.UserName">
+            @context.UserName
+        </GridColumn>
+        <GridColumn TItem="UserDto" HeaderText="Email" PropertyName="Email" SortKeySelector="item => item.Email">
+            @context.Email
+        </GridColumn>
+        <GridColumn TItem="UserDto" HeaderText="Phone Number" PropertyName="Phonenumber" SortKeySelector="item => item.Phonenumber">
+            @context.Phonenumber
+        </GridColumn>
+        <GridColumn TItem="UserDto" HeaderText="Actions">
+
+            <Button @onclick="(() => HandleUserSupport(context))">Handle User</Button>
+
+        </GridColumn>
+    </Grid>
+}
+
+@code {
+    [Inject]
+    ISupportService SupportService { get; set; } = default!;
+
+    [Inject]
+    IUsersService UserService { get; set; } = default!;
+
+    [Inject]
+    IOrdersService OrderService { get; set; } = default!;
+
+    List<SupportMailDto> SupportMails { get; set; } = default!;
+
+    List<UserDto> UserList { get; set; } = default!;
+
+    List<OrderDto> OrderList { get; set; } = default!;
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchInformation();
+    }
+
+    protected async Task FetchInformation()
+    {
+        SupportMails = await SupportService.GetSupportMails();
+
+        UserList = await UserService.GetUsers();
+
+        OrderList = await OrderService.GetOrders();
+
+        StateHasChanged();
+    }
+
+    private async Task<GridDataProviderResult<UserDto>> UsersDataProvider(GridDataProviderRequest<UserDto> request)
+    {
+        return await Task.FromResult(request.ApplyTo(UserList));
+    }
+
+
+    private void HandleUserSupport(UserDto user)
+    {
+        // Logic to navigate to the HandleUserSupport page with the selected user's details
+        var userId = user.Id;
+        navigationManager.NavigateTo($"/HandleUser/{userId}");
+    }
+}

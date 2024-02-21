@@ -180,7 +180,7 @@
 
     protected async Task OnQuantityUpdate()
     {
-        var order = await orderService.GetOrder(orderId.Value);
+        var order = await orderService.GetOrder(orderId!.Value);
         if (order is not null)
         {
             currentOrder.Id = order.Id;

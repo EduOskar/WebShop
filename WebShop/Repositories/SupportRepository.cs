@@ -16,6 +16,19 @@ public class SupportRepository : ISupportrepository
     {
         _dbContext = dbContext;
     }
+    public async Task<bool> AddSupportMessage(SupportMessages supportMessage)
+    {
+        await _dbContext.SupportMessages.AddAsync(supportMessage);
+        return await Save();
+    }
+
+    public async Task<List<SupportMessages>> GetSupportMessagesForMail(int supportMailId)
+    {
+        return await _dbContext.SupportMessages
+                                .Where(m => m.SupportMailId == supportMailId)
+                                .OrderBy(m => m.CreatedAt)
+                                .ToListAsync();
+    }
     public async Task<bool> CreateSupportMail(SupportMail supportMailCreate)
     {
         var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == supportMailCreate.UserId);

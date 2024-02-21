@@ -44,5 +44,7 @@ public class MappingProfile : Profile
        CreateMap<ProductsDiscount, ProductDiscountsDto>().ReverseMap();
 
         CreateMap<SupportMail, SupportMailDto>().ReverseMap();
+
+        CreateMap<SupportMessages, SupportMessagesDto>().ReverseMap();
     }
 }
