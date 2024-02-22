@@ -55,6 +55,7 @@ public class SupportRepository : ISupportrepository
         var supportMail = await _dbContext.SupportMails
             .Include(u => u.User)
             .Include(s => s.Support)
+            .Include(sm => sm.Messages)
             .FirstOrDefaultAsync(x => x.Id == id);
 
         if (supportMail != null)
@@ -70,6 +71,7 @@ public class SupportRepository : ISupportrepository
         var supportMails = await _dbContext.SupportMails
             .Include(u => u.User)
             .Include(s => s.Support)
+            .Include(sm => sm.Messages)
             .ToListAsync();
 
         if (supportMails != null)
@@ -85,6 +87,7 @@ public class SupportRepository : ISupportrepository
         var userSupportMails = await _dbContext.SupportMails
             .Include(u => u.User)
             .Include(s => s.Support)
+            .Include(sm => sm.Messages)
             .Where(usm => usm.UserId == userId)
             .ToListAsync();
 

@@ -42,6 +42,11 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
                 .HasMany(c => c.Reviews)
                 .WithOne(r => r.User)
                 .HasForeignKey(r => r.UserId);
+
+            customer
+            .HasMany(sm => sm.SupportMails)
+            .WithOne(u => u.User)
+            .HasForeignKey(u => u.UserId);
         });
 
         modelBuilder.Entity<Product>(product =>
@@ -95,6 +100,7 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
         supportMail.HasOne(s => s.Support)
         .WithMany()
         .HasForeignKey(s => s.SupportId)
+        .IsRequired(false)
         );
 
         modelBuilder.Entity<SupportMail>(supportMail =>

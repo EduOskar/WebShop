@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebShop.Api.Entity;
 using WebShop.Api.Repositories;
 using WebShop.Api.Repositories.Contracts;
+using WebShop.Api.Services;
 using WebShop.Models.DTOs.MailDtos;
 
 namespace WebShop.Api.Controllers;
@@ -13,12 +14,14 @@ public class SupportsController : ControllerBase
 {
     private readonly ISupportrepository _supportrepository;
     private readonly IUserRepository _userRepository;
+    private readonly SupportEmailService _supportEmailService;
     private readonly IMapper _mapper;
 
-    public SupportsController(ISupportrepository supportrepository, IUserRepository userRepository, IMapper mapper)
+    public SupportsController(ISupportrepository supportrepository, IUserRepository userRepository, SupportEmailService supportEmailService, IMapper mapper)
     {
         _supportrepository = supportrepository;
         _userRepository = userRepository;
+        _supportEmailService = supportEmailService;
         _mapper = mapper;
     }
 
@@ -115,6 +118,19 @@ public class SupportsController : ControllerBase
 
         return BadRequest();
     }
+
+    [HttpPost("AssignSupportToTicket/{supportMailId:int}-{supportId:int}")]
+    public async Task<ActionResult> AssignSupportToTicket(int supportMailId, int supportId)
+    {
+        if (await _supportEmailService.AssignSupportToTicket(supportMailId, supportId))
+        {
+            return Ok();
+        }
+        return NotFound();
+    }
+    
+
+    
 
     [HttpDelete("{supportMailId:int}")]
     [ProducesResponseType(204)]

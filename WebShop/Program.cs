@@ -89,7 +89,7 @@ builder.Services.AddScoped<ISupportrepository, SupportRepository>();
 builder.Services.AddScoped<CartOrderTransferService>();
 builder.Services.AddScoped<OrderWorkerService>();
 builder.Services.AddScoped<ApplyDiscountToProductServices>();
-
+builder.Services.AddScoped<SupportEmailService>();
 
 var app = builder.Build();
 

@@ -19,7 +19,7 @@ public class SupportMailDto
 
     public int UserId { get; set; }
 
-    public int SupportId { get; set; }
+    public int? SupportId { get; set; }
 
     public IsResolved? IsResolved { get; set; }
 

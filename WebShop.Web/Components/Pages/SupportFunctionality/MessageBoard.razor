@@ -1,0 +1,37 @@
+﻿@if (messages == null)
+{
+    <p>Loading messages...</p>
+}
+else
+{
+    foreach (var message in messages)
+    {
+        <div>@message.Content</div>
+    }
+    <textarea @bind="newMessage"></textarea>
+    <button @onclick="SendMessage">Send</button>
+}
+
+@code {
+
+    [Inject]
+    ISupportService SupportService { get; set; } = default!;
+
+    [Parameter]
+    public int SupportMailId { get; set; }
+
+    private List<SupportMessagesDto> messages { get; set; } = default!;
+    private string newMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        messages = await SupportService.GetSupportMessagesForMail(SupportMailId);
+    }
+
+    private async Task SendMessage()
+    {
+        await SupportService.AddSupportMessage(this.SupportMailId, new SupportMessagesDto { SupportMailId = this.SupportMailId, Content = newMessage, SenderId = "Ina", CreatedAt = DateTime.UtcNow });
+        newMessage = "";
+        messages = await SupportService.GetSupportMessagesForMail(SupportMailId); 
+    }
+}

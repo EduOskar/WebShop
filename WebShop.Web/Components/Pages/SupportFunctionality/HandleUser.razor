@@ -1,11 +1,13 @@
 ﻿@page "/HandleUser/{UserId:int}"
-@inject NavigationManager navigationManager
+@inject NavigationManager NavigationManager
+@inject ISupportService SupportService
+@inject IUsersService UserService
 
 <AuthorizeView Roles="Support">
     <Authorized>
         @if (UserId == 0 || UserSupportMail == null)
         {
-            <h5>Loading Information - <DisplaySpinner/> </h5>
+            <h5>Loading Information - <DisplaySpinner /> </h5>
         }
         else
         {
@@ -19,59 +21,44 @@
 
             @foreach (var email in UserSupportMail)
             {
-                <div class="support-container">
-                    <div class="support">
-                        <div @onclick="ToggleDetails">
-                            <Button onclick="" Class="centered-button">@email.Id - Status: @email.IsResolved</Button>
-                        </div>
-                    </div>
+                <div class="support-container" style="background-color: @(email.IsResolved == IsResolved.Resolved ? "green" : "red");">
+                    <button class="centered-button" @onclick="() => OpenMessageBoard(email)">Ticket @email.Id - Status: @(email.IsResolved == IsResolved.Resolved ? "Resolved" : "Active")</button>
                 </div>
             }
+        }
+
+        @if (isMessageBoardOpen)
+        {
+            <div class="message-board-popup">
+                <MessageBoard SupportMailId="@selectedSupportMailId" />
+                <button @onclick="() => isMessageBoardOpen = false">Close</button>
+            </div>
         }
     </Authorized>
 </AuthorizeView>
 
 @code {
-    [Inject]
-    IUsersService UserService { get; set; } = default!;
-
-    [Inject]
-    ISupportService SupportService { get; set; } = default!;
-
-    List<SupportMailDto> UserSupportMail { get; set; } = default!;
-
     [Parameter]
     public int? UserId { get; set; }
 
-    UserDto User { get; set; } = default!;
+    UserDto User { get; set; } = new();
+    List<SupportMailDto> UserSupportMail { get; set; } = default!;
 
-    [SupplyParameterFromForm]
-    public UserDto CurrentUser { get; set; } = new();
-
-    private bool showDetails = false;
-
-    private void ToggleDetails() => showDetails = !showDetails;
+    private bool isMessageBoardOpen = false;
+    private int selectedSupportMailId;
 
     protected override async Task OnParametersSetAsync()
     {
-        if (UserId is not null)
+        if (UserId.HasValue)
         {
             User = await UserService.GetUser(UserId.Value);
-
-            if (User is not null)
-            {
-                CurrentUser.Id = User.Id;
-                CurrentUser.FirstName = User.FirstName;
-                CurrentUser.LastName = User.LastName;
-                CurrentUser.UserName = User.UserName;
-                CurrentUser.Adress = User.Adress;
-                CurrentUser.Email = User.Email;
-                CurrentUser.Phonenumber = User.Phonenumber;
-
-                UserSupportMail = await SupportService.GetUsersSupportMail(UserId.Value);
-            }
+            UserSupportMail = await SupportService.GetUsersSupportMail(UserId.Value);
         }
     }
 
-    
+    private void OpenMessageBoard(SupportMailDto email)
+    {
+        selectedSupportMailId = email.Id;
+        isMessageBoardOpen = true;
+    }
 }

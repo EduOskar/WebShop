@@ -9,10 +9,41 @@ public class SupportService : ISupportService
 {
     private readonly HttpClient _httpClient;
 
-    public SupportService( IHttpClientFactory clientFactory)
+    public SupportService(IHttpClientFactory clientFactory)
     {
         _httpClient = clientFactory.CreateClient("WebShop.Api");
     }
+
+    public async Task<SupportMessagesDto> AddSupportMessage(int supportMailId, SupportMessagesDto supportMessage)
+    {
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync<SupportMessagesDto>($"api/Supports/messages/{supportMailId}", supportMessage);
+
+            if (response.IsSuccessStatusCode)
+            {
+                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                {
+                    return null!;
+                }
+
+                var mailreturn = await response.Content.ReadFromJsonAsync<SupportMessagesDto>();
+
+                return mailreturn!;
+            }
+            else
+            {
+                var message = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Http status:{response.StatusCode} Message -{message}");
+            }
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
     public async Task<SupportMailDto> CreateSupportMail(SupportMailDto supportMail)
     {
         try
@@ -121,6 +152,35 @@ public class SupportService : ISupportService
         }
     }
 
+    public async Task<List<SupportMessagesDto>> GetSupportMessagesForMail(int supportMailId)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"api/Supports/messages/{supportMailId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                {
+                    return null!;
+                }
+
+                var supportMails = await response.Content.ReadFromJsonAsync<List<SupportMessagesDto>>();
+                return supportMails!;
+            }
+            else
+            {
+                var message = await response.Content.ReadAsStringAsync();
+                throw new Exception(message);
+            }
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+
+    }
     public async Task<List<SupportMailDto>> GetUsersSupportMail(int userId)
     {
         try
@@ -149,5 +209,6 @@ public class SupportService : ISupportService
             throw;
         }
     }
+
 }
 
