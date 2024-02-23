@@ -13,10 +13,10 @@ public class SupportMail
     public int Id { get; set; }
 
     public int UserId { get; set; }
-    public virtual User User { get; set; } = default!;
+    public User? User { get; set; } = default!;
 
     public int? SupportId { get; set; }
-    public User? Support { get; set; }
+    public virtual User? Support { get; set; }
 
     public IsResolved? IsResolved { get; set; }
 

@@ -1,5 +1,6 @@
 ﻿@page "/HandleTickets"
 @inject NavigationManager navigationManager
+@inject CustomStateProvider authenticationStateProvider
 
 
 @if (UserList == null)
@@ -8,46 +9,55 @@
 }
 else
 {
-    <Grid TItem="UserDto"
+    <Grid TItem="SupportMailDto"
           class="table table-hover table-bordered table-striped"
           DataProvider="UsersDataProvider"
           AllowFiltering="true"
           AllowPaging="true"
-          PageSize="5"
+          PageSize="5" 
           ItemsPerPageText="1"
         
           PageSizeSelectorItems="[1]"
           PaginationItemsTextFormat="yes"
           AllowSorting="true"
           Responsive="true">
-        <GridColumn TItem="UserDto" HeaderText="Id" IsDefaultSortColumn="true" PropertyName="Id" SortKeySelector="item => item.Id">
+        <GridColumn TItem="SupportMailDto" HeaderText="Id" IsDefaultSortColumn="true" PropertyName="Id" SortKeySelector="item => item.Id">
             @context.Id
         </GridColumn>
-        <GridColumn TItem="UserDto" HeaderText="First Name" PropertyName="FirstName" SortKeySelector="item => item.FirstName">
-            @context.FirstName
+        <GridColumn TItem="SupportMailDto" HeaderText="First Name" PropertyName="FirstName" SortKeySelector="item => item.User!.FirstName">
+            @context.User!.FirstName
         </GridColumn>
-        <GridColumn TItem="UserDto" HeaderText="Last Name" PropertyName="LastName" SortKeySelector="item => item.LastName">
-            @context.LastName
+        <GridColumn TItem="SupportMailDto" HeaderText="Last Name" PropertyName="LastName" SortKeySelector="item => item.User!.LastName">
+            @context.User!.LastName
         </GridColumn>
-        <GridColumn TItem="UserDto" HeaderText="Credit" PropertyName="Credit" SortKeySelector="item => item.Credit">
-            @context.Credit
+        <GridColumn TItem="SupportMailDto" HeaderText="Credit" PropertyName="Credit" SortKeySelector="item => item.User!.Credit">
+            @context.User!.Credit
         </GridColumn>
-        <GridColumn TItem="UserDto" HeaderText="Address" PropertyName="Adress" SortKeySelector="item => item.Adress">
-            @context.Adress
+        <GridColumn TItem="SupportMailDto" HeaderText="Address" PropertyName="Adress" SortKeySelector="item => item.User!.Adress">
+            @context.User!.Adress
         </GridColumn>
-        <GridColumn TItem="UserDto" HeaderText="Username" PropertyName="UserName" SortKeySelector="item => item.UserName">
-            @context.UserName
+        <GridColumn TItem="SupportMailDto" HeaderText="Username" PropertyName="UserName" SortKeySelector="item => item.User!.UserName">
+            @context.User!.UserName
         </GridColumn>
-        <GridColumn TItem="UserDto" HeaderText="Email" PropertyName="Email" SortKeySelector="item => item.Email">
-            @context.Email
+        <GridColumn TItem="SupportMailDto" HeaderText="Email" PropertyName="Email" SortKeySelector="item => item.User!.Email">
+            @context.User!.Email
         </GridColumn>
-        <GridColumn TItem="UserDto" HeaderText="Phone Number" PropertyName="Phonenumber" SortKeySelector="item => item.Phonenumber">
-            @context.Phonenumber
+        <GridColumn TItem="SupportMailDto" HeaderText="Phone Number" PropertyName="Phonenumber" SortKeySelector="item => item.User!.Phonenumber">
+            @context.User!.Phonenumber
         </GridColumn>
-        <GridColumn TItem="UserDto" HeaderText="Actions">
+        <GridColumn TItem="SupportMailDto" HeaderText="Ticket Active" PropertyName="ActiveSupportMailDisplay" SortKeySelector="item => item.IsResolved">
+            @context.IsResolved
+        </GridColumn>
+        <GridColumn TItem="SupportMailDto" HeaderText="Actions">
 
-            <Button @onclick="(() => HandleUserSupport(context))">Handle User</Button>
-
+            @if (context.SupportId == null)
+            {
+                <Button @onclick="(() => HandleUserSupport(context))">Handle User</Button>
+            }
+            else
+            {
+                <div><a>User is being handled</a></div>
+            }
         </GridColumn>
     </Grid>
 }
@@ -86,16 +96,36 @@ else
         StateHasChanged();
     }
 
-    private async Task<GridDataProviderResult<UserDto>> UsersDataProvider(GridDataProviderRequest<UserDto> request)
+    private async Task<GridDataProviderResult<SupportMailDto>> UsersDataProvider(GridDataProviderRequest<SupportMailDto> request)
     {
-        return await Task.FromResult(request.ApplyTo(UserList));
+        return await Task.FromResult(request.ApplyTo(SupportMails));
     }
 
 
-    private void HandleUserSupport(UserDto user)
+    private async void HandleUserSupport(SupportMailDto supportmail)
     {
-        // Logic to navigate to the HandleUserSupport page with the selected user's details
-        var userId = user.Id;
-        navigationManager.NavigateTo($"/HandleUser/{userId}");
+        int supportId = 0;
+       
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+
+        if (authState is not null)
+        {
+            string userIdValue = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+            if (int.TryParse(userIdValue, out supportId))
+            {
+                // supportId = userId;
+
+            }
+
+            var result = await SupportService.AssignSupportToTicket(supportmail.Id, supportId);
+
+            if (result)
+            {
+                var userId = supportmail.UserId;
+                navigationManager.NavigateTo($"/HandleUser/{userId}/{supportmail.Id}");
+            }
+
+        }
+      
     }
 }

@@ -1,16 +1,30 @@
-﻿@if (messages == null)
-{
-    <p>Loading messages...</p>
-}
-else
-{
-    foreach (var message in messages)
-    {
-        <div>@message.Content</div>
-    }
-    <textarea @bind="newMessage"></textarea>
-    <button @onclick="SendMessage">Send</button>
-}
+﻿<AuthorizeView Roles="Support">
+    <Authorized>
+        @if (messages == null || SupportMail == null)
+        {
+            <p>Loading messages...</p>
+        }
+        else
+        {
+            <div class="supportMail-container">
+                <div>@SupportMail.To</div>
+                <div>@SupportMail.Subject</div>
+                <div>@SupportMail.Body</div>
+            </div>
+            <br />
+            foreach (var message in messages)
+            {
+                <div class="message-container">
+                    <div>@context.User.Identity!.Name: @message.Content </div>
+                    <div class="timestamp"><a>@message.CreatedAt.ToString("h:mm tt")</a></div>
+                </div>
+            }
+            <textarea @bind="newMessage"></textarea>
+            <button @onclick="SendMessage">Send</button>
+        }
+    </Authorized>
+</AuthorizeView>
+
 
 @code {
 
@@ -20,11 +34,16 @@ else
     [Parameter]
     public int SupportMailId { get; set; }
 
+    private SupportMailDto SupportMail { get; set; } = default!;
+
     private List<SupportMessagesDto> messages { get; set; } = default!;
+
     private string newMessage = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
+        SupportMail = await SupportService.GetSupportMail(SupportMailId);
+
         messages = await SupportService.GetSupportMessagesForMail(SupportMailId);
     }
 

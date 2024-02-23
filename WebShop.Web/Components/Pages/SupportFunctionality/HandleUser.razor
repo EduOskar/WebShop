@@ -1,11 +1,11 @@
-﻿@page "/HandleUser/{UserId:int}"
+﻿@page "/HandleUser/{UserId:int}/{SupportMailId:int}"
 @inject NavigationManager NavigationManager
 @inject ISupportService SupportService
 @inject IUsersService UserService
 
 <AuthorizeView Roles="Support">
     <Authorized>
-        @if (UserId == 0 || UserSupportMail == null)
+        @if (UserId == 0 || SupportMailId == 0 || User == null || UserSupportMail == null)
         {
             <h5>Loading Information - <DisplaySpinner /> </h5>
         }
@@ -19,12 +19,11 @@
                 </CardBody>
             </Card>
 
-            @foreach (var email in UserSupportMail)
-            {
-                <div class="support-container" style="background-color: @(email.IsResolved == IsResolved.Resolved ? "green" : "red");">
-                    <button class="centered-button" @onclick="() => OpenMessageBoard(email)">Ticket @email.Id - Status: @(email.IsResolved == IsResolved.Resolved ? "Resolved" : "Active")</button>
+
+            <div class="support-container" style="background-color: @(UserSupportMail.IsResolved == IsResolved.Resolved ? "green" : "red");">
+                <button class="centered-button" @onclick="() => OpenMessageBoard(UserSupportMail)">Ticket @UserSupportMail.Id - Status: @(UserSupportMail.IsResolved == IsResolved.Resolved ? "Resolved" : "Active")</button>
                 </div>
-            }
+           
         }
 
         @if (isMessageBoardOpen)
@@ -41,8 +40,11 @@
     [Parameter]
     public int? UserId { get; set; }
 
+    [Parameter]
+    public int? SupportMailId { get; set; }
+
     UserDto User { get; set; } = new();
-    List<SupportMailDto> UserSupportMail { get; set; } = default!;
+    SupportMailDto UserSupportMail { get; set; } = default!;
 
     private bool isMessageBoardOpen = false;
     private int selectedSupportMailId;
@@ -52,7 +54,10 @@
         if (UserId.HasValue)
         {
             User = await UserService.GetUser(UserId.Value);
-            UserSupportMail = await SupportService.GetUsersSupportMail(UserId.Value);
+        }
+        if (SupportMailId.HasValue)
+        {
+            UserSupportMail = await SupportService.GetSupportMail(SupportMailId.Value);
         }
     }
 

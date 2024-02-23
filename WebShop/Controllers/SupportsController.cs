@@ -119,12 +119,13 @@ public class SupportsController : ControllerBase
         return BadRequest();
     }
 
-    [HttpPost("AssignSupportToTicket/{supportMailId:int}-{supportId:int}")]
-    public async Task<ActionResult> AssignSupportToTicket(int supportMailId, int supportId)
+    [HttpPost("AssignSupportToTicket/{supportMailId:int}/{supportId:int}")]
+    public async Task<ActionResult<bool>> AssignSupportToTicket(int supportMailId, int supportId)
     {
-        if (await _supportEmailService.AssignSupportToTicket(supportMailId, supportId))
+        var result = await _supportEmailService.AssignSupportToTicket(supportMailId, supportId);
+        if (result)
         {
-            return Ok();
+            return Ok(result);
         }
         return NotFound();
     }

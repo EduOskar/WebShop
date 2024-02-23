@@ -222,7 +222,6 @@ public class OrdersController : ControllerBase
         }
 
         var orderDelete = await _orderRepository.GetOrder(orderId);
-
         if (!await _orderRepository.DeleteOrder(orderDelete))
         {
             return BadRequest();

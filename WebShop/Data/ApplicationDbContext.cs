@@ -90,27 +90,27 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             .HasForeignKey(os => os.OrderStatusId);
         });
 
-        modelBuilder.Entity<SupportMail>(supportMail =>
-         supportMail.HasOne(u => u.User)
-         .WithMany()
-         .HasForeignKey(u => u.UserId)
-        );
+        //modelBuilder.Entity<SupportMail>(supportMail =>
+        // supportMail.HasOne(u => u.User)
+        // .WithMany()
+        // .HasForeignKey(u => u.UserId)
+        //);
 
-        modelBuilder.Entity<SupportMail>(supportMail =>
-        supportMail.HasOne(s => s.Support)
-        .WithMany()
-        .HasForeignKey(s => s.SupportId)
-        .IsRequired(false)
-        );
+        //modelBuilder.Entity<SupportMail>(supportMail =>
+        //supportMail.HasOne(s => s.Support)
+        //.WithMany()
+        //.HasForeignKey(s => s.SupportId)
+        //.IsRequired(false)
+        //);
 
-        modelBuilder.Entity<SupportMail>(supportMail =>
-        {
-            supportMail.HasKey(sm => sm.Id);
+        //modelBuilder.Entity<SupportMail>(supportMail =>
+        //{
+        //    supportMail.HasKey(sm => sm.Id);
 
-            supportMail.HasMany(sm => sm.Messages)
-            .WithOne(sm => sm.SupportMail)
-            .HasForeignKey(m => m.SupportMailId);
-        });
+        //    supportMail.HasMany(sm => sm.Messages)
+        //    .WithOne(sm => sm.SupportMail)
+        //    .HasForeignKey(m => m.SupportMailId);
+        //});
 
         //Products
         //Beauty Category

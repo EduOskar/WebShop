@@ -44,6 +44,22 @@ public class SupportService : ISupportService
         }
     }
 
+    public async Task<bool> AssignSupportToTicket(int supportMailId, int supportId)
+    {
+        var response = await _httpClient.PostAsync($"api/Supports/AssignSupportToTicket/{supportMailId}/{supportId}", null);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            return bool.Parse(responseContent);
+        }
+        else
+        {
+            return response.IsSuccessStatusCode;
+        }
+    }
+
     public async Task<SupportMailDto> CreateSupportMail(SupportMailDto supportMail)
     {
         try

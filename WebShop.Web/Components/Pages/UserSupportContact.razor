@@ -1,0 +1,107 @@
+﻿@page "/UserSupportContact"
+@inject CustomStateProvider authenticationStateProvider
+
+@if (User == null)
+{
+    <h5>Not logged in</h5>
+    <div>@message</div>
+}
+else
+{
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Contact Support</h5>
+                    </div>
+                    <div class="card-body">
+                        <EditForm Model="SupportMail" OnValidSubmit="()=> CreateSupportMail(SupportMail)">
+                            <div class="mb-3">
+                                <label for="From" class="form-label">From</label>
+                                <input type="text" class="form-control" id="From" value="@User.Email" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="To" class="form-label">To</label>
+                                <InputText class="form-control" id="to" @bind-Value="SupportMail.To" readonly />
+                            </div>
+                            <div class="mb-3">
+                                <label for="Subject" class="form-label">Subject</label>
+                                <InputText class="form-control" id="subject" @bind-Value="SupportMail.Subject" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="Body" class="form-label">Body</label>
+                                <InputTextArea class="form-control" id="Body" @bind-Value="SupportMail.Body" />
+                            </div>
+                            <button type="submit" class="btn btn-primary">Send</button>
+                        </EditForm>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+@code {
+    [Inject]
+    ISupportService SupportService { get; set; } = default!;
+
+    [Inject]
+    IUsersService UserService { get; set; } = default!;
+
+    UserDto User { get; set; } = default!;
+
+    SupportMailDto SupportMail { get; set; } = new();
+
+    public int UserId { get; set; }
+
+    string? message { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchInformation();
+    }
+
+    public async Task FetchInformation()
+    {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+
+        SupportMail.To = "Support@Consid.com";
+
+        if (authState is not null)
+        {
+            string userIdValue = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+            if (int.TryParse(userIdValue, out int userId))
+            {
+                UserId = userId;
+
+                User = await UserService.GetUser(UserId);
+            }
+        }
+
+    }
+
+    public async Task CreateSupportMail(SupportMailDto supportMail)
+    {
+        SupportMail.UserId = User.Id;
+        SupportMail.To = "Consid@Support.com";
+        SupportMail.From = User.Email;
+
+        var result = await SupportService.CreateSupportMail(supportMail);
+
+        if (result != null)
+        {
+            SupportMail = await SupportService.GetSupportMail(result.Id);
+            message = "Succeeded to create supportmail";
+            StateHasChanged();
+        }
+        else
+        {
+            message = "Failed to create SupportMail";
+            StateHasChanged();
+        }
+    }
+
+}

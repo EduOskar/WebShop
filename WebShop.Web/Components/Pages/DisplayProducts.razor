@@ -1,7 +1,7 @@
-﻿@foreach (var products in ProductList)
-{
-
-    <div class="col-md" style="padding-bottom:40px;">
+﻿
+<div class="product-container">
+    @foreach (var products in ProductList)
+    {
         <a href="/ProductDetails/@products.Id">
             <div class="card">
                 <img class="img-thumbnail" src="@products.ImageURL" />
@@ -19,11 +19,9 @@
                 </div>
             </div>
         </a>
-    </div>
 
-
-}
-
+    }
+</div>
 @code {
     [Parameter]
     public IEnumerable<ProductDto> ProductList { get; set; } = default!;

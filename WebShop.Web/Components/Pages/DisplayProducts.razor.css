@@ -1,36 +1,39 @@
-﻿div-col-md{
-    width:40px;
+﻿.product-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+div-col-md {
+    width: 40px;
 }
 
 a {
     text-decoration: none;
-/*    display: flex;*/
+    /*    display: flex;*/
 
-    width:20px;
-    justify-items:center;
-
-    background-color:red;
+    width: auto;
+    justify-items: center;
 }
 
-a:hover .card {
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    transition: box-shadow 0.3s ease-in-out;
-}
+    a:hover .card {
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        transition: box-shadow 0.3s ease-in-out;
+    }
 
 .card {
     transition: box-shadow 0.3s ease-in-out;
-    overflow: hidden;
-    align-items:center;
-  
-    background-color:lightblue;
-    
-    width: 433px;
-    height: 300px;
+    /*  overflow: hidden;*/
+    align-items: center;
+    flex: 0 1 calc(10% - 10px);
+    margin: 20px;
+    padding-bottom: 40px;
 }
 
 a:hover img {
     transform: scale(1.07);
     transition: 0.5s ease-in-out;
+    margin: 20px;
 }
 
 img {
@@ -38,4 +41,3 @@ img {
     width: 433px;
     height: 200px;
 }
-

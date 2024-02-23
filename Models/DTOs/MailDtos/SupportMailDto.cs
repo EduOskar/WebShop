@@ -19,6 +19,8 @@ public class SupportMailDto
 
     public int UserId { get; set; }
 
+    public UserDto? User { get; set; } = default!;
+
     public int? SupportId { get; set; }
 
     public IsResolved? IsResolved { get; set; }

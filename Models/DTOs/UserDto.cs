@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using WebShop.Models.DTOs.MailDtos;
 
 namespace WebShop.Models.DTOs;
 
@@ -29,4 +30,15 @@ public class UserDto
     [DataType(DataType.Password)]
     public string? ConfirmPassword { get; set; }
 
+    public bool? HasActiveSupportMail()
+    {
+        return SupportMails!.Any(mail => !mail.IsResolved.HasValue);
+    }
+
+    // Or for display purposes
+    public string? ActiveSupportMailDisplay => HasActiveSupportMail() ?? false ? "Yes" : "No";
+
+    public IEnumerable<SupportMailDto>? SupportMails { get; set; }
+
 }
+

@@ -34,6 +34,7 @@ public class SupportRepository : ISupportrepository
         var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == supportMailCreate.UserId);
 
         supportMailCreate.User = user!;
+        supportMailCreate.IsResolved = Entity.IsResolved.Unresolved;
 
         await SendSupportEmailAsync(supportMailCreate);
 
@@ -113,7 +114,7 @@ public class SupportRepository : ISupportrepository
             var mail = "Consid_Support@Consid.com";
             var host = "localhost";
             var port = 25;
-            var sender = supportEmail.User.Email;
+            var sender = supportEmail.User!.Email;
 
             var client = new SmtpClient(host, port);
 
