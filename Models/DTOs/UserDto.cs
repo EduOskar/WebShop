@@ -32,7 +32,7 @@ public class UserDto
 
     public bool? HasActiveSupportMail()
     {
-        return SupportMails!.Any(mail => !mail.IsResolved.HasValue);
+        return SupportMails?.Any(mail => !mail.IsResolved.HasValue) ?? false;
     }
 
     // Or for display purposes

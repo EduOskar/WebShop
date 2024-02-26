@@ -22,8 +22,83 @@
 
             <div class="support-container" style="background-color: @(UserSupportMail.IsResolved == IsResolved.Resolved ? "green" : "red");">
                 <button class="centered-button" @onclick="() => OpenMessageBoard(UserSupportMail)">Ticket @UserSupportMail.Id - Status: @(UserSupportMail.IsResolved == IsResolved.Resolved ? "Resolved" : "Active")</button>
-                </div>
-           
+            </div>
+
+        }
+
+        @if (OrderList == null || User == null)
+        {
+            <h5>@User!.Email Has no orders to display</h5>
+        }
+        else
+        {
+            <Card>
+                <CardHeader>
+                    <CardTitle>Here is card Title</CardTitle>
+                </CardHeader>
+                <CardBody>
+                    <Grid TItem="OrderDto"
+                          class="table table-hover table-bordered table-striped"
+                          DataProvider="TicketDataProvider"
+                          AllowFiltering="true"
+                          AllowPaging="true"
+                          PageSize="15"
+                          ItemsPerPageText="1"
+                          PageSizeSelectorItems="[1]"
+                          PaginationItemsTextFormat="yes"
+                          AllowSorting="true"
+                          Responsive="true">
+                        <GridColumn TItem="OrderDto" HeaderText="Id" IsDefaultSortColumn="true" PropertyName="Id" SortKeySelector="item => item.Id">
+                            <ChildContent Context="item">
+                                @item.Id
+                            </ChildContent>
+                        </GridColumn>
+                        <GridColumn TItem="OrderDto" HeaderText="Order Status" IsDefaultSortColumn="true" PropertyName="OrderStatus" SortKeySelector="item => item.OrderStatus.CurrentStatus">
+                            <ChildContent Context="item">
+                                @item.OrderStatus.CurrentStatus
+                            </ChildContent>
+                        </GridColumn>
+                        <GridColumn TItem="OrderDto" HeaderText="User Id" IsDefaultSortColumn="true" PropertyName="UserId" SortKeySelector="item => item.UserId">
+                            <ChildContent Context="item">
+                                @item.UserId
+                            </ChildContent>
+                        </GridColumn>
+                        <GridColumn TItem="OrderDto" HeaderText="WareHouseWorker " IsDefaultSortColumn="true" PropertyName="WareHouseWorker" SortKeySelector="item => item.WareHouseWorkerId">
+                            <ChildContent Context="item">
+                                @if (item.WarehouseWorker == null)
+                                {
+                                    <p>No WarehouseWorker yet</p>
+                                }
+                                else
+                                {
+                                    @item.WareHouseWorkerId<br />
+                                    @item.WarehouseWorker.FirstName <br />
+                                    @item.WarehouseWorker.LastName
+                                }
+                              
+                            </ChildContent>
+                        </GridColumn>
+                        <GridColumn TItem="OrderDto" HeaderText="Order Items" IsDefaultSortColumn="true" PropertyName="OrderItems">
+                            <ChildContent Context="item">
+                                @if (item.OrderItems != null)
+                                {
+                                    @foreach (var orderItem in item.OrderItems)
+                                    {
+                                        <p> @orderItem.ProductId : @orderItem.Product.Name<br /></p>
+                                    }
+                                }
+                                else
+                                {
+                                   <p>No OrderItems</p>
+                                }
+                            </ChildContent>
+                        </GridColumn>
+
+
+
+                    </Grid>
+                </CardBody>
+            </Card>
         }
 
         @if (isMessageBoardOpen)
@@ -37,6 +112,9 @@
 </AuthorizeView>
 
 @code {
+    [Inject]
+    IOrdersService OrderService { get; set; } = default!;
+
     [Parameter]
     public int? UserId { get; set; }
 
@@ -46,6 +124,8 @@
     UserDto User { get; set; } = new();
     SupportMailDto UserSupportMail { get; set; } = default!;
 
+    List<OrderDto>? OrderList { get; set; }
+
     private bool isMessageBoardOpen = false;
     private int selectedSupportMailId;
 
@@ -54,6 +134,8 @@
         if (UserId.HasValue)
         {
             User = await UserService.GetUser(UserId.Value);
+
+            OrderList = await OrderService.GetOrdersFromUser(User.Id);
         }
         if (SupportMailId.HasValue)
         {
@@ -65,5 +147,9 @@
     {
         selectedSupportMailId = email.Id;
         isMessageBoardOpen = true;
+    }
+    private async Task<GridDataProviderResult<OrderDto>> TicketDataProvider(GridDataProviderRequest<OrderDto> request)
+    {
+        return await Task.FromResult(request.ApplyTo(OrderList!));
     }
 }

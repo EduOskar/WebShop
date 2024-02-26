@@ -14,9 +14,8 @@ else
           DataProvider="UsersDataProvider"
           AllowFiltering="true"
           AllowPaging="true"
-          PageSize="5" 
+          PageSize="15" 
           ItemsPerPageText="1"
-        
           PageSizeSelectorItems="[1]"
           PaginationItemsTextFormat="yes"
           AllowSorting="true"
@@ -44,6 +43,16 @@ else
         </GridColumn>
         <GridColumn TItem="SupportMailDto" HeaderText="Phone Number" PropertyName="Phonenumber" SortKeySelector="item => item.User!.Phonenumber">
             @context.User!.Phonenumber
+        </GridColumn>
+        <GridColumn TItem="SupportMailDto" HeaderText="Support" PropertyName="Support" SortKeySelector="item => item.Support!.LastName">
+            @if (context.Support == null )
+            {
+                <div><p>Ticket is not assigned yet</p></div>
+            }
+            else
+            {
+                <a>@context.Support!.FirstName @context.Support.LastName</a>
+            }
         </GridColumn>
         <GridColumn TItem="SupportMailDto" HeaderText="Ticket Active" PropertyName="ActiveSupportMailDisplay" SortKeySelector="item => item.IsResolved">
             @context.IsResolved

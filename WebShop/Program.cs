@@ -227,6 +227,16 @@ using (var scope = app.Services.CreateScope())
                 dbContext.Carts.Add(cart);
                 await dbContext.SaveChangesAsync();
             }
+            if (!dbContext.Carts.Any(c => c.UserId == user3.Id))
+            {
+                var cart3 = new Cart
+                {
+                    UserId = user3.Id
+                };
+
+                dbContext.Carts.Add(cart3);
+                await dbContext.SaveChangesAsync();
+            }
         }
 
     }

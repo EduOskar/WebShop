@@ -23,6 +23,8 @@ public class SupportMailDto
 
     public int? SupportId { get; set; }
 
+    public UserDto? Support { get; set; }
+
     public IsResolved? IsResolved { get; set; }
 
     public string From { get; set; } = default!;
