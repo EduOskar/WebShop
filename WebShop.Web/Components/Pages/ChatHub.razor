@@ -1,50 +1,35 @@
-﻿@rendermode InteractiveServer
+﻿@page "/chat"
 @using Microsoft.AspNetCore.SignalR.Client
 @inject NavigationManager Navigation
+@inject CustomStateProvider authenticationStateProvider
 @implements IAsyncDisposable
 
-<PageTitle>Home</PageTitle>
+<AuthorizeView>
+    <Authorized>
+        <h3>Support Chat</h3>
+        <div>
+            Support ID: <input type="number" @bind="supportMailId" />
+            <button @onclick="JoinGroup">Join Session</button>
+        </div>
+        <div>
+            Message: <input type="text" @bind="messageInput" />
+            <button @onclick="SendMessageToGroup">Send</button>
+        </div>
 
-@if (User is null)
-{
-    <p>Loading User</p>
-}
-else
-{
-    <div class="form-group">
-        <label>
-            @User.UserName
-        </label>
-    </div>
-    <div class="form-group">
-        <label>
-            Message:
-            <input @bind="messageInput" size="50" />
-        </label>
-    </div>
-    <button @onclick="Send" disabled="@(!IsConnected)">Send</button>
-
-    <hr>
-
-    <ul id="messagesList">
-        @foreach (var message in messages)
+        @if (messages.Any())
         {
-            <li>@message</li>
+            foreach (var message in messages)
+            {
+                <p>@message</p>
+            }
         }
-    </ul>
-}
-
+    </Authorized>
+</AuthorizeView>
 
 @code {
     private HubConnection? hubConnection;
-
-    [Parameter]
-    public UserDto User { get; set; } = default!;
-
     private List<string> messages = new List<string>();
-
-    private string? userInput;
-
+    private int supportMailId;
     private string? messageInput;
 
     protected override async Task OnInitializedAsync()
@@ -53,28 +38,36 @@ else
             .WithUrl(Navigation.ToAbsoluteUri("/chathub"))
             .Build();
 
-        hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+        hubConnection.On<string>("ReceiveMessage", (message) =>
         {
-            var encodedMsg = $"{user}: {message}";
-            messages.Add(encodedMsg);
+            messages.Add(message);
             InvokeAsync(StateHasChanged);
         });
 
         await hubConnection.StartAsync();
     }
 
-    private async Task Send()
+    private async Task JoinGroup()
     {
-        if (hubConnection is not null && User is not null)
+        if (hubConnection is not null)
         {
-            userInput = User.UserName;
-
-            await hubConnection.SendAsync("SendMessage", userInput, messageInput);
+            // Join the SignalR group corresponding to the supportMailId
+            await hubConnection.SendAsync("JoinGroup", supportMailId);
+            // Optionally, clear previous messages or handle UI changes for the new session
         }
     }
 
-    public bool IsConnected =>
-        hubConnection?.State == HubConnectionState.Connected;
+    private async Task SendMessageToGroup()
+    {
+        if (hubConnection is not null && !string.IsNullOrWhiteSpace(messageInput))
+        {
+            // Send a message to the group corresponding to the supportMailId
+            await hubConnection.SendAsync("SendMessageToGroup", supportMailId, messageInput);
+            messageInput = string.Empty; // Clear the input after sending
+        }
+    }
+
+    public bool IsConnected => hubConnection?.State == HubConnectionState.Connected;
 
     public async ValueTask DisposeAsync()
     {

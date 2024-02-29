@@ -1,10 +1,17 @@
 ﻿@page "/userCheck"
 @inject CustomStateProvider authenticationStateProvider
 
-@attribute [Authorize(Roles = "User, Admin, WareHouse Worker")]
+@attribute [Authorize(Roles = "User, Admin, WareHouse Worker, Support")]
 
 <AuthorizeView>
     <Authorized>
+        <h1>Roles:</h1>
+        @foreach (var claim in context.User.Claims.Where(c => c.Type == ClaimTypes.Role))
+        {
+            <div>@claim.Value</div>
+        }
+        <br />
+        <br />
         <h1>Hello @context.User.Identity!.Name !!</h1>
         <br />
         <h5>Hello, @User.Identity!.Name</h5>

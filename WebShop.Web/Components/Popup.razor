@@ -1,0 +1,20 @@
+﻿@if (IsVisible)
+{
+    <div class="popup-background">
+        <div class="popup-content">
+            <button class="close-button" @onclick="Hide">X</button>
+            @ChildContent
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    public bool IsVisible { get; private set; }
+
+    public void Show() => IsVisible = true;
+
+    public void Hide() => IsVisible = false;
+}

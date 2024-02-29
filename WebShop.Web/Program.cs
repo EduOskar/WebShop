@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.ResponseCompression;
-using WebShop.Web.Hubs;
 using Microsoft.AspNetCore.Components.Authorization;
 using Radzen;
 using WebShop.Web.Components;
@@ -7,6 +6,13 @@ using WebShop.Web.Services;
 using WebShop.Web.Services.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddSignalR(opts =>
+{
+    opts.EnableDetailedErrors = true;
+    opts.MaximumParallelInvocationsPerClient = 100;
+    opts.KeepAliveInterval = TimeSpan.FromDays(10);
+});
 
 builder.Services.AddResponseCompression(opts =>
 {
@@ -23,6 +29,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddOptions();
 builder.Services.AddAuthenticationCore();
 builder.Services.AddAuthorizationCore();
+
 
 
 var cookieContainer = new System.Net.CookieContainer();
@@ -63,6 +70,8 @@ builder.Services.AddRadzenComponents();
 //builder.Services.AddCascadingAuthenticationState();
 
 var app = builder.Build();
+
+//app.UseResponseCaching();
 
 app.UseResponseCompression();
 
