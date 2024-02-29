@@ -51,9 +51,7 @@
     {
         if (hubConnection is not null)
         {
-            // Join the SignalR group corresponding to the supportMailId
             await hubConnection.SendAsync("JoinGroup", supportMailId);
-            // Optionally, clear previous messages or handle UI changes for the new session
         }
     }
 
@@ -61,9 +59,9 @@
     {
         if (hubConnection is not null && !string.IsNullOrWhiteSpace(messageInput))
         {
-            // Send a message to the group corresponding to the supportMailId
+
             await hubConnection.SendAsync("SendMessageToGroup", supportMailId, messageInput);
-            messageInput = string.Empty; // Clear the input after sending
+            messageInput = string.Empty; 
         }
     }
 

@@ -18,14 +18,13 @@ public class ChatHub : Hub
 
     public override async Task OnConnectedAsync()
     {
-        // Log connection or perform any general setup here
+     
         await Clients.Caller.SendAsync("Message", "Connected successfully.");
         await base.OnConnectedAsync();
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        // Log disconnection or clean up resources here
         await base.OnDisconnectedAsync(exception);
     }
 
@@ -33,7 +32,6 @@ public class ChatHub : Hub
     {
         if (Context == null)
         {
-            // Optionally, notify the caller that joining the session failed due to authentication
             await Clients.Caller.SendAsync("Message", "You must be authenticated to join a support session.");
             return;
         }
@@ -49,9 +47,9 @@ public class ChatHub : Hub
             session.UserConnectionId = Context.ConnectionId;
         }
 
-        supportSessions[supportMailId] = session; // Update the session in the dictionary
+        supportSessions[supportMailId] = session;
 
-        // Notify the user of successful joining
+
         await Clients.Caller.SendAsync("JoinedSupportSession", supportMailId, "You have joined the support session successfully.");
     }
 
