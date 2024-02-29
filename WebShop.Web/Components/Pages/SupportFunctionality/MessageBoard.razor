@@ -15,7 +15,7 @@
             foreach (var message in messages)
             {
                 <div class="message-container">
-                    <div>@context.User.Identity!.Name: @message.Content </div>
+                    <div>@context.User.Identity!.Name: @message.Message </div>
                     <div class="timestamp"><a>@message.CreatedAt.ToString("h:mm tt")</a></div>
                 </div>
             }
@@ -49,7 +49,7 @@
 
     private async Task SendMessage()
     {
-        await SupportService.AddSupportMessage(this.SupportMailId, new SupportMessagesDto { SupportMailId = this.SupportMailId, Content = newMessage, SenderId = "Ina", CreatedAt = DateTime.UtcNow });
+        await SupportService.AddSupportMessage(this.SupportMailId, new SupportMessagesDto { SupportMailId = this.SupportMailId, Message = newMessage, UserName = "Ina", CreatedAt = DateTime.UtcNow });
         newMessage = "";
         messages = await SupportService.GetSupportMessagesForMail(SupportMailId); 
     }

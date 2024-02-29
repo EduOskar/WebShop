@@ -28,5 +28,5 @@ public class SupportMail
 
     public string Body { get; set; } = default!;
 
-    public List<SupportMessages> Messages { get; set; } = new List<SupportMessages>();
+    public List<SupportMessages>? Messages { get; set; } = new List<SupportMessages>();
 }

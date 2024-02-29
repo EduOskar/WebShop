@@ -1,10 +1,11 @@
 ﻿@page "/UserSupportContact"
 @inject CustomStateProvider authenticationStateProvider
+@inject ISupportService SupportService
+@inject IUsersService UserService
 
 @if (User == null)
 {
     <h5>Not logged in</h5>
-    <div>@message</div>
 }
 else
 {
@@ -16,7 +17,7 @@ else
                         <h5>Contact Support</h5>
                     </div>
                     <div class="card-body">
-                        <EditForm Model="SupportMail" OnValidSubmit="()=> CreateSupportMail(SupportMail)">
+                        <EditForm Model="SupportMail" OnValidSubmit="HandleValidSubmit">
                             <div class="mb-3">
                                 <label for="From" class="form-label">From</label>
                                 <input type="text" class="form-control" id="From" value="@User.Email" readonly>
@@ -40,68 +41,44 @@ else
             </div>
         </div>
     </div>
+
+    @if (SupportMail.Id != 0)
+    {
+        <div class="Chathub-container">
+            <ChatHub />
+        </div>
+    }
 }
 
-
-
 @code {
-    [Inject]
-    ISupportService SupportService { get; set; } = default!;
-
-    [Inject]
-    IUsersService UserService { get; set; } = default!;
-
     UserDto User { get; set; } = default!;
-
-    SupportMailDto SupportMail { get; set; } = new();
-
-    public int UserId { get; set; }
-
+    SupportMailDto SupportMail { get; set; } = new SupportMailDto { To = "Support@Consid.com" };
     string? message { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        await FetchInformation();
-    }
-
-    public async Task FetchInformation()
-    {
         var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
-
-        SupportMail.To = "Support@Consid.com";
-
-        if (authState is not null)
+        string userIdValue = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+        if (int.TryParse(userIdValue, out int userId))
         {
-            string userIdValue = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
-            if (int.TryParse(userIdValue, out int userId))
-            {
-                UserId = userId;
-
-                User = await UserService.GetUser(UserId);
-            }
+            User = await UserService.GetUser(userId);
         }
-
     }
 
-    public async Task CreateSupportMail(SupportMailDto supportMail)
+    private async Task HandleValidSubmit()
     {
         SupportMail.UserId = User.Id;
-        SupportMail.To = "Consid@Support.com";
         SupportMail.From = User.Email;
 
-        var result = await SupportService.CreateSupportMail(supportMail);
-
+        var result = await SupportService.CreateSupportMail(SupportMail);
         if (result != null)
         {
-            SupportMail = await SupportService.GetSupportMail(result.Id);
-            message = "Succeeded to create supportmail";
-            StateHasChanged();
+            SupportMail = result; // Assuming CreateSupportMail returns the created object with Id
+            message = "Succeeded to create support mail.";
         }
         else
         {
-            message = "Failed to create SupportMail";
-            StateHasChanged();
+            message = "Failed to create support mail.";
         }
     }
-
 }

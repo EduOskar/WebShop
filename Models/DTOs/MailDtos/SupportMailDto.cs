@@ -35,6 +35,6 @@ public class SupportMailDto
 
     public string Body { get; set; } = default!;
 
-    public List<SupportMessagesDto> Messages { get; set; } = new List<SupportMessagesDto>();
+    public List<SupportMessagesDto>? Messages { get; set; } = new List<SupportMessagesDto>();
 }
  

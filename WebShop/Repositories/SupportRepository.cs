@@ -25,6 +25,7 @@ public class SupportRepository : ISupportrepository
     public async Task<List<SupportMessages>> GetSupportMessagesForMail(int supportMailId)
     {
         return await _dbContext.SupportMessages
+                                .Include(m => m.SupportMail)
                                 .Where(m => m.SupportMailId == supportMailId)
                                 .OrderBy(m => m.CreatedAt)
                                 .ToListAsync();

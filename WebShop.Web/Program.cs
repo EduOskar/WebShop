@@ -1,4 +1,5 @@
-
+using Microsoft.AspNetCore.ResponseCompression;
+using WebShop.Web.Hubs;
 using Microsoft.AspNetCore.Components.Authorization;
 using Radzen;
 using WebShop.Web.Components;
@@ -7,7 +8,11 @@ using WebShop.Web.Services.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
+builder.Services.AddResponseCompression(opts =>
+{
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+          new[] { "application/octet-stream" });
+});
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -28,7 +33,7 @@ var handler = new HttpClientHandler
 };
 
 builder.Services.AddHttpClient("WebShop.Api", x => x.BaseAddress = new Uri("https://localhost:7066/"))
-    .ConfigurePrimaryHttpMessageHandler(() => handler); 
+    .ConfigurePrimaryHttpMessageHandler(() => handler);
 
 builder.Services.AddScoped<IProductsService, ProductsService>();
 builder.Services.AddScoped<IProductsService, ProductsService>();
@@ -47,7 +52,7 @@ builder.Services.AddSingleton<CategoryStateService>();
 builder.Services.AddTransient<IEmailSenderService, EmailSenderService>();
 builder.Services.AddScoped<ISupportService, SupportService>();
 builder.Services.AddScoped<DiscountCodeState>();
-builder.Services.AddScoped<CustomStateProvider>(); 
+builder.Services.AddScoped<CustomStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<CustomStateProvider>());
 builder.Services.AddScoped<IAuthService, AuthService>();
 
@@ -58,6 +63,8 @@ builder.Services.AddRadzenComponents();
 //builder.Services.AddCascadingAuthenticationState();
 
 var app = builder.Build();
+
+app.UseResponseCompression();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -74,6 +81,8 @@ app.UseAuthorization();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
+
+app.MapHub<ChatHub>("/chathub");
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();

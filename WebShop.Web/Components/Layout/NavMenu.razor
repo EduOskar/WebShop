@@ -34,18 +34,18 @@
 @code {
     private CategoriesNavMenu? categoriesNavMenu;
 
-    protected override void OnInitialized()
-    {
-        categoryStateService.OnCategoryChanged += RefreshCategories;
-    }
+    // protected override void OnInitialized()
+    // {
+    //     categoryStateService.OnCategoryChanged += RefreshCategories;
+    // }
 
-    private void RefreshCategories()
-    {
-        // var _ = categoriesNavMenu.RefreshCategoriesList();
-    }
+    // private void RefreshCategories()
+    // {
+    //     // var _ = categoriesNavMenu.RefreshCategoriesList();
+    // }
 
-    public void Dispose()
-    {
-        categoryStateService.OnCategoryChanged -= RefreshCategories;
-    }
+    // public void Dispose()
+    // {
+    //     categoryStateService.OnCategoryChanged -= RefreshCategories;
+    // }
 }
