@@ -5,33 +5,46 @@
 
 <PageTitle>Home</PageTitle>
 
-<div class="form-group">
-    <label>
-        User:
-        <input @bind="userInput" />
-    </label>
-</div>
-<div class="form-group">
-    <label>
-        Message:
-        <input @bind="messageInput" size="50" />
-    </label>
-</div>
-<button @onclick="Send" disabled="@(!IsConnected)">Send</button>
+@if (User is null)
+{
+    <p>Loading User</p>
+}
+else
+{
+    <div class="form-group">
+        <label>
+            @User.UserName
+        </label>
+    </div>
+    <div class="form-group">
+        <label>
+            Message:
+            <input @bind="messageInput" size="50" />
+        </label>
+    </div>
+    <button @onclick="Send" disabled="@(!IsConnected)">Send</button>
 
-<hr>
+    <hr>
 
-<ul id="messagesList">
-    @foreach (var message in messages)
-    {
-        <li>@message</li>
-    }
-</ul>
+    <ul id="messagesList">
+        @foreach (var message in messages)
+        {
+            <li>@message</li>
+        }
+    </ul>
+}
+
 
 @code {
     private HubConnection? hubConnection;
+
+    [Parameter]
+    public UserDto User { get; set; } = default!;
+
     private List<string> messages = new List<string>();
+
     private string? userInput;
+
     private string? messageInput;
 
     protected override async Task OnInitializedAsync()
@@ -52,8 +65,10 @@
 
     private async Task Send()
     {
-        if (hubConnection is not null)
+        if (hubConnection is not null && User is not null)
         {
+            userInput = User.UserName;
+
             await hubConnection.SendAsync("SendMessage", userInput, messageInput);
         }
     }
