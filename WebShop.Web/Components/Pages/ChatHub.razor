@@ -12,6 +12,9 @@
             <button @onclick="JoinGroup">Join Session</button>
         </div>
         <div>
+            User: <input type="text" @bind="User.UserName" readonly="readonly"/>
+        </div>
+        <div>
             Message: <input type="text" @bind="messageInput" />
             <button @onclick="SendMessageToGroup">Send</button>
         </div>
@@ -27,20 +30,32 @@
 </AuthorizeView>
 
 @code {
+    CurrentUser User { get; set; } = default!;
+
     private HubConnection? hubConnection;
     private List<string> messages = new List<string>();
     private int supportMailId;
     private string? messageInput;
+    private string? user;
 
     protected override async Task OnInitializedAsync()
     {
+        var authstate = await authenticationStateProvider.GetCurrentUser();
+
+        if (authstate != null)
+        {
+            User = authstate;
+        }
+
         hubConnection = new HubConnectionBuilder()
             .WithUrl(Navigation.ToAbsoluteUri("/chathub"))
             .Build();
 
-        hubConnection.On<string>("ReceiveMessage", (message) =>
+        hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
         {
-            messages.Add(message);
+            var formattedMEssage = $"{user}: {message}";
+
+            messages.Add(formattedMEssage);
             InvokeAsync(StateHasChanged);
         });
 
@@ -59,8 +74,8 @@
     {
         if (hubConnection is not null && !string.IsNullOrWhiteSpace(messageInput))
         {
-
-            await hubConnection.SendAsync("SendMessageToGroup", supportMailId, messageInput);
+             user = User.UserName;
+            await hubConnection.SendAsync("SendMessageToGroup", supportMailId, user, messageInput);
             messageInput = string.Empty; 
         }
     }

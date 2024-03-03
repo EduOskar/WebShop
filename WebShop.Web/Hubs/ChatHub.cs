@@ -38,7 +38,7 @@ public class ChatHub : Hub
 
         var session = supportSessions.GetOrAdd(supportMailId, _ => new JoinSupportSession());
 
-        if (Context.User.Claims.Any(c => c.ValueType == ClaimTypes.Role && c.Value == "Support"))
+        if (Context.User!.Claims.Any(c => c.ValueType == ClaimTypes.Role && c.Value == "Support"))
         {
             session.SupportWorkerConnectionId = Context.ConnectionId;
         }
@@ -53,7 +53,7 @@ public class ChatHub : Hub
         await Clients.Caller.SendAsync("JoinedSupportSession", supportMailId, "You have joined the support session successfully.");
     }
 
-    public async Task SendMessageToSupport(int supportMailId, string message)
+    public async Task SendMessageToSupport(int supportMailId, string senderName, string message)
     {
         //await Clients.Group(supportMailId.ToString()).SendAsync("ReceiveMessage", message);
 
@@ -65,7 +65,7 @@ public class ChatHub : Hub
 
             if (!string.IsNullOrEmpty(targetConnectionId))
             {
-                await Clients.Client(targetConnectionId).SendAsync("ReceiveMessage", message);
+                await Clients.Client(targetConnectionId).SendAsync("ReceiveMessage", senderName, message);
             }
         }
     }
@@ -75,9 +75,9 @@ public class ChatHub : Hub
         await Groups.AddToGroupAsync(Context.ConnectionId, supportMailId.ToString());
     }
 
-    public async Task SendMessageToGroup(int supportMailId, string message)
+    public async Task SendMessageToGroup(int supportMailId, string senderName, string message)
     {
-        await Clients.Group(supportMailId.ToString()).SendAsync("ReceiveMessage", message);
+        await Clients.Group(supportMailId.ToString()).SendAsync("ReceiveMessage", senderName, message);
     }
 }
 
