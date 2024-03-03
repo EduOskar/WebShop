@@ -23,7 +23,7 @@
         {
             foreach (var message in messages)
             {
-                <p>@message</p>
+                <p> @context.User.Identity.Name @message</p>
             }
         }
     </Authorized>

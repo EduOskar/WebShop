@@ -7,12 +7,7 @@ using WebShop.Web.Services.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSignalR(opts =>
-{
-    opts.EnableDetailedErrors = true;
-    opts.MaximumParallelInvocationsPerClient = 100;
-    opts.KeepAliveInterval = TimeSpan.FromDays(10);
-});
+builder.Services.AddSignalR();
 
 builder.Services.AddResponseCompression(opts =>
 {
@@ -27,8 +22,8 @@ builder.Services.AddRazorComponents()
 builder.Services.AddServerSideBlazor();
 
 builder.Services.AddOptions();
-builder.Services.AddAuthenticationCore();
-builder.Services.AddAuthorizationCore();
+builder.Services.AddAuthentication();
+builder.Services.AddAuthorization();
 
 
 

@@ -9,7 +9,7 @@ public class SupportMessagesDto
 {
     public int Id { get; set; }
 
-    public int SupportMailId { get; set; }
+    public int SupportMailId { get; set; }  
     public SupportMailDto SupportMail { get; set; } = default!;
 
     public string UserName { get; set; } = default!;
