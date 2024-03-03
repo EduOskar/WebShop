@@ -7,13 +7,13 @@ using WebShop.Web.Services.Contracts;
 public class ChatHub : Hub
 {
     private static readonly ConcurrentDictionary<int, JoinSupportSession> supportSessions = new ConcurrentDictionary<int, JoinSupportSession>();
-    private readonly CustomStateProvider customStateProvider;
-    private readonly ISupportService supportService;
+    private readonly CustomStateProvider _customStateProvider;
+    private readonly ISupportService _supportService;
 
     public ChatHub(CustomStateProvider customStateProvider, ISupportService supportService)
     {
-        this.customStateProvider = customStateProvider;
-        this.supportService = supportService;
+        _customStateProvider = customStateProvider;
+        _supportService = supportService;
     }
 
     public override async Task OnConnectedAsync()
