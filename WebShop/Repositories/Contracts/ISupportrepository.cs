@@ -15,6 +15,8 @@ public interface ISupportrepository
 
     Task<SupportMail> GetSupportMail(int id);
 
+    Task<bool> UppdateSupportMail(SupportMail supportMail);
+
     Task<bool> CreateSupportMail(SupportMail supportMailCreate);
 
     Task<bool> DeleteSupportMail(SupportMail supportMailDelete);

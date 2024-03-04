@@ -25,8 +25,6 @@ public class SupportRepository : ISupportrepository
     public async Task<List<SupportMessages>> GetSupportMessagesForMail(int supportMailId)
     {
         return await _dbContext.SupportMessages
-                                .Include(m => m.SupportMail)
-                                .Where(m => m.SupportMailId == supportMailId)
                                 .OrderBy(m => m.CreatedAt)
                                 .ToListAsync();
     }
@@ -35,7 +33,7 @@ public class SupportRepository : ISupportrepository
         var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == supportMailCreate.UserId);
 
         supportMailCreate.User = user!;
-        supportMailCreate.IsResolved = Entity.IsResolved.Unresolved;
+        supportMailCreate.IsAnswered = Entity.IsAnswered.NotAnswered;
 
         await SendSupportEmailAsync(supportMailCreate);
 
@@ -57,7 +55,6 @@ public class SupportRepository : ISupportrepository
         var supportMail = await _dbContext.SupportMails
             .Include(u => u.User)
             .Include(s => s.Support)
-            .Include(sm => sm.Messages)
             .FirstOrDefaultAsync(x => x.Id == id);
 
         if (supportMail != null)
@@ -68,12 +65,19 @@ public class SupportRepository : ISupportrepository
         throw new Exception($"Could not find {supportMail}");
     }
 
+    public async Task<bool> UppdateSupportMail(SupportMail supportMail)
+    {
+        _dbContext.Update(supportMail);
+
+        return await Save();
+    }
+
     public async Task<List<SupportMail>> GetSupportMails()
     {
         var supportMails = await _dbContext.SupportMails
             .Include(u => u.User)
             .Include(s => s.Support)
-            .Include(sm => sm.Messages)
+            .OrderBy(x => x.DateTime)
             .ToListAsync();
 
         if (supportMails != null)
@@ -89,7 +93,7 @@ public class SupportRepository : ISupportrepository
         var userSupportMails = await _dbContext.SupportMails
             .Include(u => u.User)
             .Include(s => s.Support)
-            .Include(sm => sm.Messages)
+            .OrderBy(x => x.DateTime)
             .Where(usm => usm.UserId == userId)
             .ToListAsync();
 

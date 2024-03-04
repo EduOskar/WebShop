@@ -54,8 +54,8 @@ else
                 <a>@context.Support!.FirstName @context.Support.LastName</a>
             }
         </GridColumn>
-        <GridColumn TItem="SupportMailDto" HeaderText="Ticket Active" PropertyName="ActiveSupportMailDisplay" SortKeySelector="item => item.IsResolved">
-            @context.IsResolved
+        <GridColumn TItem="SupportMailDto" HeaderText="Ticket Active" PropertyName="ActiveSupportMailDisplay" SortKeySelector="item => item.IsAnswered">
+            @context.IsAnswered
         </GridColumn>
         <GridColumn TItem="SupportMailDto" HeaderText="Actions">
 
@@ -81,7 +81,7 @@ else
     [Inject]
     IOrdersService OrderService { get; set; } = default!;
 
-    List<SupportMailDto> SupportMails { get; set; } = default!;
+    IEnumerable<SupportMailDto> SupportMails { get; set; } = default!;
 
     List<UserDto> UserList { get; set; } = default!;
 
@@ -96,7 +96,9 @@ else
 
     protected async Task FetchInformation()
     {
-        SupportMails = await SupportService.GetSupportMails();
+        var PreEditedMails = await SupportService.GetSupportMails();
+
+        SupportMails = PreEditedMails.Where(x => x.IsSupport == IsSupport.User);
 
         UserList = await UserService.GetUsers();
 
@@ -131,7 +133,7 @@ else
             if (result)
             {
                 var userId = supportmail.UserId;
-                navigationManager.NavigateTo($"/HandleUser/{userId}/{supportmail.Id}");
+                navigationManager.NavigateTo($"/HandleUser/{userId}");
             }
 
         }

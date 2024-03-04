@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using Newtonsoft.Json;
 using WebShop.Models.DTOs;
 using WebShop.Models.DTOs.MailDtos;
 using WebShop.Web.Services.Contracts;
@@ -226,5 +227,11 @@ public class SupportService : ISupportService
         }
     }
 
+    public async Task<bool> UpdateSupportMail(int supportMailId)
+    {
+        var response = await _httpClient.PutAsync($"api/Supports/{supportMailId}", null);
+
+        return response.IsSuccessStatusCode;
+    }
 }
 

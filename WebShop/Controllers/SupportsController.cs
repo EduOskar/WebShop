@@ -39,15 +39,36 @@ public class SupportsController : ControllerBase
         return NotFound();
     }
 
-    [HttpPost("messages/{supportMailId:int}")]
-    public async Task<ActionResult<SupportMessagesDto>> CreateSupportMessage(int supportMailId, [FromBody] SupportMessagesDto messageDto)
+    [HttpPut("{supportMailId:int}")]
+    public async Task<ActionResult<bool>> UpdateSupportMessage(int supportMailId)
+    {
+        var mail = await _supportrepository.GetSupportMail(supportMailId);
+
+        if (mail != null)
+        {
+            mail.IsAnswered = Entity.IsAnswered.Answered;
+
+            if (await _supportrepository.UppdateSupportMail(mail))
+            {
+
+                return NoContent();
+
+            }
+
+            return BadRequest("couldnt update bool");
+        }
+
+        return NotFound();
+    }
+
+    [HttpPost("messages/")]
+    public async Task<ActionResult<SupportMessagesDto>> CreateSupportMessage([FromBody] SupportMessagesDto messageDto)
     {
         var message = _mapper.Map<SupportMessages>(messageDto);
-        message.SupportMailId = supportMailId;
 
         if (await _supportrepository.AddSupportMessage(message))
         {
-            return CreatedAtAction(nameof(GetSupportMessages), new { supportMailId = message.SupportMailId }, message);
+            return CreatedAtAction(nameof(GetSupportMessages), new { message.Id }, message);
         }
 
         return BadRequest();

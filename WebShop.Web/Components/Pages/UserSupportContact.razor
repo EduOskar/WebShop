@@ -41,6 +41,8 @@ else
             </div>
         </div>
     </div>
+
+    <p>@message</p>
 }
 
 @code {
@@ -62,11 +64,12 @@ else
     {
         SupportMail.UserId = User.Id;
         SupportMail.From = User.Email;
+        SupportMail.IsSupport = IsSupport.User;
 
         var result = await SupportService.CreateSupportMail(SupportMail);
         if (result != null)
         {
-            SupportMail = result; // Assuming CreateSupportMail returns the created object with Id
+            SupportMail = result;
             message = "Succeeded to create support mail.";
         }
         else

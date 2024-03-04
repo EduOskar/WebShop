@@ -2,10 +2,15 @@
 
 namespace WebShop.Api.Entity;
 
-public enum IsResolved
+public enum IsSupport
 {
-    Unresolved = 0,
-    Resolved = 1
+    Support = 0,
+    Answered = 1,
+}
+public enum IsAnswered
+{
+    NotAnswered = 0,
+    Answered = 1
 }
 public class SupportMail
 {
@@ -17,8 +22,10 @@ public class SupportMail
 
     public int? SupportId { get; set; }
     public virtual User? Support { get; set; }
+     
+    public IsSupport IsSupport { get; set; }
 
-    public IsResolved? IsResolved { get; set; }
+    public IsAnswered? IsAnswered { get; set; }
 
     public string From { get; set; } = default!;
 
@@ -28,5 +35,6 @@ public class SupportMail
 
     public string Body { get; set; } = default!;
 
-    public List<SupportMessages>? Messages { get; set; } = new List<SupportMessages>();
+    public DateTime DateTime { get; set; } = DateTime.UtcNow;
+
 }

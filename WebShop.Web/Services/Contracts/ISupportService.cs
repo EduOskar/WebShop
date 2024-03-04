@@ -19,4 +19,6 @@ public interface ISupportService
     Task<bool> DeleteSupportMail(int supportMailId);
 
     Task<bool> AssignSupportToTicket(int supportMailId, int supportId);
+
+    Task<bool> UpdateSupportMail(int supportMailId);
 }

@@ -23,7 +23,7 @@
         {
             foreach (var message in messages)
             {
-                <p> @context.User.Identity.Name @message</p>
+                <p>@message.UserName: @message.CreatedAt : @message.Message</p>
             }
         }
     </Authorized>
@@ -33,7 +33,7 @@
     CurrentUser User { get; set; } = default!;
 
     private HubConnection? hubConnection;
-    private List<string> messages = new List<string>();
+    private List<SupportMessagesDto> messages = new List<SupportMessagesDto>();
     private int supportMailId;
     private string? messageInput;
     private string? user;
@@ -52,10 +52,10 @@
             .Build();
 
         hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
-        {
-            var formattedMEssage = $"{user}: {message}";
+        { 
+            // var formattedMEssage = $"{} {user}: {message}";
 
-            messages.Add(formattedMEssage);
+            messages.Add(new SupportMessagesDto { UserName = user, Message = message, CreatedAt = DateTime.UtcNow});
             InvokeAsync(StateHasChanged);
         });
 

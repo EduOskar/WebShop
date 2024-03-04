@@ -78,20 +78,20 @@
                                 @item.User!.Phonenumber
                             </ChildContent>
                         </GridColumn>
-                        <GridColumn TItem="SupportMailDto" HeaderText="Ticket Active" PropertyName="ActiveSupportMailDisplay" SortKeySelector="item => item.IsResolved">
+                        <GridColumn TItem="SupportMailDto" HeaderText="Ticket Active" PropertyName="ActiveSupportMailDisplay" SortKeySelector="item => item.IsAnswered">
                             <ChildContent Context="item">
-                                @item.IsResolved
+                                @item.IsAnswered
                             </ChildContent>
                         </GridColumn>
-                        <GridColumn TItem="SupportMailDto" HeaderText="Actions">
+                        <GridColumn TItem="SupportMailDto" HeaderText="Handle Ticket">
                             <ChildContent Context="item">
-                                @if (item.IsResolved == IsResolved.Unresolved)
+                                @if (item.IsAnswered == IsAnswered.NotAnswered)
                                 {
                                     <Button @onclick="(() => HandleUserSupport(item))">Handle Ticket</Button>
                                 }
                                 else
                                 {
-                                    <a>Ticket is already resolved</a>
+                                    <Button @onclick="(() => HandleUserSupport(item))">Review Answered Ticket</Button>
                                 }
 
                             </ChildContent>
@@ -144,7 +144,7 @@
 
     private void HandleUserSupport(SupportMailDto supportMail)
     {
-        navigationManager.NavigateTo($"/HandleUser/{supportMail.UserId}/{supportMail.Id}");
+        navigationManager.NavigateTo($"/HandleUser/{supportMail.UserId}");
     }
 
 }

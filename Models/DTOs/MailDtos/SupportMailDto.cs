@@ -7,10 +7,16 @@ using System.Threading.Tasks;
 namespace WebShop.Models.DTOs.MailDtos;
 
 
-public enum IsResolved
+public enum IsAnswered
 {
-    Unresolved = 0,
-    Resolved = 1
+    NotAnswered = 0,
+    Answered = 1
+}
+
+public enum IsSupport
+{
+    Support = 0,
+    User = 1,
 }
 
 public class SupportMailDto
@@ -25,7 +31,9 @@ public class SupportMailDto
 
     public UserDto? Support { get; set; }
 
-    public IsResolved? IsResolved { get; set; }
+    public IsSupport? IsSupport { get; set; }
+
+    public IsAnswered? IsAnswered { get; set; }
 
     public string From { get; set; } = default!;
 
@@ -35,6 +43,7 @@ public class SupportMailDto
 
     public string Body { get; set; } = default!;
 
-    public List<SupportMessagesDto>? Messages { get; set; } = new List<SupportMessagesDto>();
+    public DateTime DateTime { get; set; } = DateTime.UtcNow;
+
 }
  

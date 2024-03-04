@@ -1,6 +1,6 @@
 ﻿<AuthorizeView Roles="Support">
     <Authorized>
-        @if (messages == null || SupportMail == null)
+        @if (SupportMail == null || SupportMail.User == null)
         {
             <p>Loading messages...</p>
         }
@@ -12,18 +12,25 @@
                 <div>@SupportMail.Body</div>
             </div>
             <br />
-            foreach (var message in messages)
-            {
-                <div class="message-container">
-                    <div>@context.User.Identity!.Name: @message.Message </div>
-                    <div class="timestamp"><a>@message.CreatedAt.ToString("h:mm tt")</a></div>
-                </div>
-            }
-            <textarea @bind="newMessage"></textarea>
-            <button @onclick="SendMessage">Send</button>
+            <button @onclick="SendEmail">Send</button>
+
+
+            <Card>
+                <CardHeader>
+                    <p>Respond to: @SupportMail!.User!.Email</p>
+                    <p>Title: @SupportMail.Subject</p>
+                    <p>Title: @SupportMail.Body</p>
+                </CardHeader>
+                <CardBody>
+
+                </CardBody>
+            </Card>
         }
     </Authorized>
 </AuthorizeView>
+
+
+
 
 
 @code {
@@ -36,21 +43,14 @@
 
     private SupportMailDto SupportMail { get; set; } = default!;
 
-    private List<SupportMessagesDto> messages { get; set; } = default!;
-
-    private string newMessage = string.Empty;
-
     protected override async Task OnInitializedAsync()
     {
         SupportMail = await SupportService.GetSupportMail(SupportMailId);
-
-        messages = await SupportService.GetSupportMessagesForMail(SupportMailId);
     }
 
-    private async Task SendMessage()
+    private async Task SendEmail() 
     {
-        await SupportService.AddSupportMessage(this.SupportMailId, new SupportMessagesDto { SupportMailId = this.SupportMailId, Message = newMessage, UserName = "Ina", CreatedAt = DateTime.UtcNow });
-        newMessage = "";
-        messages = await SupportService.GetSupportMessagesForMail(SupportMailId); 
+        // var result = await SupportService.CreateSupportMail();
+         await SupportService.GetSupportMessagesForMail(SupportMailId); 
     }
 }
