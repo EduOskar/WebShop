@@ -46,5 +46,7 @@ public class MappingProfile : Profile
         CreateMap<SupportMail, SupportMailDto>().ReverseMap();
 
         CreateMap<SupportMessages, SupportMessagesDto>().ReverseMap();
+
+        //CreateMap<MessageTicket, MessageTicketDto>().ReverseMap();
     }
 }

@@ -22,6 +22,8 @@ public class User :  IdentityUser<int>
 
     public ICollection<Review>? Reviews { get; set; }
 
-    public ICollection<SupportMail>? SupportMails { get; set; }
+    public IEnumerable<SupportMail>? SupportMails { get; set; }
+
+    public IEnumerable<MessageTicket>? MessageTickets { get; set; }
 
 }

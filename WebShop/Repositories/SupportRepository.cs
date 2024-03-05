@@ -134,4 +134,52 @@ public class SupportRepository : ISupportrepository
 
         throw new Exception("Email could not be  sent due to missing information");
     }
+
+    public async Task<bool> CreateSupportTicket(MessageTicket messageTicket)
+    {
+        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == messageTicket.UserID);
+
+        messageTicket.User = user!;
+        messageTicket.IsResolved = Entity.IsResolved.NotResolved;
+
+        await _dbContext.MessageTickets.AddAsync(messageTicket);
+
+        return await Save();
+    }
+
+    public async Task<List<MessageTicket>> GetMEssageTicketsByUser(int userId)
+    {
+        var userMessageTickets = await _dbContext.MessageTickets
+            .Where(x => x.UserID == userId).ToListAsync();
+
+        if (userMessageTickets != null)
+        {
+            return userMessageTickets;
+        }
+
+        throw new Exception("Couldnt find any userMEssageTickets with that user");
+    }
+
+    public async Task<MessageTicket> GetMessageTicket(int messageTicketId)
+    {
+        var messageTicket = await _dbContext.MessageTickets
+            .Include(x => x.User)
+            .Include(x => x.Support)
+            .FirstOrDefaultAsync(x => x.Id == messageTicketId);
+
+        if (messageTicket != null)
+        {
+            return messageTicket;
+        }
+
+        throw new Exception($"Couldnt find messageticket with Id{messageTicket}");
+    }
+
+    public async Task<List<MessageTicket>> GetMessageTickets()
+    {
+        var messageTickets = await _dbContext.MessageTickets.OrderBy(x => x.CreatedDate).ToListAsync();
+
+        return messageTickets;
+    }
 }
+

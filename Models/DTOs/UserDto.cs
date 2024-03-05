@@ -30,15 +30,9 @@ public class UserDto
     [DataType(DataType.Password)]
     public string? ConfirmPassword { get; set; }
 
-    //public bool? HasActiveSupportMail()
-    //{
-    //    return SupportMails?.Any(mail => !mail.IsResolved.HasValue) ?? false;
-    //}
-
-    //// Or for display purposes
-    //public string? ActiveSupportMailDisplay => HasActiveSupportMail() ?? false ? "Yes" : "No";
-
     public IEnumerable<SupportMailDto>? SupportMails { get; set; }
+
+    public IEnumerable<MessageTicketDto>? Tickets { get; set; }
 
 }
 

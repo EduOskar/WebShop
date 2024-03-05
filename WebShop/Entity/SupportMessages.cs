@@ -2,6 +2,8 @@
 
 namespace WebShop.Api.Entity;
 
+
+
 public class SupportMessages
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

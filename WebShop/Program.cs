@@ -137,9 +137,9 @@ using (var scope = app.Services.CreateScope())
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
     var dbContext = services.GetRequiredService<ApplicationDbContext>();
 
-    //dbContext.Database.EnsureDeleted();
+    dbContext.Database.EnsureDeleted();
 
-    //dbContext.Database.EnsureCreated();
+    dbContext.Database.EnsureCreated();
 
     var roles = new[] { "Admin", "User", "Warehouse Worker", "Support" };
 

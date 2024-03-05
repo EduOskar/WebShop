@@ -23,6 +23,14 @@ public interface ISupportrepository
 
     Task SendSupportEmailAsync(SupportMail supportEmail);
 
+    Task<bool> CreateSupportTicket(MessageTicket messageTicket);
+
+    Task<List<MessageTicket>> GetMEssageTicketsByUser(int userId);
+
+    Task<MessageTicket> GetMessageTicket(int messageTicketId);
+
+    Task<List<MessageTicket>> GetMessageTickets();
+
     Task<bool> Save();
 
 

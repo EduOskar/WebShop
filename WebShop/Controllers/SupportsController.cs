@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Sockets;
 using WebShop.Api.Entity;
 using WebShop.Api.Repositories;
 using WebShop.Api.Repositories.Contracts;
@@ -168,5 +170,69 @@ public class SupportsController : ControllerBase
         }
 
         return BadRequest(mailToDelete);
+    }
+
+    [HttpGet("Tickets/{Id:int}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(500)]
+    public async Task<ActionResult<MessageTicketDto>> GetSupportTicket(int Id)
+    {
+        var messageTicket = _mapper.Map<MessageTicketDto>(await _supportrepository.GetMessageTicket(Id));
+
+        if (messageTicket != null)
+        {
+            return messageTicket;
+        }
+
+        return NotFound();
+    }
+
+    [HttpGet("UserTickets/{userId:int}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(500)]
+    public async Task<ActionResult<List<MessageTicketDto>>> GetUserSpportTickets(int userId)
+    {
+        var messageTickets = _mapper.Map<List<MessageTicketDto>>(
+            await _supportrepository.GetMEssageTicketsByUser(userId));
+
+        if (messageTickets != null)
+        {
+            return Ok(messageTickets);
+        }
+
+        return NotFound(messageTickets);
+    }
+
+    [HttpGet("Tickets")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    public async Task<ActionResult<List<MessageTicketDto>>> GetSupportTickets()
+    {
+        var messageTickets = _mapper.Map<List<MessageTicketDto>>(
+            await _supportrepository.GetMessageTickets());
+
+        if (messageTickets != null)
+        {
+            return Ok(messageTickets);
+        }
+
+        return NotFound(messageTickets);
+    }
+
+    [HttpPost("Tickets")]
+    [ProducesResponseType(201)]
+    [ProducesResponseType(500)]
+    public async Task<ActionResult> CreateSupportTicket([FromBody] MessageTicketDto ticketCreate)
+    {
+        var ticketMap = _mapper.Map<MessageTicket>(ticketCreate);
+
+        if (await _supportrepository.CreateSupportTicket(ticketMap))
+        {
+            return CreatedAtAction("GetSupportEmail", new { emailId = ticketMap.Id }, ticketMap);
+        }
+
+        return BadRequest();
     }
 }

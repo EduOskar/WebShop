@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace WebShop.Models.DTOs.MailDtos;
+
 public class SupportMessagesDto
 {
     public int Id { get; set; }
@@ -14,4 +15,5 @@ public class SupportMessagesDto
     public string Message { get; set; } = default!;
 
     public DateTime CreatedAt { get; set; }
+
 }
