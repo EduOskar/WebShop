@@ -1,5 +1,6 @@
 ﻿@page "/UserSupportContact"
 @inject CustomStateProvider authenticationStateProvider
+@inject NavigationManager navigationManager
 @inject ISupportService SupportService
 @inject IUsersService UserService
 
@@ -14,10 +15,10 @@ else
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">
-                        <h5>Contact Support</h5>
+                        <h5>Contact Support through mail</h5>
                     </div>
                     <div class="card-body">
-                        <EditForm Model="SupportMail" OnValidSubmit="HandleValidSubmit">
+                        <EditForm Model="SupportMail" OnValidSubmit="HandleValidEmailSubmit">
                             <div class="mb-3">
                                 <label for="From" class="form-label">From</label>
                                 <input type="text" class="form-control" id="From" value="@User.Email" readonly>
@@ -42,12 +43,39 @@ else
         </div>
     </div>
 
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Contact Support through Ticket</h5>
+                    </div>
+                    <div class="card-body">
+                        <EditForm Model="MessageTicket" OnValidSubmit="HandleValidTicketSubmit">
+                            <div class="mb-3">
+                                <label for="From" class="form-label">From</label>
+                                <input type="text" class="form-control" id="From" value="@User.Email" readonly>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Send</button>
+                        </EditForm>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <p>@message</p>
 }
 
 @code {
+
     UserDto User { get; set; } = default!;
     SupportMailDto SupportMail { get; set; } = new SupportMailDto { To = "Support@Consid.com" };
+
+    MessageTicketDto MessageTicket { get; set; } = new();
+
     string? message { get; set; }
 
     protected override async Task OnInitializedAsync()
@@ -60,7 +88,7 @@ else
         }
     }
 
-    private async Task HandleValidSubmit()
+    private async Task HandleValidEmailSubmit()
     {
         SupportMail.UserId = User.Id;
         SupportMail.From = User.Email;
@@ -69,12 +97,32 @@ else
         var result = await SupportService.CreateSupportMail(SupportMail);
         if (result != null)
         {
-            SupportMail = result;
+            SupportMail = new SupportMailDto{ To = "Support@Consid.com"};
             message = "Succeeded to create support mail.";
         }
         else
         {
             message = "Failed to create support mail.";
+        }
+    }
+
+    private async Task HandleValidTicketSubmit()
+    {
+        MessageTicket.UserID = User.Id;
+        MessageTicket.User = User;
+        MessageTicket.CreatedDate = DateTime.UtcNow;
+        MessageTicket.IsResolved = IsResolved.NotResolved;
+
+        var result = await SupportService.CreateSupportTicket(MessageTicket);
+        if (result != null)
+        {
+            MessageTicket = new();
+            navigationManager.NavigateTo($"UserChattSupport/{result.Id}");
+
+        }
+        else
+        {
+            message = "YOU FAILED BUB";
         }
     }
 }

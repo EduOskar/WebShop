@@ -90,6 +90,7 @@ builder.Services.AddScoped<CartOrderTransferService>();
 builder.Services.AddScoped<OrderWorkerService>();
 builder.Services.AddScoped<ApplyDiscountToProductServices>();
 builder.Services.AddScoped<SupportEmailService>();
+builder.Services.AddScoped<SupportMessageService>();
 
 var app = builder.Build();
 
@@ -137,9 +138,9 @@ using (var scope = app.Services.CreateScope())
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
     var dbContext = services.GetRequiredService<ApplicationDbContext>();
 
-    dbContext.Database.EnsureDeleted();
+    //dbContext.Database.EnsureDeleted();
 
-    dbContext.Database.EnsureCreated();
+    //dbContext.Database.EnsureCreated();
 
     var roles = new[] { "Admin", "User", "Warehouse Worker", "Support" };
 

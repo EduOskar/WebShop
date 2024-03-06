@@ -1,13 +1,11 @@
-﻿@page "/usertickets"
-@inject CustomStateProvider authenticationStateProvider
+﻿@page "/HandleUser/{UserId:int}"
 @inject NavigationManager NavigationManager
 @inject ISupportService SupportService
 @inject IUsersService UserService
 
-
-<AuthorizeView>
-    <Authorized Context="Ababa">
-        @if (User == null || UserSupportMails == null)
+<AuthorizeView Roles="Support">
+    <Authorized Context="Nono">
+        @if (UserId == 0 || User == null || UserSupportMails == null)
         {
             <h5>Loading Information - <DisplaySpinner /> </h5>
         }
@@ -24,7 +22,7 @@
             @foreach (var supportMail in UserSupportMails)
             {
 
-                @if (supportMail.IsSupport == IsSupport.Support)
+                @if(supportMail.IsSupport == IsSupport.User)
                 {
                     <div class="support-container" style="background-color: @(supportMail.IsAnswered == IsAnswered.NotAnswered ? "green" : "red");">
                         <button class="centered-button" @onclick="() => OpenMessageBoard(supportMail)">
@@ -50,7 +48,7 @@
                     </div>
                 </div>
 
-                if (supportMail.IsSupport == IsSupport.Support && supportMail.IsAnswered == IsAnswered.NotAnswered)
+                if(supportMail.IsSupport == IsSupport.User && supportMail.IsAnswered == IsAnswered.NotAnswered)
                 {
                     <div class="container mt-5">
                         <div class="row justify-content-center">
@@ -88,13 +86,17 @@
             }
 
         }
+
+
     </Authorized>
 </AuthorizeView>
-
 
 @code {
     [Inject]
     IOrdersService OrderService { get; set; } = default!;
+
+    [Parameter]
+    public int? UserId { get; set; }
 
     UserDto User { get; set; } = new();
     IEnumerable<SupportMailDto> UserSupportMails { get; set; } = default!;
@@ -105,23 +107,17 @@
 
     private int? selectedMailId = null;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
-
-        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
-
-        if (authState is not null)
+        if (UserId.HasValue)
         {
-            string userIdValue = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
-            if (int.TryParse(userIdValue, out int Id))
-            {
-                User = await UserService.GetUser(Id);
+            User = await UserService.GetUser(UserId.Value);
 
-                UserSupportMails = await SupportService.GetUsersSupportMail(Id);
+            OrderList = await OrderService.GetOrdersFromUser(User.Id);
 
-            }
+            UserSupportMails = await SupportService.GetUsersSupportMail(UserId.Value);
+            // UserSupportMails = mails.Where(x => x.IsSupport == IsSupport.User).ToList();
         }
-
     }
 
     private void OpenMessageBoard(SupportMailDto supportMail)
@@ -132,11 +128,11 @@
     private async Task HandleValidSubmit(SupportMailDto supportMail)
     {
         SupportMailCreate.UserId = User.Id;
-        SupportMailCreate.From = User.Email;
-        SupportMailCreate.To = "Support@Consid.com";
+        SupportMailCreate.From = "Support@Consid.com";
+        SupportMailCreate.To = User.Email;
         SupportMailCreate.Subject = supportMail.Subject;
-        SupportMailCreate.IsAnswered = supportMail.IsAnswered = IsAnswered.NotAnswered;
-        SupportMailCreate.IsSupport = IsSupport.User;
+        SupportMailCreate.IsAnswered = supportMail.IsAnswered = IsAnswered.Answered;
+        SupportMailCreate.IsSupport = IsSupport.Support;
 
         var result = await SupportService.CreateSupportMail(SupportMailCreate);
         if (result != null)
@@ -144,6 +140,7 @@
 
             await SupportService.UpdateSupportMail(supportMail.Id);
             UserSupportMails = await SupportService.GetUsersSupportMail(supportMail.UserId);
+            // UserSupportMails = mails.Where(x => x.IsSupport == IsSupport.User).ToList();
             StateHasChanged();
 
         }

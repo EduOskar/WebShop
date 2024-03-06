@@ -70,14 +70,23 @@ public class ChatHub : Hub
         }
     }
 
-    public async Task JoinGroup(int supportMailId)
+    public async Task JoinGroup(int TicketId)
     {
-        await Groups.AddToGroupAsync(Context.ConnectionId, supportMailId.ToString());
+        var result = await _supportService.GetMessageTicket(TicketId);
+
+        if (result != null)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, TicketId.ToString());
+
+            await Clients.Caller.SendAsync("RecieveMessage", TicketId, "You have joined support session. wait for support to contact you");
+        }
+
+        throw new Exception("No Ticket session with that Id");
     }
 
-    public async Task SendMessageToGroup(int supportMailId, string user, string message)
+    public async Task SendMessageToGroup(int TicketId, string user, string message)
     {
-        await Clients.Group(supportMailId.ToString()).SendAsync("ReceiveMessage", user, message);
+        await Clients.Group(TicketId.ToString()).SendAsync("ReceiveMessage", user, message);
     }
 }
 

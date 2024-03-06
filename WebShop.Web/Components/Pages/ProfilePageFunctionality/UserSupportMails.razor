@@ -1,11 +1,13 @@
-﻿@page "/HandleUser/{UserId:int}"
+﻿@page "/usertickets"
+@inject CustomStateProvider authenticationStateProvider
 @inject NavigationManager NavigationManager
 @inject ISupportService SupportService
 @inject IUsersService UserService
 
-<AuthorizeView Roles="Support">
-    <Authorized Context="Nono">
-        @if (UserId == 0 || User == null || UserSupportMails == null)
+
+<AuthorizeView>
+    <Authorized Context="Ababa">
+        @if (User == null || SupportMails == null)
         {
             <h5>Loading Information - <DisplaySpinner /> </h5>
         }
@@ -19,10 +21,10 @@
                 </CardBody>
             </Card>
 
-            @foreach (var supportMail in UserSupportMails)
+            @foreach (var supportMail in SupportMails)
             {
 
-                @if(supportMail.IsSupport == IsSupport.User)
+                @if (supportMail.IsSupport == IsSupport.Support)
                 {
                     <div class="support-container" style="background-color: @(supportMail.IsAnswered == IsAnswered.NotAnswered ? "green" : "red");">
                         <button class="centered-button" @onclick="() => OpenMessageBoard(supportMail)">
@@ -48,7 +50,7 @@
                     </div>
                 </div>
 
-                if(supportMail.IsSupport == IsSupport.User && supportMail.IsAnswered == IsAnswered.NotAnswered)
+                if (supportMail.IsSupport == IsSupport.Support && supportMail.IsAnswered == IsAnswered.NotAnswered)
                 {
                     <div class="container mt-5">
                         <div class="row justify-content-center">
@@ -86,94 +88,16 @@
             }
 
         }
-
-        @if (OrderList == null || User == null)
-        {
-            <h5>@User!.Email Has no orders to display</h5>
-        }
-        else
-        {
-            <Card>
-                <CardHeader>
-                    <CardTitle>Here is card Title</CardTitle>
-                </CardHeader>
-                <CardBody>
-                    <Grid TItem="OrderDto"
-                          class="table table-hover table-bordered table-striped"
-                          DataProvider="TicketDataProvider"
-                          AllowFiltering="true"
-                          AllowPaging="true"
-                          PageSize="15"
-                          ItemsPerPageText="1"
-                          PageSizeSelectorItems="[1]"
-                          PaginationItemsTextFormat="yes"
-                          AllowSorting="true"
-                          Responsive="true">
-                        <GridColumn TItem="OrderDto" HeaderText="Id" IsDefaultSortColumn="true" PropertyName="Id" SortKeySelector="item => item.Id">
-                            <ChildContent Context="item">
-                                @item.Id
-                            </ChildContent>
-                        </GridColumn>
-                        <GridColumn TItem="OrderDto" HeaderText="Order Status" IsDefaultSortColumn="true" PropertyName="OrderStatus" SortKeySelector="item => item.OrderStatus.CurrentStatus">
-                            <ChildContent Context="item">
-                                @item.OrderStatus.CurrentStatus
-                            </ChildContent>
-                        </GridColumn>
-                        <GridColumn TItem="OrderDto" HeaderText="User Id" IsDefaultSortColumn="true" PropertyName="UserId" SortKeySelector="item => item.UserId">
-                            <ChildContent Context="item">
-                                @item.UserId
-                            </ChildContent>
-                        </GridColumn>
-                        <GridColumn TItem="OrderDto" HeaderText="WareHouseWorker " IsDefaultSortColumn="true" PropertyName="WareHouseWorker" SortKeySelector="item => item.WareHouseWorkerId">
-                            <ChildContent Context="item">
-                                @if (item.WarehouseWorker == null)
-                                {
-                                    <p>No WarehouseWorker yet</p>
-                                }
-                                else
-                                {
-                                    @item.WareHouseWorkerId
-
-                                    <br />
-                                    @item.WarehouseWorker.FirstName <br />
-                                    @item.WarehouseWorker.LastName
-                                }
-
-                            </ChildContent>
-                        </GridColumn>
-                        <GridColumn TItem="OrderDto" HeaderText="Order Items" IsDefaultSortColumn="true" PropertyName="OrderItems">
-                            <ChildContent Context="item">
-                                @if (item.OrderItems != null)
-                                {
-                                    @foreach (var orderItem in item.OrderItems)
-                                    {
-                                        <p> @orderItem.ProductId : @orderItem.Product.Name<br /></p>
-                                    }
-                                }
-                                else
-                                {
-                                    <p>No OrderItems</p>
-                                }
-                            </ChildContent>
-                        </GridColumn>
-
-                    </Grid>
-                </CardBody>
-            </Card>
-        }
-
     </Authorized>
 </AuthorizeView>
+
 
 @code {
     [Inject]
     IOrdersService OrderService { get; set; } = default!;
 
-    [Parameter]
-    public int? UserId { get; set; }
-
     UserDto User { get; set; } = new();
-    IEnumerable<SupportMailDto> UserSupportMails { get; set; } = default!;
+    IEnumerable<SupportMailDto> SupportMails { get; set; } = default!;
 
     SupportMailDto SupportMailCreate { get; set; } = new();
 
@@ -181,17 +105,23 @@
 
     private int? selectedMailId = null;
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
-        if (UserId.HasValue)
+
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+
+        if (authState is not null)
         {
-            User = await UserService.GetUser(UserId.Value);
+            string userIdValue = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+            if (int.TryParse(userIdValue, out int Id))
+            {
+                User = await UserService.GetUser(Id);
 
-            OrderList = await OrderService.GetOrdersFromUser(User.Id);
+                SupportMails = await SupportService.GetUsersSupportMail(Id);
 
-            UserSupportMails = await SupportService.GetUsersSupportMail(UserId.Value);
-            // UserSupportMails = mails.Where(x => x.IsSupport == IsSupport.User).ToList();
+            }
         }
+
     }
 
     private void OpenMessageBoard(SupportMailDto supportMail)
@@ -202,19 +132,18 @@
     private async Task HandleValidSubmit(SupportMailDto supportMail)
     {
         SupportMailCreate.UserId = User.Id;
-        SupportMailCreate.From = "Support@Consid.com";
-        SupportMailCreate.To = User.Email;
+        SupportMailCreate.From = User.Email;
+        SupportMailCreate.To = "Support@Consid.com";
         SupportMailCreate.Subject = supportMail.Subject;
-        SupportMailCreate.IsAnswered = supportMail.IsAnswered = IsAnswered.Answered;
-        SupportMailCreate.IsSupport = IsSupport.Support;
+        SupportMailCreate.IsAnswered = supportMail.IsAnswered = IsAnswered.NotAnswered;
+        SupportMailCreate.IsSupport = IsSupport.User;
 
         var result = await SupportService.CreateSupportMail(SupportMailCreate);
         if (result != null)
         {
 
             await SupportService.UpdateSupportMail(supportMail.Id);
-            UserSupportMails = await SupportService.GetUsersSupportMail(supportMail.UserId);
-            // UserSupportMails = mails.Where(x => x.IsSupport == IsSupport.User).ToList();
+            SupportMails = await SupportService.GetUsersSupportMail(supportMail.UserId);
             StateHasChanged();
 
         }

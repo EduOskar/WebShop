@@ -18,7 +18,17 @@ public interface ISupportService
 
     Task<bool> DeleteSupportMail(int supportMailId);
 
-    Task<bool> AssignSupportToTicket(int supportMailId, int supportId);
+    Task<bool> AssignSupportToEmail(int supportMailId, int supportId);
+
+    Task<bool> AssignSupportToTicket(int ticketId, int supportId);
 
     Task<bool> UpdateSupportMail(int supportMailId);
+
+    Task<MessageTicketDto> CreateSupportTicket(MessageTicketDto messageTicket);
+
+    Task<List<MessageTicketDto>> GetMessageTicketsByUser(int userId);
+
+    Task<MessageTicketDto> GetMessageTicket(int messageTicketId);
+
+    Task<List<MessageTicketDto>> GetMessageTickets();
 }

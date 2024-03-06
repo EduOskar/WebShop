@@ -6,26 +6,32 @@
 
 <AuthorizeView>
     <Authorized>
-        <h3>Support Chat</h3>
-        <div>
-            Support ID: <input type="number" @bind="supportMailId" />
-            <button @onclick="JoinGroup">Join Session</button>
-        </div>
-        <div>
-            User: <input type="text" @bind="User.UserName" readonly="readonly"/>
-        </div>
-        <div>
-            Message: <input type="text" @bind="messageInput" />
-            <button @onclick="SendMessageToGroup">Send</button>
+
+        <div class="chat-container">
+            <h3 class="chat-title">Support Chat</h3>
+            <div class="support-id-container">
+                Support ID: <input class="support-id-input" type="number" @bind="ticketId" readonly/>
+                <button class="join-session-button" @onclick="JoinGroup">Join Session</button>
+            </div>
+            <div class="user-container">
+                User: <input class="user-input" type="text" @bind="User.UserName" readonly="readonly" />
+            </div>
+            <div class="message-container">
+                Message: <input class="message-input" type="text" @bind="messageInput" />
+                <button class="send-message-button" @onclick="SendMessageToGroup">Send</button>
+            </div>
+
+            @if (messages.Any())
+            {
+                <div class="messages-display">
+                    @foreach (var message in messages)
+                    {
+                        <p class="message">@message.UserName: @message.CreatedAt : @message.Message</p>
+                    }
+                </div>
+            }
         </div>
 
-        @if (messages.Any())
-        {
-            foreach (var message in messages)
-            {
-                <p>@message.UserName: @message.CreatedAt : @message.Message</p>
-            }
-        }
     </Authorized>
 </AuthorizeView>
 
@@ -34,12 +40,18 @@
 
     private HubConnection? hubConnection;
     private List<SupportMessagesDto> messages = new List<SupportMessagesDto>();
-    private int supportMailId;
+
+    private bool IsChatOpen = false;
+
+    [Parameter]
+    public int ticketId { get; set; }
+
     private string? messageInput;
     private string? user;
 
     protected override async Task OnInitializedAsync()
     {
+
         var authstate = await authenticationStateProvider.GetCurrentUser();
 
         if (authstate != null)
@@ -52,21 +64,26 @@
             .Build();
 
         hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
-        { 
+        {
             // var formattedMEssage = $"{} {user}: {message}";
 
-            messages.Add(new SupportMessagesDto { UserName = user, Message = message, CreatedAt = DateTime.UtcNow});
+            messages.Add(new SupportMessagesDto { UserName = user, Message = message, CreatedAt = DateTime.UtcNow });
             InvokeAsync(StateHasChanged);
         });
 
         await hubConnection.StartAsync();
     }
 
+    private void ToggleChat()
+    {
+        IsChatOpen = !IsChatOpen;
+    }
+
     private async Task JoinGroup()
     {
         if (hubConnection is not null)
         {
-            await hubConnection.SendAsync("JoinGroup", supportMailId);
+            await hubConnection.SendAsync("JoinGroup", ticketId);
         }
     }
 
@@ -74,9 +91,9 @@
     {
         if (hubConnection is not null && !string.IsNullOrWhiteSpace(messageInput))
         {
-             user = User.UserName;
-            await hubConnection.SendAsync("SendMessageToGroup", supportMailId, user, messageInput);
-            messageInput = string.Empty; 
+            user = User.UserName;
+            await hubConnection.SendAsync("SendMessageToGroup", ticketId, user, messageInput);
+            messageInput = string.Empty;
         }
     }
 

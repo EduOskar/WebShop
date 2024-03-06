@@ -17,13 +17,19 @@ public class SupportsController : ControllerBase
     private readonly ISupportrepository _supportrepository;
     private readonly IUserRepository _userRepository;
     private readonly SupportEmailService _supportEmailService;
+    private readonly SupportMessageService _supportMessageService;
     private readonly IMapper _mapper;
 
-    public SupportsController(ISupportrepository supportrepository, IUserRepository userRepository, SupportEmailService supportEmailService, IMapper mapper)
+    public SupportsController(ISupportrepository supportrepository,
+        IUserRepository userRepository, 
+        SupportEmailService supportEmailService, 
+        SupportMessageService supportMessageService,
+        IMapper mapper)
     {
         _supportrepository = supportrepository;
         _userRepository = userRepository;
         _supportEmailService = supportEmailService;
+        _supportMessageService = supportMessageService;
         _mapper = mapper;
     }
 
@@ -142,19 +148,31 @@ public class SupportsController : ControllerBase
         return BadRequest();
     }
 
-    [HttpPost("AssignSupportToTicket/{supportMailId:int}/{supportId:int}")]
-    public async Task<ActionResult<bool>> AssignSupportToTicket(int supportMailId, int supportId)
+    [HttpPost("AssignSupportToMail/{supportMailId:int}/{supportId:int}")]
+    public async Task<ActionResult<bool>> AssignSupportToMail(int supportMailId, int supportId)
     {
         var result = await _supportEmailService.AssignSupportToTicket(supportMailId, supportId);
+
         if (result)
         {
             return Ok(result);
         }
         return NotFound();
     }
-    
 
-    
+    [HttpPost("AssignSupportToTicket/{supportTicketId:int}/{supportId:int}")]
+    public async Task<ActionResult<bool>> AssignSupportToTicket(int supportTicketId, int supportId)
+    {
+        var result = await _supportMessageService.AssignSupportToTicket(supportTicketId, supportId);
+        if (result)
+        {
+            return Ok(result);
+        }
+        return NotFound();
+    }
+
+
+
 
     [HttpDelete("{supportMailId:int}")]
     [ProducesResponseType(204)]
@@ -230,7 +248,7 @@ public class SupportsController : ControllerBase
 
         if (await _supportrepository.CreateSupportTicket(ticketMap))
         {
-            return CreatedAtAction("GetSupportEmail", new { emailId = ticketMap.Id }, ticketMap);
+            return CreatedAtAction("GetSupportTicket", new { Id = ticketMap.Id }, ticketMap);
         }
 
         return BadRequest();

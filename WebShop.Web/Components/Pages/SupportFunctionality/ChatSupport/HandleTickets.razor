@@ -1,0 +1,133 @@
+﻿@page "/HandleTickets"
+@inject NavigationManager navigationManager
+@inject CustomStateProvider authenticationStateProvider
+
+
+@if (UserList == null)
+{
+    <DisplaySpinner />
+}
+else
+{
+    <Grid TItem="MessageTicketDto"
+          class="table table-hover table-bordered table-striped"
+          DataProvider="UsersDataProvider"
+          AllowFiltering="true"
+          AllowPaging="true"
+          PageSize="15"
+          ItemsPerPageText="1"
+          PageSizeSelectorItems="[1]"
+          PaginationItemsTextFormat="yes"
+          AllowSorting="true"
+          Responsive="true">
+        <GridColumn TItem="MessageTicketDto" HeaderText="Id" IsDefaultSortColumn="true" PropertyName="Id" SortKeySelector="item => item.Id">
+            @context.Id
+        </GridColumn>
+        <GridColumn TItem="MessageTicketDto" HeaderText="First Name" PropertyName="FirstName" SortKeySelector="item => item.User!.FirstName">
+            @context.User!.FirstName
+        </GridColumn>
+        <GridColumn TItem="MessageTicketDto" HeaderText="Last Name" PropertyName="LastName" SortKeySelector="item => item.User!.LastName">
+            @context.User!.LastName
+        </GridColumn>
+        <GridColumn TItem="MessageTicketDto" HeaderText="Credit" PropertyName="Credit" SortKeySelector="item => item.User!.Credit">
+            @context.User!.Credit
+        </GridColumn>
+        <GridColumn TItem="MessageTicketDto" HeaderText="Address" PropertyName="Adress" SortKeySelector="item => item.User!.Adress">
+            @context.User!.Adress
+        </GridColumn>
+        <GridColumn TItem="MessageTicketDto" HeaderText="Username" PropertyName="UserName" SortKeySelector="item => item.User!.UserName">
+            @context.User!.UserName
+        </GridColumn>
+        <GridColumn TItem="MessageTicketDto" HeaderText="Email" PropertyName="Email" SortKeySelector="item => item.User!.Email">
+            @context.User!.Email
+        </GridColumn>
+        <GridColumn TItem="MessageTicketDto" HeaderText="Phone Number" PropertyName="Phonenumber" SortKeySelector="item => item.User!.Phonenumber">
+            @context.User!.Phonenumber
+        </GridColumn>
+        <GridColumn TItem="MessageTicketDto" HeaderText="Support" PropertyName="Support" SortKeySelector="item => item.Support!.LastName">
+            @if (context.Support == null)
+            {
+                <div><p>Ticket is not assigned yet</p></div>
+            }
+            else
+            {
+                <a>@context.Support!.FirstName @context.Support.LastName</a>
+            }
+        </GridColumn>
+        <GridColumn TItem="MessageTicketDto" HeaderText="Ticket Active" PropertyName="ActiveSupportMailDisplay" SortKeySelector="item => item.IsResolved">
+            @context.IsResolved
+        </GridColumn>
+        <GridColumn TItem="MessageTicketDto" HeaderText="Actions">
+
+            @if (context.SupportId == null)
+            {
+                <Button @onclick="(() => HandleUserSupport(context))">Handle User</Button>
+            }
+            else
+            {
+                <Button @onclick="(() => HandleUserSupport(context))">Join the supportChat</Button>
+            }
+        </GridColumn>
+    </Grid>
+}
+
+@code {
+    [Inject]
+    ISupportService SupportService { get; set; } = default!;
+
+    [Inject]
+    IUsersService UserService { get; set; } = default!;
+
+    IEnumerable<MessageTicketDto> SupportTickets { get; set; } = default!;
+
+    List<UserDto> UserList { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchInformation();
+    }
+
+    protected async Task FetchInformation()
+    {
+         SupportTickets = await SupportService.GetMessageTickets();
+
+        // SupportTickets = PreEditedMails.Where(x => x. == IsSupport.User);
+
+        UserList = await UserService.GetUsers();
+
+        StateHasChanged();
+    }
+
+    private async Task<GridDataProviderResult<MessageTicketDto>> UsersDataProvider(GridDataProviderRequest<MessageTicketDto> request)
+    {
+        return await Task.FromResult(request.ApplyTo(SupportTickets));
+    }
+
+
+    private async void HandleUserSupport(MessageTicketDto supportTicket)
+    {
+        int supportId = 0;
+
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+
+        if (authState is not null)
+        {
+            string userIdValue = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+            if (int.TryParse(userIdValue, out supportId))
+            {
+                // supportId = userId;
+
+            }
+
+            var result = await SupportService.AssignSupportToTicket(supportTicket.Id, supportId);
+
+            if (result)
+            {
+                var userId = supportTicket.UserID;
+                navigationManager.NavigateTo($"/HandleUserTickets/{supportTicket.Id}");
+            }
+
+        }
+
+    }
+}

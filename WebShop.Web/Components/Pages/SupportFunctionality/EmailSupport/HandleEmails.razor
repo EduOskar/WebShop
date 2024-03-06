@@ -1,4 +1,4 @@
-﻿@page "/HandleTickets"
+﻿@page "/HandleEmails"
 @inject NavigationManager navigationManager
 @inject CustomStateProvider authenticationStateProvider
 
@@ -128,7 +128,7 @@ else
 
             }
 
-            var result = await SupportService.AssignSupportToTicket(supportmail.Id, supportId);
+            var result = await SupportService.AssignSupportToEmail(supportmail.Id, supportId);
 
             if (result)
             {

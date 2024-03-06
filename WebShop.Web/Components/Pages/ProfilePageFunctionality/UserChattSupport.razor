@@ -1,0 +1,8 @@
+﻿@page "/UserChattSupport/{ticketId:int}"
+
+<WebShop.Web.Components.Pages.Chathubs.ChatHub ticketId="ticketId"/>
+
+@code {
+    [Parameter]
+    public int ticketId { get; set; }
+}

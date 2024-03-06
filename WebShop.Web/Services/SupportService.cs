@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using System.Net.Http.Json;
 using Newtonsoft.Json;
 using WebShop.Models.DTOs;
 using WebShop.Models.DTOs.MailDtos;
@@ -45,9 +46,25 @@ public class SupportService : ISupportService
         }
     }
 
-    public async Task<bool> AssignSupportToTicket(int supportMailId, int supportId)
+    public async Task<bool> AssignSupportToEmail(int supportMailId, int supportId)
     {
-        var response = await _httpClient.PostAsync($"api/Supports/AssignSupportToTicket/{supportMailId}/{supportId}", null);
+        var response = await _httpClient.PostAsync($"api/Supports/AssignSupportToMail/{supportMailId}/{supportId}", null);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            return bool.Parse(responseContent);
+        }
+        else
+        {
+            return response.IsSuccessStatusCode;
+        }
+    }
+
+    public async Task<bool> AssignSupportToTicket(int ticketId, int supportId)
+    {
+        var response = await _httpClient.PostAsync($"api/Supports/AssignSupportToTicket/{ticketId}/{supportId}", null);
 
         if (response.IsSuccessStatusCode)
         {
@@ -232,6 +249,109 @@ public class SupportService : ISupportService
         var response = await _httpClient.PutAsync($"api/Supports/{supportMailId}", null);
 
         return response.IsSuccessStatusCode;
+    }
+
+    public async Task<MessageTicketDto> CreateSupportTicket(MessageTicketDto messageTicket)
+    {
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync<MessageTicketDto>("api/Supports/Tickets", messageTicket);
+
+            if (response.IsSuccessStatusCode)
+            {
+                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                {
+                    return null!;
+                }
+
+                var ticket = await response.Content.ReadFromJsonAsync<MessageTicketDto>();
+
+                return ticket!;
+            }
+            else
+            {
+                var message = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Http status:{response.StatusCode} Message -{message}");
+            }
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
+    public async Task<List<MessageTicketDto>> GetMessageTicketsByUser(int userId)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"api/Supports/UserTickets/{userId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                {
+                    return null!;
+                }
+
+                var tickets = await response.Content.ReadFromJsonAsync<List<MessageTicketDto>>();
+
+                return tickets!;
+            }
+            else
+            {
+                var message = await response.Content.ReadAsStringAsync();
+                throw new Exception(message);
+            }
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
+    public async Task<MessageTicketDto> GetMessageTicket(int messageTicketId)
+    {
+        var response = await _httpClient.GetAsync($"api/Supports/Tickets/{messageTicketId}");
+
+        if (response.IsSuccessStatusCode)
+        {
+            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+            {
+                return null!;
+            }
+
+            var Ticket = await response.Content.ReadFromJsonAsync<MessageTicketDto>();
+            return Ticket!;
+        }
+        else
+        {
+            var message = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Http status:{response.StatusCode} Message -{message}");
+        }
+    }
+
+    public async Task<List<MessageTicketDto>> GetMessageTickets()
+    {
+        var response = await _httpClient.GetAsync("api/Supports/Tickets");
+
+        if (response.IsSuccessStatusCode)
+        {
+            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+            {
+                return null!;
+            }
+
+            var tickets = await response.Content.ReadFromJsonAsync<List<MessageTicketDto>>();
+
+            return tickets!;
+        }
+        else
+        {
+            var message = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Http status:{response.StatusCode} Message -{message}");
+        }
     }
 }
 

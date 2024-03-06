@@ -1,0 +1,86 @@
+﻿@page "/UserChattTickets"
+@inject NavigationManager navigationManager
+@inject CustomStateProvider authenticationStateProvider
+
+@if(SupportTickets == null)
+{
+    <h1>Loading Your Tickets...</h1>
+}
+else
+{
+    <Grid TItem="MessageTicketDto"
+          class="table table-hover table-bordered table-striped"
+          DataProvider="UsersDataProvider"
+          AllowFiltering="true"
+          AllowPaging="true"
+          PageSize="15"
+          ItemsPerPageText="1"
+          PageSizeSelectorItems="[1]"
+          PaginationItemsTextFormat="yes"
+          AllowSorting="true"
+          Responsive="true">
+        <GridColumn TItem="MessageTicketDto" HeaderText="Id" IsDefaultSortColumn="true" PropertyName="Id" SortKeySelector="item => item.Id">
+            @context.Id
+        </GridColumn>
+        <GridColumn TItem="MessageTicketDto" HeaderText="Support" PropertyName="Support" SortKeySelector="item => item.Support!.LastName">
+            @if (context.Support == null)
+            {
+                <div><p>No support at the moment. please wait a while</p></div>
+            }
+            else
+            {
+                <a>@context.Support!.FirstName @context.Support.LastName</a>
+            }
+        </GridColumn>
+        <GridColumn TItem="MessageTicketDto" HeaderText="Ticket Active" PropertyName="ActiveSupportMailDisplay" SortKeySelector="item => item.IsResolved">
+            @context.IsResolved
+        </GridColumn>
+        <GridColumn TItem="MessageTicketDto" HeaderText="Actions">
+            <button @onclick="(() => HandleUserSupport(context))">Go to your ticket</button>
+        </GridColumn>
+    </Grid>
+}
+
+@code {
+    [Inject]
+    ISupportService SupportService { get; set; } = default!;
+
+    [Inject]
+    IUsersService UserService { get; set; } = default!;
+
+    IEnumerable<MessageTicketDto> SupportTickets { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchInformation();
+    }
+
+    protected async Task FetchInformation()
+    {
+        int userId;
+
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+
+        if (authState is not null)
+        {
+            string userIdValue = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+            if (int.TryParse(userIdValue, out userId))
+            { }
+
+
+            SupportTickets = await SupportService.GetMessageTicketsByUser(userId);
+        }
+    }
+
+    private async Task<GridDataProviderResult<MessageTicketDto>> UsersDataProvider(GridDataProviderRequest<MessageTicketDto> request)
+    {
+        return await Task.FromResult(request.ApplyTo(SupportTickets));
+    }
+
+
+    private void HandleUserSupport(MessageTicketDto supportTicket)
+    {
+        navigationManager.NavigateTo($"/UserChattSupport/{supportTicket.Id}");
+
+    }
+}
