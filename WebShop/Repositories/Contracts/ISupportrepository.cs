@@ -7,7 +7,11 @@ public interface ISupportrepository
 {
     Task<bool> AddSupportMessage(SupportMessages supportMessage);
 
-    Task<List<SupportMessages>> GetSupportMessagesForMail(int supportMailId);
+    Task<List<SupportMessages>> SupportMessagesByTicket(int ticketId);
+
+    Task<SupportMessages> GetSupportMessage(int messageId);
+
+    Task<List<SupportMessages>> GetSupportMessagesForTicket(int supportMailId);
 
     Task<List<SupportMail>> GetSupportMails();
 

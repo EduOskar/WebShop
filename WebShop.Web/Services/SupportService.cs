@@ -16,11 +16,11 @@ public class SupportService : ISupportService
         _httpClient = clientFactory.CreateClient("WebShop.Api");
     }
 
-    public async Task<SupportMessagesDto> AddSupportMessage(int supportMailId, SupportMessagesDto supportMessage)
+    public async Task<SupportMessagesDto> AddSupportMessage(int ticketId, SupportMessagesDto supportMessage)
     {
         try
         {
-            var response = await _httpClient.PostAsJsonAsync<SupportMessagesDto>($"api/Supports/messages/{supportMailId}", supportMessage);
+            var response = await _httpClient.PostAsJsonAsync<SupportMessagesDto>($"api/Supports/messages/{ticketId}", supportMessage);
 
             if (response.IsSuccessStatusCode)
             {
@@ -186,17 +186,17 @@ public class SupportService : ISupportService
         }
     }
 
-    public async Task<List<SupportMessagesDto>> GetSupportMessagesForMail(int supportMailId)
+    public async Task<List<SupportMessagesDto>> GetSupportMessagesForMail(int ticketId)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"api/Supports/messages/{supportMailId}");
+            var response = await _httpClient.GetAsync($"api/Supports/messages/{ticketId}");
 
             if (response.IsSuccessStatusCode)
             {
-                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
-                    return null!;
+                    return new List<SupportMessagesDto>();
                 }
 
                 var supportMails = await response.Content.ReadFromJsonAsync<List<SupportMessagesDto>>();
@@ -344,6 +344,28 @@ public class SupportService : ISupportService
             }
 
             var tickets = await response.Content.ReadFromJsonAsync<List<MessageTicketDto>>();
+
+            return tickets!;
+        }
+        else
+        {
+            var message = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Http status:{response.StatusCode} Message -{message}");
+        }
+    }
+
+    public async Task<List<SupportMessagesDto>> GetSupportMessageByTicket(int ticketId)
+    {
+        var response = await _httpClient.GetAsync($"api/Supports/messagesByTicket/{ticketId}");
+
+        if (response.IsSuccessStatusCode)
+        {
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return new List<SupportMessagesDto>();
+            }
+
+            var tickets = await response.Content.ReadFromJsonAsync<List<SupportMessagesDto>>();
 
             return tickets!;
         }

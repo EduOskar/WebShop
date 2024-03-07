@@ -10,8 +10,7 @@
         <div class="chat-container">
             <h3 class="chat-title">Support Chat</h3>
             <div class="support-id-container">
-                Support ID: <input class="support-id-input" type="number" @bind="ticketId" readonly/>
-                <button class="join-session-button" @onclick="JoinGroup">Join Session</button>
+                Support ID: <input class="support-id-input" type="number" @bind="ticketId" readonly="readonly" />
             </div>
             <div class="user-container">
                 User: <input class="user-input" type="text" @bind="User.UserName" readonly="readonly" />
@@ -36,12 +35,13 @@
 </AuthorizeView>
 
 @code {
+    [Inject]
+    protected ISupportService SupportService { get; set; } = default!;
+
     CurrentUser User { get; set; } = default!;
 
     private HubConnection? hubConnection;
-    private List<SupportMessagesDto> messages = new List<SupportMessagesDto>();
-
-    private bool IsChatOpen = false;
+    private List<SupportMessagesDto> messages { get; set; } = new List<SupportMessagesDto>();
 
     [Parameter]
     public int ticketId { get; set; }
@@ -51,7 +51,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-
         var authstate = await authenticationStateProvider.GetCurrentUser();
 
         if (authstate != null)
@@ -59,31 +58,32 @@
             User = authstate;
         }
 
+        var supportmessages = await SupportService.GetSupportMessageByTicket(ticketId);
+
+        messages = supportmessages ?? new List<SupportMessagesDto>();
+
         hubConnection = new HubConnectionBuilder()
             .WithUrl(Navigation.ToAbsoluteUri("/chathub"))
             .Build();
 
         hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
         {
-            // var formattedMEssage = $"{} {user}: {message}";
-
-            messages.Add(new SupportMessagesDto { UserName = user, Message = message, CreatedAt = DateTime.UtcNow });
+            messages!.Add(new SupportMessagesDto { UserName = user, Message = message, CreatedAt = DateTime.UtcNow });
             InvokeAsync(StateHasChanged);
         });
 
         await hubConnection.StartAsync();
-    }
 
-    private void ToggleChat()
-    {
-        IsChatOpen = !IsChatOpen;
+        await JoinGroup();
     }
 
     private async Task JoinGroup()
     {
         if (hubConnection is not null)
         {
+
             await hubConnection.SendAsync("JoinGroup", ticketId);
+            messages.Add(new SupportMessagesDto { UserName = user!, Message = $"{User.UserName}: successfully joined chat", CreatedAt = DateTime.UtcNow });
         }
     }
 

@@ -25,5 +25,5 @@ public class MessageTicket
 
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 
-    List<SupportMessages>? SupportMessages { get; set; } = default!;
+    public List<SupportMessages>? SupportMessages { get; set; }
 }

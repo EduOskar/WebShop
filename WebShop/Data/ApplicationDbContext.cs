@@ -98,18 +98,14 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             .HasForeignKey(os => os.OrderStatusId);
         });
 
-        //modelBuilder.Entity<SupportMail>(supportMail =>
-        // supportMail.HasOne(u => u.User)
-        // .WithMany()
-        // .HasForeignKey(u => u.UserId)
-        //);
+        modelBuilder.Entity<MessageTicket>(messageTicket =>
+        {
+            messageTicket
+            .HasMany(x => x.SupportMessages)
+            .WithOne(x => x.Ticket)
+            .HasForeignKey(os => os.TicketId);
+        });
 
-        //modelBuilder.Entity<SupportMail>(supportMail =>
-        //supportMail.HasOne(s => s.Support)
-        //.WithMany()
-        //.HasForeignKey(s => s.SupportId)
-        //.IsRequired(false)
-        //);
 
         //Products
         //Beauty Category

@@ -10,6 +10,8 @@ public class SupportMessagesDto
 {
     public int Id { get; set; }
 
+    public int TicketId { get; set; }
+
     public string UserName { get; set; } = default!;
 
     public string Message { get; set; } = default!;

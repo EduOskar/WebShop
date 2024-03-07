@@ -30,5 +30,7 @@ public interface ISupportService
 
     Task<MessageTicketDto> GetMessageTicket(int messageTicketId);
 
+    Task<List<SupportMessagesDto>> GetSupportMessageByTicket(int ticketId);
+
     Task<List<MessageTicketDto>> GetMessageTickets();
 }

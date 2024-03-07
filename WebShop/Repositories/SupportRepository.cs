@@ -22,9 +22,10 @@ public class SupportRepository : ISupportrepository
         return await Save();
     }
 
-    public async Task<List<SupportMessages>> GetSupportMessagesForMail(int supportMailId)
+    public async Task<List<SupportMessages>> GetSupportMessagesForTicket(int supportMailId)
     {
         return await _dbContext.SupportMessages
+                                .Include(x => x.Ticket)
                                 .OrderBy(m => m.CreatedAt)
                                 .ToListAsync();
     }
@@ -150,6 +151,9 @@ public class SupportRepository : ISupportrepository
     public async Task<List<MessageTicket>> GetMEssageTicketsByUser(int userId)
     {
         var userMessageTickets = await _dbContext.MessageTickets
+             .Include(x => x.User)
+            .Include(x => x.Support)
+            .Include(x => x.SupportMessages)
             .OrderBy(x => x.CreatedDate)
             .Where(x => x.UserID == userId).ToListAsync();
 
@@ -166,6 +170,7 @@ public class SupportRepository : ISupportrepository
         var messageTicket = await _dbContext.MessageTickets
             .Include(x => x.User)
             .Include(x => x.Support)
+             .Include(x => x.SupportMessages)
             .FirstOrDefaultAsync(x => x.Id == messageTicketId);
 
         if (messageTicket != null)
@@ -181,9 +186,36 @@ public class SupportRepository : ISupportrepository
         var messageTickets = await _dbContext.MessageTickets
             .Include(x => x.User)
             .Include(x => x.Support)
-            .OrderBy(x => x.CreatedDate).ToListAsync();
+             .Include(x => x.SupportMessages)
+            .OrderBy(x => x.CreatedDate)
+            .ToListAsync();
 
         return messageTickets;
+    }
+
+    public async Task<SupportMessages> GetSupportMessage(int messageId)
+    {
+        var messageTicket = await _dbContext.SupportMessages
+            .Include(x => x.Ticket)
+            .FirstOrDefaultAsync(x => x.Id == messageId);
+
+        if (messageTicket != null)
+        {
+            return messageTicket;
+        }
+
+        throw new Exception($"No message could be found with Id {messageId}");
+
+    }
+
+    public async Task<List<SupportMessages>> SupportMessagesByTicket(int ticketId)
+    {
+        var messagesByTicket = await _dbContext.SupportMessages
+            .Include(x => x.Ticket)
+            .Where(x => x.TicketId == ticketId).
+            ToListAsync();
+
+        return messagesByTicket;
     }
 }
 

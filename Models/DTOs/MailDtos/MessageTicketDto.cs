@@ -28,5 +28,5 @@ public class MessageTicketDto
 
     public DateTime CreatedDate { get; set; }
 
-    List<SupportMessagesDto>? SupportMessages { get; set; } = default!;
+    public List<SupportMessagesDto>? SupportMessages { get; set; } = default!;
 }

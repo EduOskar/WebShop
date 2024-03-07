@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using System.Collections.Concurrent;
 using System.Security.Claims;
+using WebShop.Models.DTOs.MailDtos;
 using WebShop.Web.Services;
 using WebShop.Web.Services.Contracts;
 
@@ -18,7 +19,7 @@ public class ChatHub : Hub
 
     public override async Task OnConnectedAsync()
     {
-     
+
         await Clients.Caller.SendAsync("Message", "Connected successfully.");
         await base.OnConnectedAsync();
     }
@@ -72,20 +73,17 @@ public class ChatHub : Hub
 
     public async Task JoinGroup(int TicketId)
     {
-        var result = await _supportService.GetMessageTicket(TicketId);
+        await Groups.AddToGroupAsync(Context.ConnectionId, TicketId.ToString());
 
-        if (result != null)
-        {
-            await Groups.AddToGroupAsync(Context.ConnectionId, TicketId.ToString());
+        await Clients.Caller.SendAsync("RecieveMessage", TicketId, "You have joined support session. wait for support to contact you");
 
-            await Clients.Caller.SendAsync("RecieveMessage", TicketId, "You have joined support session. wait for support to contact you");
-        }
-
-        throw new Exception("No Ticket session with that Id");
+        //throw new Exception("No Ticket session with that Id");
     }
 
     public async Task SendMessageToGroup(int TicketId, string user, string message)
     {
+        await _supportService.AddSupportMessage(TicketId, new SupportMessagesDto { TicketId = TicketId, UserName = user, Message = message });
+
         await Clients.Group(TicketId.ToString()).SendAsync("ReceiveMessage", user, message);
     }
 }

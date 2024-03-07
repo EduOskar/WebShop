@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.Configuration.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -33,10 +34,10 @@ public class SupportsController : ControllerBase
         _mapper = mapper;
     }
 
-    [HttpGet("messages/{supportMailId:int}")]
-    public async Task<ActionResult<List<SupportMessagesDto>>> GetSupportMessages(int supportMailId)
+    [HttpGet("messages/{ticketId:int}")]
+    public async Task<ActionResult<List<SupportMessagesDto>>> GetSupportMessages(int ticketId)
     {
-        var messages = await _supportrepository.GetSupportMessagesForMail(supportMailId);
+        var messages = await _supportrepository.GetSupportMessagesForTicket(ticketId);
         if (messages != null)
         {
             var messageMap = _mapper.Map<List<SupportMessagesDto>>(messages);
@@ -44,13 +45,27 @@ public class SupportsController : ControllerBase
             return Ok(messageMap);
         }
 
+        return NotFound(new List<SupportMessagesDto>());
+    }
+
+    [HttpGet("messagesByTicket/{ticketId:int}")]
+    public async Task<ActionResult<List<SupportMessagesDto>>> GetSupportMessagesByTicket(int ticketId)
+    {
+        var result = _mapper.Map<List<SupportMessagesDto>>(
+            await _supportrepository.GetSupportMessagesForTicket(ticketId));
+
+        if (result != null)
+        {
+            return result;
+        }
+
         return NotFound();
     }
 
-    [HttpPut("{supportMailId:int}")]
-    public async Task<ActionResult<bool>> UpdateSupportMessage(int supportMailId)
+    [HttpPut("{ticketId:int}")]
+    public async Task<ActionResult<bool>> UpdateSupportMessage(int ticketId)
     {
-        var mail = await _supportrepository.GetSupportMail(supportMailId);
+        var mail = await _supportrepository.GetSupportMail(ticketId);
 
         if (mail != null)
         {
@@ -69,18 +84,34 @@ public class SupportsController : ControllerBase
         return NotFound();
     }
 
-    [HttpPost("messages/")]
-    public async Task<ActionResult<SupportMessagesDto>> CreateSupportMessage([FromBody] SupportMessagesDto messageDto)
+    [HttpPost("messages/{ticketId:int}")]
+    public async Task<ActionResult<SupportMessagesDto>> CreateSupportMessage(int ticketId ,[FromBody] SupportMessagesDto messageDto)
     {
         var message = _mapper.Map<SupportMessages>(messageDto);
+        message.TicketId = ticketId;
 
         if (await _supportrepository.AddSupportMessage(message))
         {
-            return CreatedAtAction(nameof(GetSupportMessages), new { message.Id }, message);
+            return CreatedAtAction("GetSupportMessage", new { messageId = message.Id }, message);
         }
 
         return BadRequest();
     }
+
+
+    [HttpGet("single-message/{messageId:int}")]
+    public async Task<ActionResult<SupportMessagesDto>> GetSupportMessage(int messageId)
+    {
+        var result = _mapper.Map<SupportMessagesDto>(await _supportrepository.GetSupportMessage(messageId));
+
+        if (result != null)
+        {
+            return result;
+        }
+
+        return NotFound();
+    }
+    
 
     [HttpGet]
     [ProducesResponseType(200)]
