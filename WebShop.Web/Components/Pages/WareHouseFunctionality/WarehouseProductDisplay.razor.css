@@ -10,8 +10,6 @@ div-col-md {
 
 a {
     text-decoration: none;
-    /*    display: flex;*/
-
     width: 20px;
     justify-items: center;
     background-color: red;
@@ -24,7 +22,6 @@ a {
 
 .card {
     transition: box-shadow 0.3s ease-in-out;
-  /*  overflow: hidden;*/
     align-items: center;
     width: 433px;
     height: 300px;

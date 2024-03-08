@@ -49,10 +49,16 @@
                                 <button class="btn btn-primary mt-2" @onclick="()=>UpdateDiscountStatus(discount)">Update status</button>
                             </td>
                             <td>@discount.DiscountType</td>
-                            @if (discount.DiscountType == DiscountType.ProductSpecific)
+                            @if (discount.DiscountType == DiscountType.ProductSpecific && discount.IsActive == DiscountStatus.Active)
                             {
                                 <td>
                                     <button @onclick="() => SelectDiscount(discount.Id)">Select discount for products</button>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <p>You need to activate the discount to apply it on products</p>
                                 </td>
                             }
                         </tr>
@@ -90,7 +96,7 @@
             <br />
 
 
-
+             
             @if (discountId > 0)
             {
                 <div>
@@ -103,7 +109,7 @@
                 </div>
             }
             <div>
-                <button class="btn btn-outline-danger" @onclick="@RemoveProductDiscounts">Remove ProductDiscounts</button>
+                <button class="bt   n btn-outline-danger" @onclick="@RemoveProductDiscounts">Remove ProductDiscounts</button>
             </div>
             <h3>@status</h3>
         }

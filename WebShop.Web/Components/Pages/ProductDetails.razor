@@ -14,38 +14,33 @@ else
 {
     <div class="row mb-5">
         <div class="col-md-6 mb-4">
-            <img class="img-fluid" src="@Product?.ImageURL" />
+            <img src="@Product?.ImageURL" class="product-image" />
         </div>
         <div class="col-md-6">
-            <h3>@Product?.Name</h3>
-            <p>@Product?.Description</p>
-            <p>
+            <h3 class="product-name">@Product?.Name</h3>
+            <p class="product-description">@Product?.Description</p>
+            <p class="product-price">
                 <strong>
                     @Product?.Price.ToString("C") (@Product?.Quantity items in stock);
                 </strong>
-
             </p>
             @if (Product!.DiscountedPrice > 0)
             {
-                <p>
-
-                    <h5>
-                        Discount
-                    </h5>
-                    <strong>
-                        @Product?.DiscountedPrice.ToString()
-                    </strong>
-                </p>
+                <div class="discount-info">
+                    <h5>Discount</h5>
+                    <strong>@Product?.DiscountedPrice.ToString()</strong>
+                </div>
             }
-
             @if (!User.Identity!.IsAuthenticated)
             {
-                <h5>You need to be logged in to have a shopping cart</h5>
-                <a href="" class="btn btn-primary">Proceed to login</a>
+                <div class="login-prompt">
+                    <h5>You need to be logged in to have a shopping cart</h5>
+                    <a href="" class="btn btn-primary">Proceed to login</a>
+                </div>
             }
             else
             {
-                <button class="btn btn-success" @onclick="() => AddToCart_Click(new CartItemDto { CartId = cart.Id, ProductId = Product!.Id, Quantity = 1 })">
+                <button class="btn btn-success add-to-cart-btn" @onclick="() => AddToCart_Click(new CartItemDto { CartId = cart.Id, ProductId = Product!.Id, Quantity = 1 })">
                     Add to Cart
                 </button>
             }

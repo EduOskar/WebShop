@@ -13,9 +13,12 @@
                         <b>@products.Price.ToString("C")</b>
                     </p>
 
-                    <p class="card-text">
-                        <b>@products.DiscountedPrice.ToString()</b>
-                    </p>
+                    @if (products.DiscountedPrice > 0)
+                    {
+                        <p class="card-text">
+                            <p>Discounted price:</p> <b>@products.DiscountedPrice.ToString()</b>
+                        </p>
+                    }
                 </div>
             </div>
         </a>

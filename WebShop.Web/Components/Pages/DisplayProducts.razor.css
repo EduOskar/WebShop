@@ -4,16 +4,25 @@
     justify-content: flex-start;
 }
 
-div-col-md {
+div-col-md{
     width: 40px;
+}
+
+.card {
+    transition: box-shadow 0.3s ease-in-out;
+    align-items: center;
+    width: 433px;
+    height: 100%;/* Make the card fill the <a> tag */
+    margin: 5px; /* Adjusted for consistent spacing */
+    padding-bottom: 40px;
+    background-color:lightblue;
 }
 
 a {
     text-decoration: none;
-    /*    display: flex;*/
-
-    width: auto;
-    justify-items: center;
+    color: inherit; 
+    flex: 0 1 calc(20% - 20px); 
+    margin: 10px; 
 }
 
     a:hover .card {
@@ -21,19 +30,14 @@ a {
         transition: box-shadow 0.3s ease-in-out;
     }
 
-.card {
-    transition: box-shadow 0.3s ease-in-out;
-    /*  overflow: hidden;*/
-    align-items: center;
-    flex: 0 1 calc(10% - 10px);
-    margin: 20px;
-    padding-bottom: 40px;
+a:hover .card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
+
 
 a:hover img {
     transform: scale(1.07);
     transition: 0.5s ease-in-out;
-    margin: 20px;
 }
 
 img {
@@ -41,3 +45,17 @@ img {
     width: 433px;
     height: 200px;
 }
+
+
+@media (min-width: 1200px) {
+    card {
+        width: 25vw; /* Increase size for larger screens */
+    }
+}
+
+@media (min-width: 1600px) {
+    card {
+        width: 30vw; /* Further increase size for even larger screens */
+    }
+}
+
