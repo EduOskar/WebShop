@@ -1,0 +1,239 @@
+﻿
+.container-fluid {
+    min-height: 100vh;
+}
+
+.row {
+    align-items: flex-start;
+    min-height: 100vh;
+}
+
+.checkout-form-container,
+.checkout-summary-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.custom-checkout-card,
+.checkout-card {
+    position: sticky;
+    margin-bottom: 20px; 
+    width: 100%;
+}
+
+.card-container {
+    align-items: flex-start;
+    align-content: flex-start;
+     width: 25%;
+    display: flex;
+    flex-direction: column; 
+    align-items: flex-start;
+    padding: 2rem;
+    height: auto; 
+    box-sizing: border-box;
+}
+
+.custom-checkout-card {
+    width: 100%;
+    max-width: 24rem; 
+    margin-bottom: 1rem; 
+    background-color: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.46875rem 2.1875rem rgba(8, 10, 37, 0.03), 0 0.9375rem 1.40625rem rgba(8, 10, 37, 0.03), 0 0.25rem 0.53125rem rgba(8, 10, 37, 0.05), 0 0.125rem 0.1875rem rgba(8, 10, 37, 0.03);
+    border: none;
+    overflow: hidden;
+}
+
+.custom-card-header {
+    background-color: #f7f7f7;
+    color: #333;
+    padding: 1rem;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.custom-card-body {
+    padding: 1rem;
+}
+
+.form-field label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-size: 0.875rem;
+}
+
+.input-text {
+    width: 100%;
+    padding: 0.625rem;
+    border: 1px solid #ddd;
+    border-radius: 0.375rem;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+}
+
+    .input-text:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+.submit-button {
+    width: 100%;
+    padding: 0.625rem;
+    background-color: rebeccapurple;
+    color: white;
+    border-radius: 0.375rem;
+    border: none;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    margin-top: 1rem;
+}
+
+    .submit-button:hover {
+        background-color: purple;
+    }
+
+.checkout-message {
+    padding: 1rem;
+    margin-top: 1rem;
+    border-radius: 0.375rem;
+    background-color: #e9f9e9;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+    font-size: 1rem;
+    text-align: center;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 24rem;
+}
+
+    .checkout-message p {
+        margin: 0;
+        line-height: 1.5;
+        font-weight: bold;
+    }
+
+
+.checkout-card-container {
+    max-width: fit-content;
+    margin-top: 1rem;
+    justify-content: flex-end;
+}
+
+.checkout-card-header {
+    background-color: #007bff;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.checkout-card-body {
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+.checkout-form-group label {
+    font-weight: bold;
+}
+
+.checkout-form-control {
+    margin-bottom: 0.5rem;
+}
+
+.checkout-btn-primary {
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.checkout-btn-block {
+    display: block;
+}
+
+@media (min-width: 992px) {
+    .checkout-container {
+        position: relative;
+    }
+
+    .checkout-col-right {
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+}
+
+.checkout-no-items {
+    text-align: center;
+    padding: 2rem;
+}
+
+.checkout-discount-box {
+    margin-top: 1rem;
+}
+
+.checkout-summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+    background-color: transparent;
+}
+
+.product-header,
+.price-header {
+    background-color: #f7f7f9;
+    color: #333;
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 2px solid #eaecef;
+}
+
+.product-row,
+.total-row {
+    border-bottom: 1px solid #eaecef;
+}
+
+.product-name,
+.product-price,
+.total-label,
+.total-amount {
+    padding: 0.75rem;
+    text-align: left;
+}
+
+.total-row {
+    font-weight: bold;
+    background-color: #f2f2f2;
+}
+
+.total-label {
+    text-align: right;
+}
+
+.total-amount {
+    text-align: right;
+}
+
+.container-fluid.h-100 {
+    height: 100vh;
+}
+
+
+.checkout-form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+}
+
+
+.checkout-summary-container {
+    
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; 
+    padding: 20px;
+    padding-left: 50px;
+}

@@ -1,0 +1,36 @@
+﻿.text-danger {
+    color: #dc3545; 
+    background-color: #fff3f4; 
+    border-left: 4px solid #dc3545;
+    padding: 0.75rem 1rem; 
+    margin: 1rem 0; 
+    border-radius: 0.375rem; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: block;
+    width: 100%; 
+    box-sizing: border-box;
+  
+}
+
+.fade-out {
+    animation: fadeOut 3s forwards; 
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+
+@media (max-width: 576px) {
+    .text-danger {
+        font-size: 0.9rem; 
+        padding: 0.5rem 0.75rem; 
+    }
+}

@@ -2,93 +2,127 @@
 @inject NavigationManager navigationManager
 @inject CustomStateProvider authenticationStateProvider
 
-@if (UserInfo == null)
+@if (UserInfo == null || ShoppingCartItems == null)
 {
     <DisplaySpinner />
 }
 else
 {
-    <EditForm class="form-signin md-4" OnValidSubmit="OnSubmit" Model="Command">
-        <DataAnnotationsValidator />
-        <label for="inputAdressLine" class="sr-only">@UserInfo.Adress</label>
-        <InputText id="inputAdressLine" class="form-control" aria-required="true" @bind-Value="Command!.BillingAdress.AddressLine" autofocus placeholder="@UserInfo.Adress" />
-        <ValidationMessage For="@(() => Command.BillingAdress.AddressLine)" />
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-6 checkout-form-container">
+                <Card Class="custom-checkout-card">
+                    <CardHeader Class="custom-card-header">
+                        Checkout Information
+                    </CardHeader>
+                    <CardBody Class="custom-card-body">
+                        <EditForm Model="@CheckoutModel" OnValidSubmit="OnSubmit">
+                            <DataAnnotationsValidator />
+                            <div class="form-field">
+                                <label for="firstName">First Name:</label>
+                                <InputText id="firstName" class="input-text" @bind-Value="CheckoutModel.FirstName" />
+                                <ValidationMessage For="@(() => CheckoutModel.FirstName)" />
+                            </div>
+                            <div class="form-field">
+                                <label for="lastName">Last Name:</label>
+                                <InputText id="lastName" class="input-text" @bind-Value="CheckoutModel.LastName" />
+                                <ValidationMessage For="@(() => CheckoutModel.LastName)" />
+                            </div>
+                            <div class="form-field">
+                                <label for="phoneNumber">Phone Number:</label>
+                                <InputText id="phoneNumber" class="input-text" @bind-Value="CheckoutModel.PhoneNumber" />
+                                <ValidationMessage For="@(() => CheckoutModel.PhoneNumber)" />
+                            </div>
+                            <div class="form-field">
+                                <label for="email">Email:</label>
+                                <InputText id="email" class="input-text" @bind-Value="CheckoutModel.Email" />
+                                <ValidationMessage For="@(() => CheckoutModel.Email)" />
+                            </div>
+                            <div class="form-field">
+                                <label for="city">City:</label>
+                                <InputText id="city" class="input-text" @bind-Value="CheckoutModel.City" />
+                                <ValidationMessage For="@(() => CheckoutModel.City)" />
+                            </div>
+                            <div class="form-field">
+                                <label for="adressLine">Address Line:</label>
+                                <InputText id="adressLine" class="input-text" @bind-Value="CheckoutModel.AdressLine" />
+                                <ValidationMessage For="@(() => CheckoutModel.AdressLine)" />
+                            </div>
+                            <div class="form-field">
+                                <label for="postCode">Post Code:</label>
+                                <InputText id="postCode" class="input-text" @bind-Value="CheckoutModel.PostCode" />
+                                <ValidationMessage For="@(() => CheckoutModel.PostCode)" />
+                            </div>
+                            <button class="submit-button" type="submit">Purchase products</button>
+                        </EditForm>
+                    </CardBody>
+                </Card>
+            </div>
 
-        <label for="inputCity" class="sr-only">City</label>
-        <InputText id="inputCity" class="form-control" aria-required="true" @bind-Value="Command.BillingAdress.City" autofocus placeholder="City" />
-        <ValidationMessage For="@(() => Command.BillingAdress.City)" />
 
-        <label for="inputPostCode" class="sr-only">PostCode</label>
-        <InputText id="inputPostCode" class="form-control" aria-required="true" @bind-Value="Command.BillingAdress.PostCode" autofocus placeholder="PostCode" />
-        <ValidationMessage For="@(() => Command.BillingAdress.PostCode)" />
-        <label class="text-danger">@error</label>
-
-    </EditForm>
-}
-
-
-
-
-@if (ShoppingCartItems == null)
-{
-    <DisplaySpinner />
-}
-else
-{
-    <div class="container">
-        <span class="discount-box">
-            <EditForm Model="this" OnValidSubmit="HandleApplyDiscount">
-                <div class="form-group">
-                    <label for="discountCode">Discount Code:</label>
-                    <InputText id="discountCode" @bind-Value="discountCode" class="form-control" />
-                </div>
-                <button type="submit" class="btn btn-primary">Apply Discount</button>
-            </EditForm>
-        </span>
-    </div>
-
-    <section class="container-fluid">
-        <div class="col-md-6">
-            <h4 class="mb-2">Payment Summary</h4>
-            @if (ShoppingCartItems.Count() > 0)
-            {
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Price</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in ShoppingCartItems)
+            <div class="col-lg-6 checkout-summary-container">
+                <Card Class="checkout-card">
+                    <CardHeader Class="checkout-card-header">
+                        Payment Summary
+                    </CardHeader>
+                    <CardBody Class="checkout-card-body">
+                        @if (ShoppingCartItems.Count() > 0)
                         {
-                            <tr>
-                                <td>@item.Quantity x @item.ProductName</td>
-                                @if (item.Product!.DiscountedPrice > 0 || item.Product.DiscountedPrice != null)
-                                {
-                                    <td>@item.Product.DiscountedPrice.ToString()</td>
-                                }
-                                else
-                                {
-                                    <td>@item.TotalPrice.ToString("C")</td>
-                                }
-                                
-                            </tr>
+                            <table class="checkout-summary-table">
+                                <thead>
+                                    <tr>
+                                        <th class="product-header">Product</th>
+                                        <th class="price-header">Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in ShoppingCartItems)
+                                    {
+                                        <tr class="product-row">
+                                            <td class="product-name">@item.Quantity x @item.ProductName</td>
+                                            @if (item.Product!.DiscountedPrice > 0 || item.Product.DiscountedPrice != null)
+                                            {
+                                                <td class="product-price">@item.Product.DiscountedPrice.ToString()</td>
+                                            }
+                                            else
+                                            {
+                                                <td class="product-price">@item.Product.Price.ToString("C")</td>
+                                            }
+                                        </tr>
+                                    }
+                                    <tr class="total-row">
+                                        <td class="total-label"><b>Total</b></td>
+                                        <td class="total-amount"><b>@PaymentAmount.ToString("C")</b></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         }
-                        <tr>
-                            <td><b>Total </b></td>
-                            <td><b></b>@PaymentAmount.ToString("C")</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <button class="btn btn-lg btn-primary btn-block" type="submit" @onclick="OnSubmit">Purchase</button>
-            }
-            else
-            {
-                <p>You currently have no items in your shopping cart</p>
-            }
+                        else
+                        {
+                            <div class="checkout-no-items">You currently have no items in your shopping cart.</div>
+                        }
+                    </CardBody>
+                    <Card Class="checkout-card">
+                        <CardHeader Class="checkout-card-header">
+                            Apply Discount
+                        </CardHeader>
+                        <CardBody Class="checkout-card-body">
+                            <EditForm Model="this" OnValidSubmit="HandleApplyDiscount">
+                                <div class="checkout-form-group">
+                                    <label for="discountCode">Discount Code:</label>
+                                    <InputText id="discountCode" class="checkout-form-control" @bind-Value="discountCode" />
+                                </div>
+                                <button type="submit" class="submit-button">Apply Discount</button>
+                            </EditForm>
+                        </CardBody>
+                        <DisplayError ErrorMessage="@ErrorMessage" />
+                    </Card>
+                </Card>
+
+
+            </div>
         </div>
-    </section>
+    </div>
 }
 
 @code {
@@ -107,10 +141,16 @@ else
     [Inject]
     private ICartsService CartsService { get; set; } = default!;
 
+    public string? CheckoutMessage = "";
+
+    public string? ErrorMessage { get; set; }
+
     [Inject]
     DiscountCodeState discountCodeState { get; set; } = default!;
 
     protected List<CartItemDto> ShoppingCartItems { get; set; } = default!;
+
+    CheckoutDto CheckoutModel = new();
 
     private ClaimsPrincipal User = default!;
 
@@ -118,12 +158,9 @@ else
 
     private CartDto cart = default!;
 
-    [SupplyParameterFromForm]
-    PlaceOrderCommand? Command { get; set; } = new();
-
     string? error { get; set; }
 
-    public string discountCode = default!; 
+    public string discountCode = default!;
 
     private int UserId;
 
@@ -182,11 +219,16 @@ else
         {
             cart = await CartsService.GetCartByUser(UserId);
             UserInfo = await userService.GetUser(UserId);
+
+            CheckoutModel.FirstName = UserInfo.FirstName;
+            CheckoutModel.LastName = UserInfo.LastName;
+            CheckoutModel.PhoneNumber = UserInfo.Phonenumber;
+            CheckoutModel.Email = UserInfo.Email;
         }
     }
 
     private List<CartItemDto> GetCartItems(int userId)
-    { 
+    {
 
         var cartItems = ShoppingCartItems
         .Where(ci => ci.Id == cart.UserId)
@@ -199,24 +241,33 @@ else
     {
         if (!string.IsNullOrWhiteSpace(discountCode))
         {
-            var result = await DiscountService.ApplyDiscount(UserId, discountCode);
-
-            if (result)
+            try
             {
+                var result = await DiscountService.ApplyDiscount(UserId, discountCode);
+
                 var discount = await DiscountService.GetDiscount(discountCode);
 
                 discountCodeState.DiscountCode = discount.DiscountCode!;
 
                 PaymentAmount = PaymentAmount * discount.DiscountPercentage;
 
-                Console.WriteLine("Discount applied successfully.");
+                foreach (var item in ShoppingCartItems)
+                {
+                    item.Product!.Price = item.Product.Price * discount.DiscountPercentage;
+                }
+
+                ErrorMessage = "";
+
                 StateHasChanged();
+
             }
-            else
+            catch (Exception)
             {
-                Console.WriteLine("Failed to apply discount.");
-                // show an error message to the user
+
+                ErrorMessage = "Discount cannot be applied: either it's invalid, expired, or already used.";
             }
+            discountCode = "";
+            StateHasChanged();
         }
     }
 

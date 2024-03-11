@@ -1,9 +1,25 @@
 ﻿
+@if (ShouldDisplayErrorMessage)
+{
+    <h3 class="text-danger @FadeOutClass">@ErrorMessage</h3>
+}
 
-<h3 class="text-danger">@ErrorMessage</h3>
 
 @code {
     [Parameter]
     public string? ErrorMessage { get; set; }
+
+    private bool ShouldDisplayErrorMessage => !string.IsNullOrWhiteSpace(ErrorMessage);
+    private string FadeOutClass { get; set; } = "";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (ShouldDisplayErrorMessage)
+        {
+            await Task.Delay(3000);
+            FadeOutClass = "fade-out"; 
+            StateHasChanged(); 
+        }
+    }
 
 }

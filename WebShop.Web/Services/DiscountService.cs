@@ -19,159 +19,246 @@ public class DiscountService : IDiscountService
 
     public async Task<bool> ActivateProductDiscounts()
     {
-        var response = await _httpClient.PostAsync($"api/Discounts/Activate-Discounts-On-Products", null);
-
-        if (response.IsSuccessStatusCode)
+        try
         {
-            return true;
+            var response = await _httpClient.PostAsync($"api/Discounts/Activate-Discounts-On-Products", null);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+
+            var message = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Http status:{response.StatusCode} Message -{message}");
+        }
+        catch (Exception ex)
+        {
+            var message = ex.Message;
+            throw new Exception(message);
         }
 
-        var message = await response.Content.ReadAsStringAsync();
-        throw new Exception($"Http status:{response.StatusCode} Message -{message}");
     }
 
     public async Task<bool> ApplyDiscount(int userId, string discountCode)
     {
-        string requestUrl = $"api/Discounts/apply-discount/{userId}-{discountCode}";
-
-        var response = await _httpClient.PostAsync(requestUrl, null);
-
-        if (response.IsSuccessStatusCode)
+        try
         {
-            return true;
+            string requestUrl = $"api/Discounts/apply-discount/{userId}-{discountCode}";
+
+            var response = await _httpClient.PostAsync(requestUrl, null);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            else
+            {
+                var message = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Http status:{response.StatusCode} Message -{message}");
+            }
         }
-        else
+        catch (Exception ex)
         {
-            var message = await response.Content.ReadAsStringAsync();
-            throw new Exception($"Http status:{response.StatusCode} Message -{message}");
+            var message = ex.Message;
+
+            throw new Exception(message);
         }
+
     }
 
     public async Task<bool> ApplyDiscountOnProduct(int productId, int discountId)
     {
-        var response = await _httpClient.PostAsync($"api/Discounts/apply-discount-on-product/{productId}/{discountId}", null);
-
-        if (response.IsSuccessStatusCode)
+        try
         {
-            return true;
+            var response = await _httpClient.PostAsync($"api/Discounts/apply-discount-on-product/{productId}/{discountId}", null);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+
+            var message = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Http status:{response.StatusCode} Message -{message}");
+        }
+        catch (Exception ex)
+        {
+            var message = ex.Message;
+            throw new Exception(message);
         }
 
-        var message = await response.Content.ReadAsStringAsync();
-        throw new Exception($"Http status:{response.StatusCode} Message -{message}");
 
     }
 
     public async Task<DiscountDto> CreateDiscount(DiscountDto discountCreate)
     {
-        var response = await _httpClient.PostAsJsonAsync<DiscountDto>("api/Discounts", discountCreate);
-
-        if (response.IsSuccessStatusCode)
+        try
         {
-            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+            var response = await _httpClient.PostAsJsonAsync<DiscountDto>("api/Discounts", discountCreate);
+
+            if (response.IsSuccessStatusCode)
             {
-                return null!;
+                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                {
+                    return null!;
+                }
+
+                var discount = await response.Content.ReadFromJsonAsync<DiscountDto>();
+
+                return discount!;
             }
-
-            var discount = await response.Content.ReadFromJsonAsync<DiscountDto>();
-
-            return discount!;
+            else
+            {
+                var message = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Http status:{response.StatusCode} Message -{message}");
+            }
         }
-        else
+        catch (Exception ex)
         {
-            var message = await response.Content.ReadAsStringAsync();
-            throw new Exception($"Http status:{response.StatusCode} Message -{message}");
+            var message = ex.Message;
+
+            throw new Exception(message);
         }
+
     }
 
     public async Task<bool> EmailDiscounts(int discountId)
     {
-        var response = await _httpClient.GetAsync($"api/Discounts/Email-discounts/{discountId}");
+        try
+        {
+            var response = await _httpClient.GetAsync($"api/Discounts/Email-discounts/{discountId}");
 
-        if (response.IsSuccessStatusCode)
-        {
-            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+            if (response.IsSuccessStatusCode)
             {
-                return false!;
+                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                {
+                    return false!;
+                }
+                return true;
             }
-            return true;
+            else
+            {
+                var message = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Http status:{response.StatusCode} Message -{message}");
+            }
         }
-        else
+        catch (Exception ex)
         {
-            var message = await response.Content.ReadAsStringAsync();
-            throw new Exception($"Http status:{response.StatusCode} Message -{message}");
+            var message = ex.Message;
+            throw new Exception(message);
         }
+
     }
 
     public async Task<DiscountDto> GetDiscount(string discountCode)
     {
-        var response = await _httpClient.GetAsync($"api/Discounts/{discountCode}");
-
-        if (response.IsSuccessStatusCode)
+        try
         {
-            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+            var response = await _httpClient.GetAsync($"api/Discounts/{discountCode}");
+
+            if (response.IsSuccessStatusCode)
             {
-                return null!;
-            }
+                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                {
+                    return null!;
+                }
 
-            var discount = await response.Content.ReadFromJsonAsync<DiscountDto>();
-            return discount!;
+                var discount = await response.Content.ReadFromJsonAsync<DiscountDto>();
+                return discount!;
+            }
+            else
+            {
+                var message = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Http status: {response.StatusCode} Message - {message}");
+            }
         }
-        else
+        catch (Exception ex)
         {
-            var message = await response.Content.ReadAsStringAsync();
-            throw new Exception($"Http status: {response.StatusCode} Message - {message}");
+            var message = ex.Message;
+
+            throw new Exception(message);
         }
+
     }
 
     public async Task<List<DiscountDto>> GetDiscounts()
     {
-        var response = await _httpClient.GetAsync("api/Discounts");
-
-        if (response.IsSuccessStatusCode)
+        try
         {
-            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
-            {
-                return null!;
-            }
+            var response = await _httpClient.GetAsync("api/Discounts");
 
-            var discounts = await response.Content.ReadFromJsonAsync<List<DiscountDto>>();
-
-            if (discounts == null)
+            if (response.IsSuccessStatusCode)
             {
-                return null!;
+                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                {
+                    return null!;
+                }
+
+                var discounts = await response.Content.ReadFromJsonAsync<List<DiscountDto>>();
+
+                if (discounts == null)
+                {
+                    return null!;
+                }
+                return discounts;
             }
-            return discounts;
+            else
+            {
+                var message = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Http status: {response.StatusCode} Message - {message}");
+            }
         }
-        else
+        catch (Exception ex)
         {
-            var message = await response.Content.ReadAsStringAsync();
-            throw new Exception($"Http status: {response.StatusCode} Message - {message}");
+            var message = ex.Message;
+
+            throw new Exception(message);
         }
+
     }
 
     public async Task<bool> RemoveProductDiscounts()
     {
-        var response = await _httpClient.DeleteAsync("api/Discounts");
+        try
+        {
+            var response = await _httpClient.DeleteAsync("api/Discounts");
 
-        if (response.IsSuccessStatusCode)
-        {
-            return true;
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            else
+            {
+                var message = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Http status: {response.StatusCode} Message - {message}");
+            }
         }
-        else
+        catch (Exception ex)
         {
-            var message = await response.Content.ReadAsStringAsync();
-            throw new Exception($"Http status: {response.StatusCode} Message - {message}");
+            var message = ex.Message;
+
+            throw new Exception(message);
         }
+
     }
 
     public async Task<bool> UpdateDiscount(DiscountDto discountUpdate)
     {
-        var jsonRequest = JsonConvert.SerializeObject(discountUpdate);
+        try
+        {
+            var jsonRequest = JsonConvert.SerializeObject(discountUpdate);
 
-        var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json-patch+json");
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json-patch+json");
 
-        var response = await _httpClient.PutAsync($"api/Discounts/{discountUpdate.Id}", content);
+            var response = await _httpClient.PutAsync($"api/Discounts/{discountUpdate.Id}", content);
 
-        return response.IsSuccessStatusCode;
+            return response.IsSuccessStatusCode;
+        }
+        catch (Exception ex)
+        {
+            var message = ex.Message;
+
+            throw new Exception(message);
+        }
+
     }
 }
