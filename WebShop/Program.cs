@@ -154,7 +154,7 @@ using (var scope = app.Services.CreateScope())
 
     string email = "admin@admin.com";
     string userName = "Admin";
-    string password = "Admin123!";
+    string password = "Hejsan123!";
 
     var user = new User();
 
@@ -174,9 +174,9 @@ using (var scope = app.Services.CreateScope())
         await userManager.AddToRoleAsync(user, "Admin");
     }
 
-    string userName2 = "Oskar";
+    string userName2 = "WareHouse";
     string password2 = "Hejsan123!";
-    string email2 = "Oskar@Mail.com";
+    string email2 = "Ware@House.com";
 
     var user2 = await userManager.FindByNameAsync(userName2);
     if (user2 == null)
@@ -185,8 +185,8 @@ using (var scope = app.Services.CreateScope())
         {
             Email = email2,
             UserName = userName2,
-            FirstName = "Oskar",
-            LastName = "Ahling",
+            FirstName = "Ware",
+            LastName = "House",
             Adress = "Warehouse Street 1",
             PhoneNumber = "+46 - 333 333 33"
         };
@@ -197,9 +197,9 @@ using (var scope = app.Services.CreateScope())
 
 
 
-        string userName3 = "Ina";
+        string userName3 = "Support";
         string password3 = "Hejsan123!";
-        string email3 = "Ina@Mail.com";
+        string email3 = "Support@Support.com";
 
         var user3 = await userManager.FindByNameAsync(userName3);
         if (user3 == null)
@@ -208,9 +208,9 @@ using (var scope = app.Services.CreateScope())
             {
                 Email = email3,
                 UserName = userName3,
-                FirstName = "Ina",
-                LastName = "Nilsson",
-                Adress = "Warehouse Street 1",
+                FirstName = "Support",
+                LastName = "Supportium",
+                Adress = "Support Street 1",
                 PhoneNumber = "+46 - 332 332 32"
             };
 

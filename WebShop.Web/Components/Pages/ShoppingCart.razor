@@ -68,6 +68,34 @@ else
                 </div>
             </div>
         </div>
+
+        if (RelatedProductList == null)
+        {
+            <DisplaySpinner />
+        }
+        else
+        {
+            <p>Other Customers have also purchased these items</p>
+            <div class="product-container d-flex flex-wrap justify-content-start">
+
+                @foreach (var product in RelatedProductList)
+                {
+                    <a href="/ProductDetails/@product.Id" class="product-card">
+                        <div class="card">
+                            <img class="img-thumbnail" src="@product.ImageURL" alt="@product.Name" />
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">@product.Name</h5>
+                                <p class="card-text"><b>@product.Price.ToString("C")</b></p>
+                                @if (product.DiscountedPrice > 0)
+                                {
+                                    <p class="card-text">Discounted price: <b>@product.DiscountedPrice.ToString()</b></p>
+                                }
+                            </div>
+                        </div>
+                    </a>
+                }
+            </div>
+        }
     }
     else
     {
@@ -96,7 +124,18 @@ else
     [Inject]
     public IUsersService UserService { get; set; } = default!;
 
+    [Inject]
+    public IProductsService ProductService { get; set; } = default!;
+
     public List<CartItemDto> ShoppingCartItems { get; set; } = default!;
+
+    public IEnumerable<ProductDto> ProductList { get; set; } = default!;
+
+    public IEnumerable<ProductDto> RelatedProductList { get; set; } = default!;
+
+    IEnumerable<int> categoryIds = default!;
+
+    IEnumerable<int> productIdsInCart = default!;
 
     private ClaimsPrincipal User = default!;
     private int UserId;
@@ -114,6 +153,12 @@ else
 
             ShoppingCartItems = await CartItemsService.GetCartItems(UserId);
 
+            categoryIds = ShoppingCartItems.Select(item => item.Product!.CategoryId).Distinct();
+
+            productIdsInCart = ShoppingCartItems.Select(item => item.ProductId).Distinct();
+
+            await GetSuggestedProducts(categoryIds, productIdsInCart);
+
             CartChanged();
 
         }
@@ -122,6 +167,37 @@ else
 
             ErrorMessage = ex.Message;
         }
+    }
+
+    protected async Task GetSuggestedProducts(IEnumerable<int> categoryIds, IEnumerable<int> excludedProductIds, int maxPercategory = 4)
+    {
+        ProductList = await ProductService.GetProducts();
+
+        var filteredProducts = ProductList.Where(product => !excludedProductIds.Contains(product.Id));
+
+        if (categoryIds.Count() == 1)
+        {
+            RelatedProductList = filteredProducts
+               .Where(product => categoryIds.Contains(product.CategoryId))
+               .GroupBy(product => product.CategoryId)
+               .SelectMany(group => group.Take(4));
+        }
+        else if (categoryIds.Count() == 2)
+        {
+            RelatedProductList = filteredProducts
+             .Where(product => categoryIds.Contains(product.CategoryId))
+             .GroupBy(product => product.CategoryId)
+             .SelectMany(group => group.Take(2));
+        }
+        else
+        {
+            RelatedProductList = filteredProducts
+               .Where(product => categoryIds.Contains(product.CategoryId))
+               .GroupBy(product => product.CategoryId)
+               .SelectMany(group => group.Take(1));
+
+        }
+        StateHasChanged();
     }
 
     protected async Task GetAuthenticatedUserCart()
@@ -144,6 +220,8 @@ else
         RemoveCartItem(cartItemid);
 
         CartChanged();
+
+        await GetSuggestedProducts(categoryIds, productIdsInCart);
     }
 
     protected async Task UpdateQtyCartItem_Click(int cartItemid, int quantity)

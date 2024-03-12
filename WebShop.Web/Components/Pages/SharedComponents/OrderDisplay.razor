@@ -1,5 +1,6 @@
 ﻿@if (Order != null)
 {
+   
     <div class="order-container">
         <div class="order">
             <div @onclick="ToggleDetails">
@@ -41,6 +42,8 @@
     </div>
 }
 
+<ConfirmDialog @ref="dialog" />
+
 @code {
     [Inject]
     public IOrdersService orderService { get; set; } = default!;
@@ -51,6 +54,8 @@
     [Parameter]
     public EventCallback<bool> OnOrdercancelled { get; set; }
 
+    public ConfirmDialog dialog = default!;
+
     private bool showDetails = false;
 
     private void ToggleDetails() => showDetails = !showDetails;
@@ -58,23 +63,32 @@
     private string? submitStatus;
     private string? alertClass;
 
-
     private async Task CancelOrder()
     {
         if (Order.OrderStatus.CurrentStatus == OrderStatusType.New)
         {
-            bool success = await orderService.UpdateOrderStatus(Order.Id, OrderStatusType.Cancelled);
+            var options = new ConfirmDialogOptions { IsVerticallyCentered = true };
+            var confirmation = await dialog.ShowAsync(
+                title: "Are you sure you want to cancle order?",
+                message1: "Do you want to proceed?",
+                confirmDialogOptions: options
+        );
 
-            if (success)
+            if (confirmation)
             {
-                submitStatus = "Order cancelled successfully!";
-                alertClass = "alert-success";
-                await OnOrdercancelled.InvokeAsync(true);
-            }
-            else
-            {
-                submitStatus = "Order cancelled Failed!";
-                alertClass = "alert-danger";
+                bool success = await orderService.UpdateOrderStatus(Order.Id, OrderStatusType.Cancelled);
+
+                if (success)
+                {
+                    submitStatus = "Order cancelled successfully!";
+                    alertClass = "alert-success";
+                    await OnOrdercancelled.InvokeAsync(true);
+                }
+                else
+                {
+                    submitStatus = "Order cancelled Failed!";
+                    alertClass = "alert-danger";
+                }
             }
         }
     }

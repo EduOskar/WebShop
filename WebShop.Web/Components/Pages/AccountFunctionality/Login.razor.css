@@ -1,0 +1,69 @@
+﻿.row.align-content-center {
+    min-height: 100vh; 
+    justify-content: center; 
+    align-items: center; 
+}
+
+.h2.font-weight-normal.login-title {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+
+.form-signin {
+    max-width: 400px; 
+    padding: 2rem;
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05); 
+    border-radius: 0.5rem; 
+    background-color: #fff;
+}
+
+    .form-signin .form-control {
+        position: relative;
+        box-sizing: border-box;
+        height: auto;
+        padding: 10px;
+        font-size: 16px; 
+        margin-bottom: 1rem; 
+    }
+
+        .form-signin .form-control:focus {
+            z-index: 2; 
+        }
+
+    .form-signin .btn.btn-primary.btn-block {
+        padding: 10px;
+        font-size: 18px; 
+        border-radius: 20px; 
+        margin-top: 1rem; 
+    }
+
+.btn-primary {
+    background-color: rebeccapurple;
+    border-color: purple;
+    color: white;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+}
+
+.btn-primary:hover{
+    background-color: purple;
+}
+ 
+
+.text-danger {
+    margin-top: 1rem; 
+    text-align: center;
+}
+
+
+.navlink, .form-signin h6 {
+    display: block; 
+    text-align: center; 
+    margin-top: 1rem; 
+    color: #007bff; 
+    text-decoration: none; 
+}
+
+    .navlink:hover, .form-signin h6:hover {
+        text-decoration: underline;
+    }

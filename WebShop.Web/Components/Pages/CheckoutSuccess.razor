@@ -8,9 +8,14 @@
 }
 else
 {
-    <div class="col-md-6">
-        <h2>Thank you for your purchase!</h2>
-        <h5>You will have recieved a email about your order information</h5>
+    <Toasts class="p-3" Messages="messages" AutoHide="true" StackLength="3" Placement="ToastsPlacement.TopRight" />
+
+
+    <div class="card mx-auto mt-5" style="width: 18rem; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+        <div class="card-body" style="background-color: rebeccapurple; color: white;">
+            <h5 class="card-title">Thank you for your purchase!</h5>
+            <p class="card-text">You will have received an email about your order information.</p>
+        </div>
     </div>
 }
 
@@ -26,6 +31,10 @@ else
 
     [Inject]
     DiscountCodeState discountCodeState { get; set; } = default!;
+
+    List<ToastMessage> messages = new List<ToastMessage>();
+
+    private void ShowMessage(ToastType toastType) => messages.Add(CreateToastMessage(toastType));
 
     public string? discountCode { get; set; }
 
@@ -49,6 +58,7 @@ else
                 if (ShoppingCartItems?.Count != 0)
                 {
                     await CartOrderTransfer(UserId);
+                    ShowMessage(ToastType.Success);
                 }
             }
             else
@@ -64,6 +74,15 @@ else
         }
 
     }
+
+    private ToastMessage CreateToastMessage(ToastType toastType)
+        => new ToastMessage
+            {
+                Type = toastType,
+                Title = "Happy purchase!",
+                HelpText = $"{DateTime.UtcNow}",
+                Message = $"Thank you for your purchase! Orders can be found in your profile. DateTime: {DateTime.UtcNow}"
+            };
 
     protected async Task GetAuthenticatedUserCart()
     {
@@ -83,6 +102,6 @@ else
         discountCode = discountCodeState.DiscountCode;
 
         await CartOrderTransferService.CartOrderTransfer(userId, discountCode);
-     
+
     }
 }

@@ -237,3 +237,7 @@
     padding: 20px;
     padding-left: 50px;
 }
+
+.img-thumbnail{
+    width: auto;
+}

@@ -79,6 +79,7 @@ else
                                     @foreach (var item in ShoppingCartItems)
                                     {
                                         <tr class="product-row">
+                                            <td><img class="img-thumbnail" src="@item.Product!.ImageURL" /></td>
                                             <td class="product-name">@item.Quantity x @item.ProductName</td>
                                             @if (item.Product!.DiscountedPrice > 0 || item.Product.DiscountedPrice != null)
                                             {

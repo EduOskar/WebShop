@@ -2,25 +2,23 @@
 @inject CustomStateProvider authenticationStateProvider
 
 
-        @if (User == null)
-        {
-            <DisplaySpinner />
-        }
-        else
-        {
-            <Card>
-                <CardBody>
-                    <CardTitle>@User.FirstName @User.LastName</CardTitle  e>
-                        <CardSubTitle Class="mb-2 text-muted">@User.Email</CardSubTitle>
-                        <CardSubTitle Class="mb-2 text-muted">@User.Adress</CardSubTitle>
-                        <CardSubTitle Class="mb-2 text-muted">@User.Phonenumber</CardSubTitle>
-                    </CardBody>
-                </Card>
+@if (User == null)
+{
+    <DisplaySpinner />
+}
+else
+{
+    <Card>
+        <CardBody>
+            <CardTitle>@User.FirstName @User.LastName</CardTitle>
+            <CardSubTitle Class="mb-2 text-muted">@User.Email</CardSubTitle>
+            <CardSubTitle Class="mb-2 text-muted">@User.Adress</CardSubTitle>
+            <CardSubTitle Class="mb-2 text-muted">@User.Phonenumber</CardSubTitle>
+        </CardBody>
+    </Card>
 
-               
-        }
-
-         <ResetPassword/>
+    <ForgotPassword/>
+}
 
 @code {
     private ClaimsPrincipal UserAuth = default!;
