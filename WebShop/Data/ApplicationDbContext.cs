@@ -403,6 +403,5 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
             Name = "Shoes",
             IconCSS = "fas fa-shoe-prints"
         });
-
     }
 }

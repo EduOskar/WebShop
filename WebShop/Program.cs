@@ -12,6 +12,7 @@ using WebShop.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 builder.Services.AddTransient<IEmailSenderRepository, EmailSenderRepository>();
 
 // Add services to the container.
@@ -115,21 +116,6 @@ app.UseAuthentication().UseCookiePolicy();
 app.UseAuthorization();
 
 app.MapControllers();
-
-using (var scope = app.Services.CreateScope())
-{
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
-
-    var roles = new[] { "Admin", "User", "Warehouse Worker" };
-
-    foreach (var role in roles)
-    {
-        if (!await roleManager.RoleExistsAsync(role))
-        {
-            await roleManager.CreateAsync(new IdentityRole<int>(role));
-        }
-    }
-}
 
 using (var scope = app.Services.CreateScope())
 {
