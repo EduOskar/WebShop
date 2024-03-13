@@ -1,7 +1,7 @@
 ﻿@page "/AdminProducts"
 
 
-<PageTitle>Products information</PageTitle>
+<PageTitle>Products Management</PageTitle>
 
 <AuthorizeView Roles="Admin">
     <Authorized>
@@ -11,90 +11,52 @@
         }
         else
         {
-
-            <h3>Categories</h3>
-
-            <div class="form-group">
-                <input class="form-control" type="text" placeholder="filter" @bind="filterCategory" @bind:event="oninput" />
-            </div>
-
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Name</th>
-                        <th>Icons</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var categories in CategoryList)
-                    {
-
-                        if (!ApplyFilterCategory(categories))
+            <div class="admin-dashboard">
+                <div class="sidebar">
+                    <div class="filter-group">
+                        <input class="filter-input" type="text" placeholder="Filter categories" @bind="filterCategory" @bind:event="oninput" />
+                    </div>
+                    <div class="filter-group">
+                        <input class="filter-input" type="text" placeholder="Filter products" @bind="filterProduct" @bind:event="oninput" />
+                    </div>
+                </div>
+                <div class="content">
+                    <h3>Categories</h3>
+                    <div class="categories-container">
+                        @foreach (var category in CategoryList.Where(c => ApplyFilterCategory(c)))
                         {
-                            continue;
+                            <div class="category-item">
+                                <span>@category.Name</span>
+                                <span class="icon-css">@category.IconCSS</span>
+                                <a href="edit-category/@category.Id">Edit</a>
+                            </div>
                         }
-                        <tr>
-                            <td>@categories.Id</td>
-                            <td>@categories.Name</td>
-                            <td>@categories.IconCSS</td>
-                            <td><a href="edit-category/@categories.Id">Edit</a></td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-            <a href="edit-category">Add Category</a>
-            <br />
-            <br />
-            <br />
-            <br />
-            <h3>Product Information</h3>
+                    </div>
+                    <a href="edit-category" class="add-btn">Add Category</a>
 
-            <div class="form-group">
-                <input class="form-control" type="text" placeholder="filter" @bind="filterProduct" @bind:event="oninput" />
-            </div>
-
-
-            <table class="table container-fluid">
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>CategoryId</th>
-                        <th>Category</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var products in ProductList)
-                    {
-                        if (!ApplyFilterProduct(products))
+                    <h3>Products</h3>
+                    <div class="products-container">
+                        @foreach (var product in ProductList.Where(p => ApplyFilterProduct(p)))
                         {
-                            continue;
+                            <div class="product-item">
+                                <img src="@product.ImageURL" alt="Product Image">
+                                <div class="product-info">
+                                    <div class="product-detail">@product.Name</div>
+                                    <div class="product-detail">@product.Price</div>
+                                    <div class="product-detail">@product.Quantity</div>
+                                    <div class="product-detail">@product.Status</div>
+                                </div>
+                                <a href="edit-product/@product.Id" class="edit-link">Edit</a>
+                            </div>
                         }
-                        <tr>
-                            <td>@products.Id</td>
-                            <td>@products.Name</td>
-                            <td>@products.Description</td>
-                            <td>@products.CategoryId</td>
-                            <td>@products.CategoryName</td>
-                            <td>@products.Price</td>
-                            <td>@products.Quantity</td>
-                            <td>@products.Status</td>
-                            <td><a href="edit-product/@products.Id">Edit</a></td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-            <a href="edit-product">Add Product</a>
-
+                    
+                    </div>
+                    <a href="edit-product" class="add-btn">Add Product</a>
+                </div>
+            </div>
         }
     </Authorized>
 </AuthorizeView>
-
 
 @code {
 

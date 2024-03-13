@@ -104,9 +104,6 @@
 
                 </div>
 
-                <div>
-                    <button id="btnActivate" class="btn btn-outline-success" @onclick="@ActivateProductDiscounts">Activate discounts</button>
-                </div>
             }
             <div>
                 <button class="bt   n btn-outline-danger" @onclick="@RemoveProductDiscounts">Remove ProductDiscounts</button>
@@ -192,7 +189,7 @@
 
             if (response)
             {
-                status = "Discounts were applied successfully";
+                await ActivateProductDiscounts();
             }
             else
             {

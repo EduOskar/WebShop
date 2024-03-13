@@ -1,107 +1,57 @@
 ﻿@page "/DisplayUsersAndRoles"
 
-<PageTitle>Users and Roles information</PageTitle>
+<PageTitle>Users Information</PageTitle>
 
 <AuthorizeView Roles="Admin">
     <Authorized>
-        @if (UserList == null || UserRolesList == null || RolesList == null)
+        @if (UserList == null || RolesList == null)
         {
             <DisplaySpinner />
         }
         else
         {
-            <h3>Users</h3>
-
-            <div class="form-group">
-                <input class="form-control" type="text" placeholder="filter" @bind="filterUser" @bind:event="oninput" />
-            </div>
-
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Firstname</th>
-                        <th>Lastname</th>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Password</th>
-                        <th>Confirm Password</th>
-                        <th>Phonenumer</th>
-                        <th>Adress</th>
-                        <th>Credits</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var users in UserList)
-                    {
-
-                        if (!ApplyFilterUsers(users))
+            <div class="admin-dashboard">
+                <div class="sidebar">
+                    <div class="filter-group">
+                        <input class="filter-input" type="text" placeholder="Filter users..." @bind="filterUser" @bind:event="oninput" />
+                    </div>
+                </div>
+                <div class="content">
+                    <h3>Users</h3>
+                    <div class="users-display">
+                        @foreach (var user in UserList)
                         {
-                            continue;
+                            if (!ApplyFilterUsers(user))
+                            {
+                                continue;
+                            }
+                            <div class="user-card">
+                                <div class="user-info">
+                                    <div><strong>ID:</strong> @user.Id</div>
+                                    <div><strong>Name:</strong> @user.FirstName @user.LastName</div>
+                                    <div><strong>Username:</strong> @user.UserName</div>
+                                    <div><strong>Email:</strong> @user.Email</div>
+                                    <div><strong>Phone:</strong> @user.Phonenumber</div>
+                                    <div><strong>Address:</strong> @user.Adress</div>
+                                </div>
+                                <a href="edit-user/@user.Id" class="edit-btn">Edit</a>
+                            </div>
                         }
-                        <tr>
-                            <td>@users.Id</td>
-                            <td>@users.FirstName</td>
-                            <td>@users.LastName</td>
-                            <td>@users.UserName</td>
-                            <td>@users.Email</td>
-                            <td>@users.Password</td>
-                            <td>@users.ConfirmPassword</td>
-                            <td>@users.Phonenumber</td>
-                            <td>@users.Adress</td>
-                            <td>@users.Credit</td>
-                            <td><a href="edit-user/@users.Id">Edit</a></td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-            <a href="edit-user">Add User</a>
+                    </div>
+                    <a href="add-user" class="add-user-btn">Add User</a>
 
-            <br />
-            <br />
-            <h3>Display RoleId and RoleNames</h3>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>RoleId</th>
-                        <th>Rolenames</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var roles in RolesList)
-                    {
-                        <tr>
-                            <td>@roles.Id</td>
-                            <td>@roles.Name</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-            <a href="edit-roles">Add Role</a>
-
-            <br />
-            <br />
-            <h3>Display UserIds and RoleIds</h3>
-
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>UserId</th>
-                        <th>RoleId</th>
-                        <th>Edit</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var userRole in UserRolesList)
-                    {
-                        <tr>
-                            <td>@userRole.UserId</td>
-                            <td>@userRole.RoleId</td>
-                            <td><a href="edit-usersroles/@userRole.UserId">Edit</a></td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                    <h3>Roles</h3>
+                    <div class="roles-display">
+                        @foreach (var role in RolesList)
+                        {
+                            <div class="role-card">
+                                <div><strong>Role ID:</strong> @role.Id</div>
+                                <div><strong>Name:</strong> @role.Name</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
         }
     </Authorized>
 </AuthorizeView>

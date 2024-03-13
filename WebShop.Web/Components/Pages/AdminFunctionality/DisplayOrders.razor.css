@@ -1,0 +1,70 @@
+﻿.admin-dashboard {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 200px;
+    background-color: rebeccapurple;
+    padding: 20px;
+    flex-shrink: 0; 
+}
+
+.filter-group {
+    margin-bottom: 20px;
+}
+
+.filter-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.content {
+    flex-grow: 1;
+    padding: 20px;
+    overflow: auto; 
+}
+
+.orders-display {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.order-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: background-color 0.3s ease;
+}
+
+.order-card:hover{
+    background-color: lightgray;
+}
+
+    .order-card > div:not(.order-items), .order-card > h4 {
+        margin-bottom: 10px;
+    }
+
+.order-items {
+    margin-top: 20px;
+    padding-top: 10px;
+    border-top: 1px solid #eee; 
+}
+
+.order-item {
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+    .order-item > div {
+        margin-bottom: 5px;
+    }

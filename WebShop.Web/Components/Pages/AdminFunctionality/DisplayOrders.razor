@@ -2,79 +2,55 @@
 
 
 <PageTitle>Display Orders</PageTitle>
+
 <AuthorizeView Roles="Admin">
     <Authorized>
-        @if (OrderItemsList == null || OrderList == null)
+        @if (OrderList == null)
         {
             <DisplaySpinner />
         }
         else
         {
-            <h3>DisplayOrders</h3>
-
-            <div class="form-group">
-                <input class="form-control" type="text" placeholder="filter" @bind="filterOrderAndOrderItems" @bind:event="oninput" />
+            <div class="admin-dashboard">
+                <div class="sidebar">
+                    <div class="filter-group">
+                        <input class="filter-input" type="text" placeholder="Filter orders..." @bind="filterOrderAndOrderItems" @bind:event="oninput" />
+                    </div>
+                </div>
+                <div class="content">
+                    <h3>Orders</h3>
+                    <div class="orders-display">
+                        @foreach (var order in OrderList)
+                        {
+                            if (!ApplyFilterOrder(order))
+                            {
+                                continue;
+                            }
+                            <div class="order-card" @onclick="() => ToggleOrderItemsVisibility(order.Id)">
+                                <div><strong>Order ID:</strong> @order.Id</div>
+                                <div><strong>User ID:</strong> @order.UserId</div>
+                                <div><strong>Placement Time:</strong> @order.PlacementTime.ToString("yyyy-MM-dd HH:mm")</div>
+                                <div><strong>Status:</strong> @order.OrderStatus.CurrentStatus</div>
+                                @if (IsOrderItemsVisible(order.Id))
+                                {
+                                    <div class="order-items">
+                                        <h4>Items:</h4>
+                                        @foreach (var item in order.OrderItems)
+                                        {
+                                            <div class="order-item">
+                                                <div><strong>Product ID:</strong> @item.Product.Id</div>
+                                                <div><strong>Product Name:</strong> @item.Product.Name</div>
+                                                <div><strong>Quantity:</strong> @item.Quantity</div>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
             </div>
-
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>orderId</th>
-                        <th>userId</th>
-                        <th>order placementTime</th>
-                        <th>OrderStatus</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var order in OrderList)
-                    {
-                        @if (!ApplyFilterOrder(order))
-                        {
-                            continue;
-                        }
-                        <tr>
-                            <td>@order.Id</td>
-                            <td>@order.UserId</td>
-                            <td>@order.PlacementTime</td>
-                            <td>@order.OrderStatus.CurrentStatus</td>
-                        </tr>
-                    }
-                </tbody>
-
-            </table>
-
-            <br />
-            <h3>OrderItems</h3>
-            <br />
-
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>OrderId</th>
-                        <th>productId</th>
-                        <th>Productname</th>
-                        <th>Quantity</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var orderItem in OrderItemsList)
-                    {
-                        @if (!ApplyFilterOrderItems(orderItem))
-                        {
-                            continue;
-                        }
-                        <tr>
-                            <td>@orderItem.OrderId</td>
-                            <td>@orderItem.Product.Id</td>
-                            <td>@orderItem.Product.Name</td>
-                            <td>@orderItem.Quantity</td>
-                        </tr>
-
-                    }
-                </tbody>
-            </table>
         }
-
     </Authorized>
 </AuthorizeView>
 
@@ -91,6 +67,8 @@
 
     private List<OrderItemDto> OrderItemsList { get; set; } = default!;
 
+    private HashSet<int> ExpandedOrders = new HashSet<int>();
+
     string? filterOrderAndOrderItems { get; set; }
 
 
@@ -105,6 +83,17 @@
 
         OrderList = await OrderService.GetOrders();
     }
+
+    private void ToggleOrderItemsVisibility(int orderId)
+    {
+        if (!ExpandedOrders.Add(orderId))
+        {
+            ExpandedOrders.Remove(orderId);
+        }
+    }
+
+    private bool IsOrderItemsVisible(int orderId) => ExpandedOrders.Contains(orderId);
+
 
     private bool ApplyFilterOrder(OrderDto order)
     {
