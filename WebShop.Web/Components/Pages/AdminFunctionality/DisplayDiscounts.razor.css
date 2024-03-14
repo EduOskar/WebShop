@@ -1,0 +1,121 @@
+﻿.discounts-layout {
+    display: flex;
+    margin: auto;
+    height: 100vh;
+}
+
+.discounts-filter {
+    flex: 0 0 250px; 
+    padding: 20px;
+    background-color: rebeccapurple;
+    color: white;
+    height: 100%; 
+    overflow-y: auto; 
+}
+
+.discounts-content {
+    flex-grow: 1; 
+    padding: 20px;
+    background-color: #fff;
+    overflow-y: auto; 
+}
+
+
+.filter-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #eee;
+    background-color: #fff;
+    color: #333; 
+}
+
+
+.discounts-content {
+    flex: 3;
+    padding: 20px;
+    background-color: #fff; 
+    border-left: 1px solid #ccc; 
+}
+
+.discount-item {
+    background: #f9f9f9;
+    border: 1px solid #e1e1e1;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.discount-info span, .discount-actions span {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.status-select, .status-update-btn, .select-products-btn, .add-discount-btn, .apply-discount-btn, .remove-discounts-btn {
+    margin-top: 10px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+}
+
+.status-update-btn, .select-products-btn, .add-discount-btn {
+    background-color: mediumpurple;
+    color: white;
+    margin: 4px;
+    transition: background-color 0.3s ease;
+}
+    .status-update-btn:hover, .select-products-btn:hover, .add-discount-btn:hover{
+        background-color: purple;
+    }
+
+.apply-discount-btn {
+    background-color: darkgreen;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+ .apply-discount-btn:hover{
+     background-color: forestgreen;
+ }
+
+
+.remove-discounts-btn {
+    background-color: #f44336;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+    .remove-discounts-btn:hover{
+        background-color: darkred;
+    }
+
+.status-select {
+    padding: 8px;
+    border-radius: 4px;
+    background-color: white;
+    border: 1px solid #ccc;
+}
+
+.activation-reminder {
+    font-style: italic;
+}
+
+.products-selection-section, .product-selection {
+    margin-top: 20px;
+}
+
+.product-selection {
+    display: flex;
+    align-items: center;
+}
+
+    .product-selection input[type="checkbox"] {
+        margin-right: 10px;
+    }
+
+.status-message {
+    margin-top: 15px;
+    color: #007bff;
+    text-align: center;
+}

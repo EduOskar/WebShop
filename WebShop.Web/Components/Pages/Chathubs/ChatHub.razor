@@ -6,14 +6,13 @@
 
 <AuthorizeView>
     <Authorized>
-
         <div class="chat-container">
             <h3 class="chat-title">Support Chat</h3>
             <div class="support-id-container">
-                Support ID: <input class="support-id-input" type="number" @bind="ticketId" readonly="readonly" />
+                Support ID: <input class="support-id-input" type="number" @bind="ticketId" readonly />
             </div>
             <div class="user-container">
-                User: <input class="user-input" type="text" @bind="User.UserName" readonly="readonly" />
+                User: <input class="user-input" type="text" @bind="User.UserName" readonly />
             </div>
             <div class="message-container">
                 Message: <input class="message-input" type="text" @bind="messageInput" />
@@ -25,14 +24,14 @@
                 <div class="messages-display">
                     @foreach (var message in messages)
                     {
-                        <p class="message">@message.UserName: @message.CreatedAt : @message.Message</p>
+                        <p class="@GetMessageClass(message.UserName)">@message.UserName: @message.CreatedAt : @message.Message</p>
                     }
                 </div>
             }
         </div>
-
     </Authorized>
 </AuthorizeView>
+
 
 @code {
     [Inject]
@@ -77,13 +76,18 @@
         await JoinGroup();
     }
 
+    private string GetMessageClass(string userName)
+    {
+        return userName == User.UserName ? "message my-message" : "message";
+    }
+
     private async Task JoinGroup()
     {
         if (hubConnection is not null)
         {
 
             await hubConnection.SendAsync("JoinGroup", ticketId);
-            messages.Add(new SupportMessagesDto { UserName = user!, Message = $"{User.UserName}: successfully joined chat", CreatedAt = DateTime.UtcNow });
+            messages.Add(new SupportMessagesDto { UserName = User.UserName, Message = $"{User.UserName}: successfully joined chat", CreatedAt = DateTime.UtcNow });
         }
     }
 
@@ -92,7 +96,7 @@
         if (hubConnection is not null && !string.IsNullOrWhiteSpace(messageInput))
         {
             user = User.UserName;
-            await hubConnection.SendAsync("SendMessageToGroup", ticketId, user, messageInput);
+            await hubConnection.SendAsync("SendMessageToGroup", ticketId, User.UserName, messageInput);
             messageInput = string.Empty;
         }
     }

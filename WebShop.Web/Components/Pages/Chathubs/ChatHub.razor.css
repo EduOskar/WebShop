@@ -1,5 +1,4 @@
-﻿/* Chat container styling */
-.chat-container {
+﻿chat-container {
     max-width: 800px;
     margin: 20px auto;
     padding: 20px;
@@ -14,7 +13,6 @@
     color: #333;
 }
 
-
 .support-id-input,
 .user-input,
 .message-input {
@@ -22,10 +20,9 @@
     margin: 5px 0;
     border: 1px solid #ccc;
     border-radius: 4px;
-    width: calc(100% - 22px); 
+    width: calc(100% - 22px);
 }
 
-.join-session-button,
 .send-message-button {
     display: inline-block;
     padding: 10px 15px;
@@ -37,11 +34,9 @@
     cursor: pointer;
 }
 
-    .join-session-button:hover,
     .send-message-button:hover {
         background-color: #0056b3;
     }
-
 
 .messages-display {
     margin-top: 20px;
@@ -59,7 +54,10 @@
     line-break: anywhere;
 }
 
+.my-message {
+    background-color: #dcf8c6;
+}
+
 .user-container, .message-container, .support-id-container {
     margin-bottom: 15px;
 }
-

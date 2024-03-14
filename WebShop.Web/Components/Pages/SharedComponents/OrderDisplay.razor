@@ -1,14 +1,14 @@
 ﻿@if (Order != null)
 {
-   
+
     <div class="order-container">
-        <div class="order">
-            <div @onclick="ToggleDetails">
-                <Button Class="centered-button">Order ID: @Order.Id - Placed: @Order.OrderStatus.StatusDate - OrderStatus: @Order.OrderStatus.CurrentStatus</Button>
+        <div class="order-card" @onclick="ToggleDetails">
+            <div class="order-header">
+                <button class="centered-button">Order ID: @Order.Id - Placed: @Order.OrderStatus.StatusDate.ToString("yyyy-MM-dd") - Status: @Order.OrderStatus.CurrentStatus</button>
             </div>
             @if (Order.OrderStatus.CurrentStatus == OrderStatusType.New)
             {
-                <Button @onclick="CancelOrder" class="cancel-button">Cancel Order</Button>
+                <button @onclick="CancelOrder" class="cancel-button">Cancel Order</button>
                 @if (submitStatus != null)
                 {
                     <div class="alert @alertClass" role="alert">
@@ -18,28 +18,20 @@
             }
             @if (showDetails)
             {
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Product Name</th>
-                            <th>Description</th>
-                            <th>Quantity</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var orderItems in Order.OrderItems)
-                        {
-                            <tr>
-                                <td>@orderItems.Product.Name</td>
-                                <td>@orderItems.Product.Description</td>
-                                <td>@orderItems.Quantity</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+                <div class="order-details">
+                    @foreach (var orderItems in Order.OrderItems)
+                    {
+                        <div class="order-item">
+                            <div><strong>Product:</strong> @orderItems.Product.Name</div>
+                            <div><strong>Description:</strong> @orderItems.Product.Description</div>
+                            <div><strong>Quantity:</strong> @orderItems.Quantity</div>
+                        </div>
+                    }
+                </div>
             }
         </div>
     </div>
+
 }
 
 <ConfirmDialog @ref="dialog" />

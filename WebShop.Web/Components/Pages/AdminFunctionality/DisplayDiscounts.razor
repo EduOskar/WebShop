@@ -4,112 +4,88 @@
 
 <AuthorizeView Roles="Admin">
     <Authorized>
-        @if (discountList == null)
-        {
-            <DisplaySpinner />
-        }
-        else
-        {
-
-            <h3>Discounts</h3>
-
-            <div class="form-group">
-                <input class="form-control" type="text" placeholder="filter" @bind="filterDiscount" @bind:event="oninput" />
-            </div>
-
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>discount code</th>
-                        <th>discount percentage</th>
-                        <th>Active Status</th>
-                        <th>Discounttype</th>
-                    </tr>
-                </thead>
-                <tbody>
+        <div class="discounts-layout">
+            <aside class="discounts-filter">
+                <div class="filter-input-group">
+                    <input class="filter-input" type="text" placeholder="Filter discounts..." @bind="filterDiscount" @bind:event="oninput" />
+                </div>
+            </aside>
+            <section class="discounts-content">
+                @if (discountList == null)
+                {
+                    <DisplaySpinner />
+                }
+                else
+                {
+                    <h3>Discounts</h3>
                     @foreach (var discount in discountList)
                     {
-
                         if (!ApplyFilter(discount))
                         {
                             continue;
                         }
-                        <tr>
-                            <td>@discount.Id</td>
-                            <td>@discount.DiscountCode</td>
-                            <td>@discount.DiscountPercentage</td>
-                            <td>
-                                <select @bind="discount.IsActive" class="form-control">
+                        <div class="discount-item">
+                            <div class="discount-info">
+                                <span>@discount.Id</span>
+                                <span>@discount.DiscountCode</span>
+                                <span>@discount.DiscountPercentage %</span>
+                                <span>@Enum.GetName(typeof(DiscountStatus), discount.IsActive)</span>
+                                <span>@Enum.GetName(typeof(DiscountType), discount.DiscountType)</span>
+                            </div>
+                            <div class="discount-actions">
+                                <select @bind="discount.IsActive" class="status-select">
                                     @foreach (var status in Enum.GetValues<DiscountStatus>())
                                     {
                                         <option value="@status">@status</option>
                                     }
                                 </select>
-                                <button class="btn btn-primary mt-2" @onclick="()=>UpdateDiscountStatus(discount)">Update status</button>
-                            </td>
-                            <td>@discount.DiscountType</td>
-                            @if (discount.DiscountType == DiscountType.ProductSpecific && discount.IsActive == DiscountStatus.Active)
-                            {
-                                <td>
-                                    <button @onclick="() => SelectDiscount(discount.Id)">Select discount for products</button>
-                                </td>
-                            }
-                            else
-                            {
-                                <td>
-                                    <p>You need to activate the discount to apply it on products</p>
-                                </td>
-                            }
-                        </tr>
+                                <button class="status-update-btn" @onclick="()=>UpdateDiscountStatus(discount)">Update status</button>
+                                @if (discount.DiscountType == DiscountType.ProductSpecific && discount.IsActive == DiscountStatus.Active)
+                                {
+                                    <button class="select-products-btn" @onclick="() => SelectDiscount(discount.Id)">Select Products</button>
+                                }
+                                else
+                                {
+                                    <p class="activation-reminder">Activate to apply on products</p>
+                                }
+                            </div>
+                        </div>
                     }
-                </tbody>
-            </table>
-            <a href="edit-discount">Add Discount</a>
-            <br />
-            <br />
-        }
+                    <a href="edit-discount" class="add-discount-btn">Add Discount</a>
+                }
+                <div class="status-message">@status</div>
 
-        @if (ProductList == null && discountList == null)
-        {
-            <DisplaySpinner />
-        }
-        else
-        {
-            <h4>Select Products to apply discount On</h4>
-            <br />
-            <h5>DiscountId: @discountId</h5>
-            @foreach (var product in ProductList!)
-            {
+                @if (ProductList != null && discountId > 0)
+                {
+                    <section class="products-selection-section">
+                        <h4>Apply Discount On Products</h4>
+                        <h5>Discount ID: @discountId</h5>
+                        @foreach (var product in ProductList)
+                        {
 
-                <div>
-                    @if (product.DiscountedPrice == null)
-                    {
-                        <input type="checkbox" value="@product.Id" @onchange="@(e => HandleProductSelection(e, product.Id))" />
-                    }
-                    Id:@product.Id -
-                    Product: @product.Name
-                    <br />
-                </div>
+                            <div class="product-selection">
+                                @if (product.DiscountedPrice == null)
+                                {
+                                    <input type="checkbox" value="@product.Id" @onchange="@(e => HandleProductSelection(e, product.Id))" />
 
-            }
-            <br />
+                                }
+                                <span>@product.Name</span>
+                            </div>
 
+                        }
+                        <button class="apply-discount-btn" @onclick="() => ApplyDiscountOnProducts(productIdList, discountId)">Apply Discount</button>
 
-             
-            @if (discountId > 0)
-            {
-                <div>
-                    <button id="btnApply" class="btn btn-primary" @onclick="() => ApplyDiscountOnProducts(productIdList, discountId)">Apply discounts on products</button>
+                    </section>
+                }
+                @if (discountList != null)
+                {
+                    <button class="remove-discounts-btn" @onclick="RemoveProductDiscounts">Remove Discounts</button>
 
-                </div>
+                }
+            </section>
 
-            }
-            <div>
-                <button class="bt   n btn-outline-danger" @onclick="@RemoveProductDiscounts">Remove ProductDiscounts</button>
-            </div>
-            <h3>@status</h3>
-        }
+        </div>
+     
     </Authorized>
 </AuthorizeView>
 
@@ -174,6 +150,7 @@
         {
             if (discount.IsActive == DiscountStatus.Active)
             {
+                status = "Discounts are now Active";
                 await SendDiscountMail(discount.Id!);
                 ProductList = await ProductService.GetProducts();
                 StateHasChanged();

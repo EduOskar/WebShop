@@ -12,8 +12,8 @@ div-col-md{
     transition: box-shadow 0.3s ease-in-out;
     align-items: center;
     width: 433px;
-    height: 100%;/* Make the card fill the <a> tag */
-    margin: 5px; /* Adjusted for consistent spacing */
+    height: 100%;
+    margin: 5px; 
     padding-bottom: 40px;
     background-color:lightblue;
 }

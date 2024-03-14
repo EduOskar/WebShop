@@ -1,36 +1,67 @@
-﻿
-.order-container {
-    margin-bottom: 20px; 
-    display: flex;
-    justify-content: center;
+﻿.order-container {
+    margin-bottom: 20px;
+}
 
+.order-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    cursor: pointer;
+}
+
+.order-header {
+    margin-bottom: 20px;
+}
+
+.centered-button, .cancel-button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    display: block;
+    margin: 10px auto;
+    transition: background-color 0.3s ease;
 }
 
 .centered-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background-color: rebeccapurple;
+    transition: background-color 0.3s ease;
+    color: white;
+}
+    .centered-button:hover{
+        background-color: purple;
+    }
+
+.cancel-button {
+    background-color: #dc3545;
+    color: white;
+}
+
+    .cancel-button:hover {
+        background-color: darkred;
+    }
+
+.order-details {
+    padding-top: 10px;
+}
+
+.order-item {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+    .order-item > div {
+        margin-bottom: 5px;
+    }
+
+.alert {
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 4px;
     text-align: center;
-    width: 100%;
-    background-color: red;
 }
-
-.order {
-    width: 100%;
-    max-width: 600px; 
-    border: 1px solid #ccc;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    margin: auto; 
-}
-
-    .order button, .order table {
-        width: 100%;
-    }
-
-
-
-    .order:hover {
-        transform: translateY(-5px); 
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
-    }

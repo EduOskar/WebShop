@@ -20,22 +20,22 @@ else
                             <DataAnnotationsValidator />
                             <div class="form-field">
                                 <label for="firstName">First Name:</label>
-                                <InputText id="firstName" class="input-text" @bind-Value="CheckoutModel.FirstName" />
+                                <InputText id="firstName" class="input-text" @bind-Value="CheckoutModel.FirstName" readonly/>
                                 <ValidationMessage For="@(() => CheckoutModel.FirstName)" />
                             </div>
                             <div class="form-field">
                                 <label for="lastName">Last Name:</label>
-                                <InputText id="lastName" class="input-text" @bind-Value="CheckoutModel.LastName" />
+                                <InputText id="lastName" class="input-text" @bind-Value="CheckoutModel.LastName" readonly="readonly" />
                                 <ValidationMessage For="@(() => CheckoutModel.LastName)" />
                             </div>
                             <div class="form-field">
                                 <label for="phoneNumber">Phone Number:</label>
-                                <InputText id="phoneNumber" class="input-text" @bind-Value="CheckoutModel.PhoneNumber" />
+                                <InputText id="phoneNumber" class="input-text" @bind-Value="CheckoutModel.PhoneNumber" readonly="readonly" />
                                 <ValidationMessage For="@(() => CheckoutModel.PhoneNumber)" />
                             </div>
                             <div class="form-field">
                                 <label for="email">Email:</label>
-                                <InputText id="email" class="input-text" @bind-Value="CheckoutModel.Email" />
+                                <InputText id="email" class="input-text" @bind-Value="CheckoutModel.Email" readonly="readonly" />
                                 <ValidationMessage For="@(() => CheckoutModel.Email)" />
                             </div>
                             <div class="form-field">

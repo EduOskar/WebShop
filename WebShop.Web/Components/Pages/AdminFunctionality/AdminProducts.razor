@@ -28,7 +28,7 @@
                             <div class="category-item">
                                 <span>@category.Name</span>
                                 <span class="icon-css">@category.IconCSS</span>
-                                <a href="edit-category/@category.Id">Edit</a>
+                                <a  class="edit-link" href="edit-category/@category.Id">Edit</a>
                             </div>
                         }
                     </div>
@@ -41,10 +41,10 @@
                             <div class="product-item">
                                 <img src="@product.ImageURL" alt="Product Image">
                                 <div class="product-info">
-                                    <div class="product-detail">@product.Name</div>
-                                    <div class="product-detail">@product.Price</div>
-                                    <div class="product-detail">@product.Quantity</div>
-                                    <div class="product-detail">@product.Status</div>
+                                    <div class="product-detail">Product: @product.Name</div>
+                                    <div class="product-detail">Price: @product.Price</div>
+                                    <div class="product-detail">Quantity: @product.Quantity</div>
+                                    <div class="product-detail">Status: @product.Status</div>
                                 </div>
                                 <a href="edit-product/@product.Id" class="edit-link">Edit</a>
                             </div>

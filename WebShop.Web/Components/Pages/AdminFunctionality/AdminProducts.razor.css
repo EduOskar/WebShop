@@ -63,18 +63,15 @@
     }
 
 .product-info {
-   width: fit-content;
-    text-align: center;
+   width: 100%;
     margin-bottom: 5px;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     padding-left: 60px;
 }
 
 .product-detail {
-    width: 22%;
-    text-align: center;
-    align-content: center;
-    align-items: center;
+    width: fit-content;
+    flex-direction: row;
     margin-bottom: 5px;
 }
 
@@ -88,17 +85,18 @@
     transition: background-color 0.3s ease;
 }
 
+.add-btn{
+    margin-bottom: 50px !important;
+}
+
     .add-btn:hover {
         background-color: purple;
-        transform: translateY(-5px);
     }
 
     .edit-link:hover {
         background-color: purple;
-        transform: translateY(-5px);
     }
 
-/* Adjustments for wrapping */
 .products-container {
     display: flex;
     flex-wrap: wrap;
