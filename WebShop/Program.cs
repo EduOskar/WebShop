@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
@@ -28,6 +29,10 @@ builder.Services.ConfigureSwaggerGen(c => c.CustomSchemaIds(c => c.FullName));
 builder.Services.AddDbContextPool<ApplicationDbContext>(options =>
     options.UseSqlServer(builder
     .Configuration.GetConnectionString("WebShop")));
+
+var sqlConnection = builder.Configuration["WebShop"];
+
+builder.Services.AddSqlServer<ApplicationDbContext>(sqlConnection, options => options.EnableRetryOnFailure());
 
 builder.Services.AddIdentity<User, IdentityRole<int>>()
     .AddRoles<IdentityRole<int>>()
@@ -104,7 +109,7 @@ if (app.Environment.IsDevelopment())
 
 
 app.UseCors(policy =>
-    policy.WithOrigins("http://localhost:7104", "https://localhost:7104")
+    policy.WithOrigins("https://app-webshop-web-northeurope.azurewebsites.net/", "https://app-webshop-web-northeurope.azurewebsites.net/")
     .AllowAnyMethod()
     .WithHeaders(HeaderNames.ContentType)
     .AllowCredentials()
@@ -124,7 +129,7 @@ using (var scope = app.Services.CreateScope())
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
     var dbContext = services.GetRequiredService<ApplicationDbContext>();
 
-    dbContext.Database.EnsureDeleted();
+    //dbContext.Database.EnsureDeleted();
 
     dbContext.Database.EnsureCreated();
 
