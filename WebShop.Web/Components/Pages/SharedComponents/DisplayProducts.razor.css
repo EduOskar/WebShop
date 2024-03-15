@@ -13,35 +13,32 @@ div-col-md{
     align-items: center;
     width: 433px;
     height: 100%;
-    margin: 5px; 
+    margin: 5px;
     padding-bottom: 40px;
-    background-color:lightblue;
+    transition: 0.5s ease-in-out;
 }
 
 a {
     text-decoration: none;
-    color: inherit; 
-    flex: 0 1 calc(20% - 20px); 
-    margin: 10px; 
+    color: inherit;
+    flex: 0 1 calc(20% - 20px);
+    margin: 10px;
+   
 }
 
     a:hover .card {
         box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-        transition: box-shadow 0.3s ease-in-out;
+        transform: scale(1.07);
     }
 
-a:hover .card {
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
 
-
-a:hover img {
+/*a:hover img {
     transform: scale(1.07);
     transition: 0.5s ease-in-out;
-}
+}*/
 
 img {
-    transition: 0.5s ease-in-out;
+ /*   transition: 0.5s ease-in-out;*/
     width: 433px;
     height: 200px;
 }

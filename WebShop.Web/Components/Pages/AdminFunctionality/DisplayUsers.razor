@@ -17,7 +17,7 @@
                     </div>
                 </div>
                 <div class="content">
-                    <h3>Users</h3>
+                    <h3 class="text-style">Users</h3>
                     <div class="users-display">
                         @foreach (var user in UserList)
                         {
@@ -40,7 +40,7 @@
                     </div>
                     <a href="add-user" class="add-user-btn">Add User</a>
 
-                    <h3>Roles</h3>
+                    <h3  class="text-style">Roles</h3>
                     <div class="roles-display">
                         @foreach (var role in RolesList)
                         {
@@ -49,6 +49,20 @@
                                 <div><strong>Name:</strong> @role.Name</div>
                             </div>
                         }
+                    </div>
+                    <h3 class="text-style">Users Role</h3>
+                    <div class="roles-display">
+                        @foreach (var userRole in UserRolesList)
+                        {
+                            <div class="role-card">
+                                <div class="user-info">
+                                    <div><strong>User Id:</strong> @userRole.UserId </div>
+                                    <div><strong>Role Id:</strong> @userRole.RoleId </div>
+                                </div>
+                                <a href="edit-usersroles/@userRole.UserId" class="edit-btn">Edit</a>
+                            </div>
+                        }
+                       
                     </div>
                 </div>
             </div>

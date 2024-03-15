@@ -29,6 +29,8 @@ else
 
     public IEnumerable<ProductDto> ProductsList { get; set; } = default!;
 
+    public IEnumerable<ProductDto> PrefilteredProducts { get; set; } = default!;
+
     public string CategoryName { get; set; } = default!;
 
     public string ErrorMessage { get; set; } = default!;
@@ -44,7 +46,8 @@ else
     {
         try
         {
-            ProductsList = await ProductService.GetProductsByCategory(CategoryId);
+            PrefilteredProducts = await ProductService.GetProductsByCategory(CategoryId);
+            ProductsList = PrefilteredProducts.Where(x => x.Status == ProductStatus.Active);
 
             if (ProductsList != null && ProductsList.Count() > 0)
             {
