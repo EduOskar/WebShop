@@ -1,42 +1,46 @@
-﻿.product-container{
+﻿.product-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
 }
 
-div-col-md {
-    width: 40px;
+.product-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 433px; /* Adjust based on preference */
+    margin: 5px;
 }
-
-a {
-    text-decoration: none;
-    width: 20px;
-    justify-items: center;
-    background-color: red;
-}
-
-    a:hover .card {
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-        transition: box-shadow 0.3s ease-in-out;
-    }
 
 .card {
     transition: box-shadow 0.3s ease-in-out;
-    align-items: center;
-    width: 433px;
-    height: 300px;
-    flex: 0 1 calc(20% - 10px);
-    margin: 5px;
-    padding-bottom: 40px;
+    width: 100%;
+    margin-bottom: 20px; /* Ensures spacing between the card and the button */
 }
 
-a:hover img {
-    transform: scale(1.07);
-    transition: 0.5s ease-in-out;
+    .card:hover {
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    }
+
+.img-thumbnail {
+    transition: transform 0.5s ease-in-out;
+    width: 100%;
+    height: auto; /* Makes image responsive while maintaining aspect ratio */
 }
 
-img {
-    transition: 0.5s ease-in-out;
-    width: 433px;
-    height: 200px;
+    .img-thumbnail:hover {
+        transform: scale(1.07);
+    }
+
+.btn-add-order {
+    padding: 10px 20px;
+    background-color: rebeccapurple; /* Or any color that suits your design */
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
 }
+
+    .btn-add-order:hover {
+        background-color: #5e2ca5; /* A darker shade of purple for hover */
+    }

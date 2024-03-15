@@ -72,12 +72,12 @@
     }
 
 .apply-discount-btn {
-    background-color: darkgreen;
+    background-color: rebeccapurple;
     color: white;
     transition: background-color 0.3s ease;
 }
  .apply-discount-btn:hover{
-     background-color: forestgreen;
+     background-color: purple;
  }
 
 

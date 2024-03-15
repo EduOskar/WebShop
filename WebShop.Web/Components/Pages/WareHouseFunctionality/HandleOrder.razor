@@ -7,74 +7,50 @@
 
         <PageTitle>Stock Order</PageTitle>
 
-
         @if (currentOrder == null)
         {
             <DisplaySpinner />
         }
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>order Id</th>
-                        <th>PlacementTime</th>
-                        <th>Status</th>
-                        <th>Status date</th>
-                        <th>Products</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>@currentOrder!.Id</td>
-                        <td>@currentOrder.PlacementTime</td>
+        else
+        {
+            <div class="order-container">
+                <div class="order-header">
+                    <h2>Order Details</h2>
+                    <div class="order-info">
+                        <p>Order ID: <span>@currentOrder!.Id</span></p>
+                        <p>Placement Time: <span>@currentOrder.PlacementTime</span></p>
                         @if (currentOrder.OrderStatus is not null)
                         {
-                            <td>@currentOrder.OrderStatus.CurrentStatus</td>
-                            <td>@currentOrder.OrderStatus.StatusDate</td>
+                            <p>Status: <span>@currentOrder.OrderStatus.CurrentStatus</span></p>
+                            <p>Status Date: <span>@currentOrder.OrderStatus.StatusDate</span></p>
                         }
-                        @if (currentOrder.OrderItems == null)
+                    </div>
+                </div>
+                @if (currentOrder.OrderItems == null)
+                {
+                    <DisplaySpinner />
+                }
+                else
+                {
+                    <div class="order-products">
+                        <h3>Products</h3>
+                        @foreach (var item in currentOrder!.OrderItems)
                         {
-                            <DisplaySpinner />
+                            <div class="product-item">
+                                <p>Name: <span>@item.Product.Name</span></p>
+                                <p>Quantity: <span>@item.Quantity</span></p>
+                                <p>Quantity Check: <span>@item.QuantityCheck</span></p>
+                            </div>
                         }
-                        else
-                        {
-
-                            @foreach (var item in currentOrder!.OrderItems)
-                            {
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Quantity</th>
-                                            <th>QuantityCheck</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>@item.Product.Name</td>
-                                            <td>@item.Quantity</td>
-                                            <td>@item.QuantityCheck</td>
-                                            @if (item.QuantityCheck != item.Quantity)
-                                            {
-                                                <button onclick="@selectOrderItemId == @item.Id"></button>
-                                            }
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            }
-                        }
-                    </tr>
-                </tbody>
-            </table>
-           
-        </div>
-
+                    </div>
+                }
+              
         @if (currentOrder.OrderStatus?.CurrentStatus == OrderStatusType.New)
         {
-            <button class="btn btn-primary mt-2" @onclick="() => UpdateOrderStatus(currentOrder.Id, currentOrder.OrderStatus.CurrentStatus)">Finnish packaging</button>
+            <button class="btn-finish" @onclick="() => UpdateOrderStatus(currentOrder.Id, currentOrder.OrderStatus.CurrentStatus)">Finnish packaging</button>
         }
-
+            </div>
+        }
 
         @if (submitStatus != null)
         {
@@ -87,22 +63,21 @@
 
         @if (ProductList == null)
         {
-            <displayspinner />
+            <DisplaySpinner />
         }
         else
         {
             var productCount = ProductList.Count();
 
-            @if (productCount > 0)
+            if (productCount > 0)
             {
-                @foreach (var productGroup in GetGroupedProductsByCategory())
+                foreach (var productGroup in GetGroupedProductsByCategory())
                 {
                     <h4>@GetCategoryName(productGroup)</h4>
 
                     <div class="row mt-3">
-                        <WarehouseProductDisplay OnQuantityUpdate="OnQuantityUpdate" OrderItems="@currentOrder.OrderItems" ProductList="@productGroup"></WarehouseProductDisplay>
+                        <WarehouseProductDisplay OnQuantityUpdate="OnQuantityUpdate" OrderItems="@currentOrder!.OrderItems" ProductList="@productGroup"></WarehouseProductDisplay>
                     </div>
-                    <h3 class="mb-3" />
                 }
             }
         }

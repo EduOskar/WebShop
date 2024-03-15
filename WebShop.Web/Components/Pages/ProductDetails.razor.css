@@ -60,12 +60,14 @@
 }
 
 .btn-success {
-    background-color: #28a745;
+    background-color: rebeccapurple;
+    transition: background-color 0.3s ease;
     color: white;
 }
 
 .btn-primary:hover, .btn-success:hover {
     opacity: 0.9;
+    background-color: purple;
 }
 
 .review-section {

@@ -41,18 +41,6 @@ else
         <label for="adress">Adress</label>
         <InputText id="adress" @bind-Value="@CurrentUser.Adress" class="form-control" />
     </div>
-    <div>
-        <label for="password">Password</label>
-        <InputText id="password" @bind-Value="@CurrentUser.Password" class="form-control" />
-    </div>
-    <div>
-        <label for="confirmpassword">Confirm Password</label>
-        <InputText id="confirmpassword" @bind-Value="@CurrentUser.ConfirmPassword" class="form-control" />
-    </div>
-    <div>
-        <label for="credit">Credits</label>
-        <InputNumber id="credit" @bind-Value="@CurrentUser.Credit" class="form-control" />
-    </div>
     <br />
     <button type="submit" class="btn btn-primary">@Message</button>
     <button type="button" class="btn btn-danger"
@@ -99,8 +87,6 @@ else
                     CurrentUser.Email ??= user.Email;
                     CurrentUser.Phonenumber ??= user.Phonenumber;
                     CurrentUser.Adress ??= user.Adress;
-                    CurrentUser.Password ??= user.Password;
-                    CurrentUser.ConfirmPassword ??= user.ConfirmPassword;
                 }
 
             }

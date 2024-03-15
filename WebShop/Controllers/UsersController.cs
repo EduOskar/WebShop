@@ -113,9 +113,12 @@ public class UsersController : ControllerBase
 
             _mapper.Map(updatedUser, user);
 
-            var hashedPasswod = _userManager.PasswordHasher.HashPassword(user, updatedUser.Password!);
+            if (updatedUser.Password != null)
+            {
+                var hashedPasswod = _userManager.PasswordHasher.HashPassword(user, updatedUser.Password!);
 
-            user.PasswordHash = hashedPasswod;
+                user.PasswordHash = hashedPasswod;
+            }
 
             var result = await _userRepository.UpdateUser(user);
 

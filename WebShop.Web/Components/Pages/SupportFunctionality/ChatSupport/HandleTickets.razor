@@ -9,66 +9,46 @@
 }
 else
 {
-    <Grid TItem="MessageTicketDto"
-          class="table table-hover table-bordered table-striped"
-          DataProvider="UsersDataProvider"
-          AllowFiltering="true"
-          AllowPaging="true"
-          PageSize="15"
-          ItemsPerPageText="1"
-          PageSizeSelectorItems="[1]"
-          PaginationItemsTextFormat="yes"
-          AllowSorting="true"
-          Responsive="true">
-        <GridColumn TItem="MessageTicketDto" HeaderText="Id" IsDefaultSortColumn="true" PropertyName="Id" SortKeySelector="item => item.Id">
-            @context.Id
-        </GridColumn>
-        <GridColumn TItem="MessageTicketDto" HeaderText="First Name" PropertyName="FirstName" SortKeySelector="item => item.User!.FirstName">
-            @context.User!.FirstName
-        </GridColumn>
-        <GridColumn TItem="MessageTicketDto" HeaderText="Last Name" PropertyName="LastName" SortKeySelector="item => item.User!.LastName">
-            @context.User!.LastName
-        </GridColumn>
-        <GridColumn TItem="MessageTicketDto" HeaderText="Credit" PropertyName="Credit" SortKeySelector="item => item.User!.Credit">
-            @context.User!.Credit
-        </GridColumn>
-        <GridColumn TItem="MessageTicketDto" HeaderText="Address" PropertyName="Adress" SortKeySelector="item => item.User!.Adress">
-            @context.User!.Adress
-        </GridColumn>
-        <GridColumn TItem="MessageTicketDto" HeaderText="Username" PropertyName="UserName" SortKeySelector="item => item.User!.UserName">
-            @context.User!.UserName
-        </GridColumn>
-        <GridColumn TItem="MessageTicketDto" HeaderText="Email" PropertyName="Email" SortKeySelector="item => item.User!.Email">
-            @context.User!.Email
-        </GridColumn>
-        <GridColumn TItem="MessageTicketDto" HeaderText="Phone Number" PropertyName="Phonenumber" SortKeySelector="item => item.User!.Phonenumber">
-            @context.User!.Phonenumber
-        </GridColumn>
-        <GridColumn TItem="MessageTicketDto" HeaderText="Support" PropertyName="Support" SortKeySelector="item => item.Support!.LastName">
-            @if (context.Support == null)
-            {
-                <div><p>Ticket is not assigned yet</p></div>
-            }
-            else
-            {
-                <a>@context.Support!.FirstName @context.Support.LastName</a>
-            }
-        </GridColumn>
-        <GridColumn TItem="MessageTicketDto" HeaderText="Ticket Active" PropertyName="ActiveSupportMailDisplay" SortKeySelector="item => item.IsResolved">
-            @context.IsResolved
-        </GridColumn>
-        <GridColumn TItem="MessageTicketDto" HeaderText="Actions">
-
-            @if (context.SupportId == null)
-            {
-                <Button @onclick="(() => HandleUserSupport(context))">Handle User</Button>
-            }
-            else
-            {
-                <Button @onclick="(() => HandleUserSupport(context))">Join the supportChat</Button>
-            }
-        </GridColumn>
-    </Grid>
+    <div class="ticket-handling-container">
+    @*     <aside class="sidebar">
+            <div class="filter-section">
+                <!-- Example of a filter, adjust based on actual filtering logic -->
+                <input class="filter-input" placeholder="Search tickets..." @oninput="ApplyFilters" />
+                <!-- Add additional filters as needed -->
+            </div>
+        </aside> *@
+        <main class="content">
+            <AuthorizeView>
+                <Authorized>
+                    @if (UserList == null)
+                    {
+                        <DisplaySpinner />
+                    }
+                    else
+                    {
+                        <div class="tickets-grid">
+                            @foreach (var ticket in SupportTickets)
+                            {
+                                <div class="ticket-card">
+                                    <div class="ticket-info">
+                                        <span class="info-label">Ticket ID:</span> @ticket.Id
+                                        <span class="info-label">User:</span> @ticket.User!.FirstName @ticket.User.LastName
+                                     
+                                    </div>
+                                    <div class="ticket-actions">
+                                    
+                                        <button class="action-button" @onclick="() => HandleUserSupport(ticket)">
+                                            @(ticket.SupportId == null ? "Handle User" : "Join Support Chat")
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </Authorized>
+            </AuthorizeView>
+        </main>
+    </div>
 }
 
 @code {
@@ -89,7 +69,7 @@ else
 
     protected async Task FetchInformation()
     {
-         SupportTickets = await SupportService.GetMessageTickets();
+        SupportTickets = await SupportService.GetMessageTickets();
 
         // SupportTickets = PreEditedMails.Where(x => x. == IsSupport.User);
 

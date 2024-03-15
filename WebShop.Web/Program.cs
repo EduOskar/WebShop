@@ -34,7 +34,7 @@ var handler = new HttpClientHandler
     CookieContainer = cookieContainer
 };
 
-builder.Services.AddHttpClient("WebShop.Api", x => x.BaseAddress = new Uri("https://sqlserver-webshop.database.windows.net/"))
+builder.Services.AddHttpClient("WebShop.Api", x => x.BaseAddress = new Uri("https://localhost:7066"))
     .ConfigurePrimaryHttpMessageHandler(() => handler);
 
 builder.Services.AddScoped<IProductsService, ProductsService>();

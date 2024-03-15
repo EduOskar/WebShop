@@ -213,18 +213,26 @@
 
     private async Task RemoveProductDiscounts()
     {
-        var response = await DiscountSevice.RemoveProductDiscounts();
+        try
+        {
+            var response = await DiscountSevice.RemoveProductDiscounts();
 
-        if (response)
-        {
-            status = "Successfully removed discounts";
-            ProductList = await ProductService.GetProducts();
-            StateHasChanged();
+            if (response)
+            {
+                status = "Successfully removed discounts";
+                ProductList = await ProductService.GetProducts();
+                StateHasChanged();
+            }
+            else
+            {
+                status = "Failed to remove discounts";
+            }
         }
-        else
+        catch (Exception)
         {
-            status = "Failed to remove discounts";
+            status = "There are no active discounts";
         }
+       
     }
 
     private bool ApplyFilter(DiscountDto discount)

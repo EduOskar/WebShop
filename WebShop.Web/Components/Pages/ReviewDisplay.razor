@@ -2,20 +2,24 @@
 
 @if (Review != null)
 {
-    <div class="review-container col-md-6">
+    <div class="review-card">
         <div class="review-header">
-            <span class="review-username">Review by @Review.User!.UserName</span>
-            <span class="review-date"> - Posted: @Review.CreatedAt?.ToString("yyyy-MM-dd")</span>
-        </div>
-        <div class="review-content-box">
+            <div class="user-info">
+                <span class="review-username">Review by @Review.User!.UserName</span>
+                <span class="review-date">Posted: @Review.CreatedAt?.ToString("yyyy-MM-dd")</span>
+            </div>
             <h4 class="review-title">Title: @Review.Title</h4>
-            <div class="review-divider"></div>
+            <div class="title-underline"></div> <!-- Line below the title -->
+        </div>
+        <div class="review-body">
             <p class="review-content">@Review.Content</p>
         </div>
         @if (CanEdit)
         {
-            <button @onclick="ShowEditModal" class="btn btn-primary">Edit</button>
-            <button @onclick="DeleteReview" class="btn btn-danger">Delete</button>
+            <div class="review-actions">
+                <button @onclick="ShowEditModal" class="btn-edit">Edit</button>
+                <button @onclick="DeleteReview" class="btn-delete">Delete</button>
+            </div>
         }
     </div>
 }

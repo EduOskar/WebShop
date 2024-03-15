@@ -1,29 +1,31 @@
 ﻿
 <div class="product-container">
-    @foreach (var products in ProductList)
+    @foreach (var product in ProductList)
     {
-        <h2>@ErrorMessage</h2>
-        <div class="card">
-            <img class="img-thumbnail" src="@products.ImageURL" />
-            <div class="card-body">
-                <h5 class="card-title mb-3">
-                    @products.Name
-                </h5>
-                <p class="card-text">
-                    <b>@products.Price.ToString("C")</b>
-                </p>
-            </div>
-        </div>
-
-        var matchingOrderItem = OrderItems.FirstOrDefault(oi => oi.ProductId == products.Id);
-        @if (matchingOrderItem != null)
-        {
-            @if (matchingOrderItem.Quantity != matchingOrderItem.QuantityCheck)
+        <div class="product-card">
+            @if (!string.IsNullOrEmpty(ErrorMessage))
             {
-                <button class="btn btn-primary" @onclick="@(() => UpdateOrderQuantity(matchingOrderItem!.Id, matchingOrderItem.QuantityCheck + 1, products.Id))">Add to order</button>
+                <h2>@ErrorMessage</h2>
             }
+            <div class="card">
+                <img class="img-thumbnail" src="@product.ImageURL" alt="@product.Name" />
+                <div class="card-body">
+                    <h5 class="card-title mb-3">@product.Name</h5>
+                    <p class="card-text"><b>@product.Price.ToString("C")</b></p>
+                </div>
+            </div>
+            @{
+                var matchingOrderItem = OrderItems.FirstOrDefault(oi => oi.ProductId == product.Id);
+                if (matchingOrderItem != null)
+                {
+                    if (matchingOrderItem!.Quantity != matchingOrderItem.QuantityCheck)
+                    {
+                        <button class="btn-add-order" @onclick="@(() => UpdateOrderQuantity(matchingOrderItem!.Id, matchingOrderItem.QuantityCheck + 1, product.Id))">Add to order</button>
+                    }
 
-        }
+                }
+            }
+        </div>
     }
 </div>
 

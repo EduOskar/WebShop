@@ -9,66 +9,39 @@
 }
 else
 {
-    <Grid TItem="SupportMailDto"
-          class="table table-hover table-bordered table-striped"
-          DataProvider="UsersDataProvider"
-          AllowFiltering="true"
-          AllowPaging="true"
-          PageSize="15" 
-          ItemsPerPageText="1"
-          PageSizeSelectorItems="[1]"
-          PaginationItemsTextFormat="yes"
-          AllowSorting="true"
-          Responsive="true">
-        <GridColumn TItem="SupportMailDto" HeaderText="Id" IsDefaultSortColumn="true" PropertyName="Id" SortKeySelector="item => item.Id">
-            @context.Id
-        </GridColumn>
-        <GridColumn TItem="SupportMailDto" HeaderText="First Name" PropertyName="FirstName" SortKeySelector="item => item.User!.FirstName">
-            @context.User!.FirstName
-        </GridColumn>
-        <GridColumn TItem="SupportMailDto" HeaderText="Last Name" PropertyName="LastName" SortKeySelector="item => item.User!.LastName">
-            @context.User!.LastName
-        </GridColumn>
-        <GridColumn TItem="SupportMailDto" HeaderText="Credit" PropertyName="Credit" SortKeySelector="item => item.User!.Credit">
-            @context.User!.Credit
-        </GridColumn>
-        <GridColumn TItem="SupportMailDto" HeaderText="Address" PropertyName="Adress" SortKeySelector="item => item.User!.Adress">
-            @context.User!.Adress
-        </GridColumn>
-        <GridColumn TItem="SupportMailDto" HeaderText="Username" PropertyName="UserName" SortKeySelector="item => item.User!.UserName">
-            @context.User!.UserName
-        </GridColumn>
-        <GridColumn TItem="SupportMailDto" HeaderText="Email" PropertyName="Email" SortKeySelector="item => item.User!.Email">
-            @context.User!.Email
-        </GridColumn>
-        <GridColumn TItem="SupportMailDto" HeaderText="Phone Number" PropertyName="Phonenumber" SortKeySelector="item => item.User!.Phonenumber">
-            @context.User!.Phonenumber
-        </GridColumn>
-        <GridColumn TItem="SupportMailDto" HeaderText="Support" PropertyName="Support" SortKeySelector="item => item.Support!.LastName">
-            @if (context.Support == null )
-            {
-                <div><p>Ticket is not assigned yet</p></div>
-            }
-            else
-            {
-                <a>@context.Support!.FirstName @context.Support.LastName</a>
-            }
-        </GridColumn>
-        <GridColumn TItem="SupportMailDto" HeaderText="Ticket Active" PropertyName="ActiveSupportMailDisplay" SortKeySelector="item => item.IsAnswered">
-            @context.IsAnswered
-        </GridColumn>
-        <GridColumn TItem="SupportMailDto" HeaderText="Actions">
-
-            @if (context.SupportId == null)
-            {
-                <Button @onclick="(() => HandleUserSupport(context))">Handle User</Button>
-            }
-            else
-            {
-                <div><a>User is being handled</a></div>
-            }
-        </GridColumn>
-    </Grid>
+    <div class="email-handling-container">
+        <main class="content">
+            <AuthorizeView>
+                <Authorized>
+                    @if (UserList == null)
+                    {
+                        <DisplaySpinner />
+                    }
+                    else
+                    {
+                        <div class="emails-grid">
+                            @foreach (var email in SupportMails)
+                            {
+                                <div class="email-card">
+                                    <div class="email-info">
+                                        <div><span class="info-label">Email ID:</span> @email.Id</div>
+                                        <div><span class="info-label">From:</span> @email.From</div>
+                                        <div><span class="info-label">To:</span> @email.To</div>
+                                        <div><span class="info-label">Subject:</span> @email.Subject</div>
+                                    </div>
+                                    <div class="email-actions">
+                                        <button class="action-button" @onclick="() => HandleUserSupport(email)">
+                                            Handle Email
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </Authorized>
+            </AuthorizeView>
+        </main>
+    </div>
 }
 
 @code {
