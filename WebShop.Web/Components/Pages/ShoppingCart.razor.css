@@ -4,9 +4,19 @@
     gap: 1rem; 
 }
 
+.btn-info {
+    background-color: rebeccapurple;
+    color: white;
+    transition: background-color 0.2s ease-in-out;
+}
+
+    .btn.btn-info:hover{
+        background-color: purple;
+    }
+
 .product-card {
-    flex: 1 0 22%; 
-    text-decoration: none; 
+    flex: 1 0 22%;
+    text-decoration: none;
 }
 
 .card {
