@@ -24,7 +24,7 @@ else
         <label for="discountPercentage">DiscountPercentage</label>
         <InputNumber id="discountPercentage" placeholder="discountPercentage" @bind-Value=@currentDiscount.DiscountPercentage class="form-control"></InputNumber>
     </div>
-    <div>
+ @*    <div>
         <label id="discountStatus">discountStatus</label>
         <select @bind="@currentDiscount.IsActive" class="form-control">
             @foreach (var status in Enum.GetValues<DiscountStatus>())
@@ -32,7 +32,7 @@ else
                 <option value="@status">@status</option>
             }
         </select>
-    </div>
+    </div> *@
     <div>
         <label id="discountType">DiscountType</label>
         <select @bind="@currentDiscount.DiscountType" class="form-control">
@@ -98,31 +98,48 @@ else
 
     async Task UpdateDiscount()
     {
-        var result = await DiscountService.UpdateDiscount(currentDiscount);
+        try
+        {
+            var result = await DiscountService.UpdateDiscount(currentDiscount);
 
-        if (result)
-        {
-            Status = "Discount has updated successfully!";
-            navigationManager.NavigateTo("DisplayDiscounts");
+            if (result)
+            {
+                Status = "Discount has updated successfully!";
+                navigationManager.NavigateTo("DisplayDiscounts");
+            }
+            else
+            {
+                Status = "Something went wrong updating discounts";
+            }
         }
-        else
+        catch (Exception)
         {
-            Status = "Something went wrong updating discounts";
+
+            ErrorMessage = "Couldn't update discount";
         }
+
     }
 
     async Task CreateDiscount()
     {
-        var result = await DiscountService.CreateDiscount(currentDiscount);
+        try
+        {
+            var result = await DiscountService.CreateDiscount(currentDiscount);
 
-        if (result != null)
-        {
-            Status = "Discount added successfully!";
-            navigationManager.NavigateTo("DisplayDiscounts");
+            if (result != null)
+            {
+                Status = "Discount added successfully!";
+                navigationManager.NavigateTo("DisplayDiscounts");
+            }
+            else
+            {
+                Status = "Something went wrong creating a discount";
+            }
         }
-        else
+        catch (Exception)
         {
-            Status = "Something went wrong creating a discount";
+            ErrorMessage = "Couldnt create discount";
         }
+       
     }
 }

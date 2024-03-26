@@ -9,9 +9,9 @@ namespace WebShop.Api.UnitTests.Services;
 public class SupportEmailServices
 {
     [Fact]
-    public async void AssignSupportToTicket_WithAEmptyDatabase_ReturnFalse()
+    public async Task AssignSupportToTicket_WithAEmptyDatabase_ReturnFalse()
     {
-        //Arrange 
+        //Arrange - Go get your variables = Classes, functions
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
            .UseInMemoryDatabase(databaseName: "TestDatabase")
            .Options;
@@ -21,10 +21,10 @@ public class SupportEmailServices
         var myService = new SupportEmailService(context);
 
 
-        //Act
+        //Act - Execute this function
         var result = await myService.AssignSupportToTicket(1, 2);
 
-        //Assert
+        //Assert - Whatever is returned is what you want
         Assert.False(result);
         //Assert.Contains(context.SupportMails);
 

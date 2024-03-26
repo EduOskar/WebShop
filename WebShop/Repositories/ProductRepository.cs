@@ -42,7 +42,7 @@ public class ProductRepository : IProductRepository
             return product;
         }
 
-        throw new Exception("Product was not found");
+        return null!;
     }
 
     public async Task<ICollection<Product>> GetProductByCategory(int categoryId)

@@ -37,13 +37,18 @@
                             @if (order.OrderStatus.CurrentStatus != OrderStatusType.New)
                             {
                                 <div class="status-update">
-                                    <select @bind="order.OrderStatus.CurrentStatus" class="form-select">
-                                        @foreach (var status in Enum.GetValues<OrderStatusType>())
-                                        {
-                                            <option value="@status">@status</option>
-                                        }
-                                    </select>
-                                    <button class="btn btn-update" @onclick="() => UpdateOrderStatus(order.Id, order.OrderStatus.CurrentStatus)">Update Status</button>
+                                  
+                                    @if(order.OrderStatus.CurrentStatus != OrderStatusType.Cancelled)
+                                    {
+                                        <select @bind="order.OrderStatus.CurrentStatus" class="form-select">
+                                            @foreach (var status in Enum.GetValues<OrderStatusType>())
+                                            {
+                                                <option value="@status">@status</option>
+                                            }
+                                        </select>
+                                        <button class="btn btn-update" @onclick="() => UpdateOrderStatus(order.Id, order.OrderStatus.CurrentStatus)">Update Status</button>
+
+                                    }
                                 </div>
                             }
                         </div>
